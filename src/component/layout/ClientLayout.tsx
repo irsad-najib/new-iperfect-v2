@@ -27,7 +27,7 @@ interface ClientLayoutProps {
 const ClientLayout: React.FC<ClientLayoutProps> = ({ children }) => {
   const pathname = usePathname();
   const router = useRouter();
-  const isLoginPage = pathname === "/login";
+  const isLoginPage = pathname === "/";
   const { isAuthenticated, isLoading } = useAuth();
   const access = getDecodedAccess();
 
