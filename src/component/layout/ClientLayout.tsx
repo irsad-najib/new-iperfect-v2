@@ -9,6 +9,7 @@ import { getDecodedAccess } from "@/utils/auth";
 import dynamic from "next/dynamic";
 import { AuthProvider } from "@/context/AuthContext";
 import { DateProvider } from "@/context/DateContext";
+import { StyleProvider } from "@ant-design/cssinjs";
 
 // Use Next.js dynamic imports instead of React.lazy for better SSR support
 const Sidebar = dynamic(() => import("./Sidebar"), {
@@ -72,39 +73,41 @@ const ClientLayout: React.FC<ClientLayoutProps> = ({ children }) => {
   }
 
   return (
-    <ConfigProvider theme={theme}>
-      {isLoginPage ? (
-        <div className="min-h-screen m-0 p-0">
-          <div className="p-0">{children}</div>
-        </div>
-      ) : (
-        <AuthProvider>
-          <DateProvider>
-            <div className="flex min-h-screen bg-gray-50">
-              {isAuthenticated && (
-                <Sidebar
-                  isCollapsed={isCollapsed}
-                  setIsCollapsed={setIsCollapsed}
-                  isMobileOpen={isMobileOpen}
-                  setIsMobileOpen={setIsMobileOpen}
-                />
-              )}
-              <main
-                className={`flex-1 transition-all duration-300 ${
-                  isAuthenticated
-                    ? isCollapsed
-                      ? "md:ml-20"
-                      : "md:ml-[300px]"
-                    : ""
-                } p-6 w-full`}>
-                <NotificationListener />
-                {children}
-              </main>
-            </div>
-          </DateProvider>
-        </AuthProvider>
-      )}
-    </ConfigProvider>
+    <StyleProvider layer>
+      <ConfigProvider theme={theme}>
+        {isLoginPage ? (
+          <div className="min-h-screen m-0 p-0">
+            <div className="p-0">{children}</div>
+          </div>
+        ) : (
+          <AuthProvider>
+            <DateProvider>
+              <div className="flex min-h-screen bg-neutral-100">
+                {isAuthenticated && (
+                  <Sidebar
+                    isCollapsed={isCollapsed}
+                    setIsCollapsed={setIsCollapsed}
+                    isMobileOpen={isMobileOpen}
+                    setIsMobileOpen={setIsMobileOpen}
+                  />
+                )}
+                <main
+                  className={`flex-1 transition-all duration-300 ${
+                    isAuthenticated
+                      ? isCollapsed
+                        ? "md:ml-20"
+                        : "md:ml-[300px]"
+                      : ""
+                  } p-6 w-full`}>
+                  <NotificationListener />
+                  {children}
+                </main>
+              </div>
+            </DateProvider>
+          </AuthProvider>
+        )}
+      </ConfigProvider>
+    </StyleProvider>
   );
 };
 

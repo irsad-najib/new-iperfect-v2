@@ -113,7 +113,7 @@ function NotificationListener() {
     <>
       <div
         id="notification-box"
-        className="absolute top-8 right-10 w-11 h-11 flex items-center justify-center rounded-xl bg-slate-50 shadow-lg cursor-pointer hover:bg-gray-800"
+        className="absolute right-10 w-11 h-11 flex items-center justify-center rounded-xl bg-neutral-100 cursor-pointer hover:bg-neutral-200"
         onClick={toggleNotifications}>
         <MdNotifications size={40} color="#13162A" />
       </div>
@@ -123,7 +123,7 @@ function NotificationListener() {
           id="notification-container"
           className="absolute top-[84px] right-10 w-[360px] bg-white rounded-xl shadow-lg z-50">
           <div className="p-4 border-b border-gray-200 bg-gray-50">
-            <span className="text-[20.16px] font-semibold text-[#13162a]">
+            <span className="text-20 font-semibold text-neutral-900">
               Notifications
             </span>
           </div>
@@ -163,7 +163,7 @@ function NotificationListener() {
                         className="shrink-0"
                       />
                     )}
-                    <div className="text-[16.8px] font-semibold text-[#13162a]">
+                    <div className="text-16 font-semibold text-neutral-900">
                       {notification.status === "completed"
                         ? "Successfully executed"
                         : notification.status === "failed"
@@ -175,7 +175,7 @@ function NotificationListener() {
                     dangerouslySetInnerHTML={{
                       __html: notification.title,
                     }}></div>
-                  <div className="text-sm text-[#13162a] font-semibold mt-2">
+                  <div className="text-14 text-neutral-900 font-semibold mt-2">
                     <span suppressHydrationWarning>
                       {new Date(notification.timestamp * 1000).toLocaleString(
                         "en-GB",
@@ -194,7 +194,7 @@ function NotificationListener() {
                 </div>
               ))
             ) : (
-              <div className="p-8 text-center text-[#777986]">
+              <div className="p-8 text-center text-neutral-500">
                 No notifications yet
               </div>
             )}

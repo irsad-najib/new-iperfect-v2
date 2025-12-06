@@ -10,19 +10,31 @@ import {
 import dayjs, { Dayjs } from "dayjs";
 import { AiOutlineCheck } from "react-icons/ai";
 import "dayjs/locale/id";
+import localeData from "dayjs/plugin/localeData";
 import { useRouter } from "next/navigation";
 
+dayjs.extend(localeData);
+
 const customCalendarStyles = `
-  [&_.ant-picker-cell-inner]:!p-[8px_4px] [&_.ant-picker-cell-inner]:!min-h-[60px] [&_.ant-picker-cell-inner]:!rounded-none [&_.ant-picker-cell-inner]:!bg-transparent [&_.ant-picker-cell-inner]:!border-none
-  [&_.ant-picker-body]:bg-[#f3f4f8]
-  [&_.ant-picker-calendar-date-today]:!bg-[#fcdcc5]
-  [&_.ant-picker-calendar-date-today_.ant-picker-calendar-date-content]:!bg-[#fcdcc5]
-  [&_.ant-picker-calendar-date-today_.ant-picker-calendar-date-value]:!bg-[#fcdcc5]
-  [&_.ant-picker-cell]:!border-[5px] [&_.ant-picker-cell]:!border-[#f3f4f8]
+  [&_.ant-picker-cell-inner]:!p-0 [&_.ant-picker-cell-inner]:!min-h-[80px] [&_.ant-picker-cell-inner]:!rounded-none [&_.ant-picker-cell-inner]:!bg-transparent [&_.ant-picker-cell-inner]:!border-none
+  [&_.ant-picker-body]:bg-[var(--color-neutral-100)]
+  [&_.ant-picker-calendar-date-today]:!bg-[#fbe5d6]
+  [&_.ant-picker-calendar-date-today_.ant-picker-calendar-date-content]:!bg-[#fbe5d6]
+  [&_.ant-picker-calendar-date-today_.ant-picker-calendar-date-value]:!bg-[#fbe5d6]
+  [&_.ant-picker-cell]:!border-[5px] [&_.ant-picker-cell]:!border-[var(--color-neutral-100)]
   [&_.ant-picker-calendar-date]:!p-0
-  [&_.ant-picker-calendar-date-content]:!px-[5px] [&_.ant-picker-calendar-date-content]:!py-0 [&_.ant-picker-calendar-date-content]:bg-white
-  [&_.ant-picker-calendar-date-value]:!p-[0_5px_5px_5px] [&_.ant-picker-calendar-date-value]:text-start [&_.ant-picker-calendar-date-value]:bg-white
-  [&_.ant-picker-content_th]:!p-[0_5px_5px_5px] [&_.ant-picker-content_th]:text-start [&_.ant-picker-content_th]:text-2xl [&_.ant-picker-content_th]:!border-[5px] [&_.ant-picker-content_th]:!border-[#f3f4f8]
+  [&_.ant-picker-calendar-date-content]:!px-1.5 [&_.ant-picker-calendar-date-content]:!py-0 [&_.ant-picker-calendar-date-content]:bg-white
+  [&_.ant-picker-calendar-date-value]:!p-[4px_8px] [&_.ant-picker-calendar-date-value]:text-start [&_.ant-picker-calendar-date-value]:bg-white [&_.ant-picker-calendar-date-value]:text-14 [&_.ant-picker-calendar-date-value]:font-semibold
+  [&_.ant-picker-content_th]:!p-[8px] [&_.ant-picker-content_th]:text-start [&_.ant-picker-content_th]:text-14 [&_.ant-picker-content_th]:font-bold [&_.ant-picker-content_th]:!border-[5px] [&_.ant-picker-content_th]:!border-[var(--color-neutral-100)] [&_.ant-picker-content_th]:bg-neutral-100
+  [&_.ant-picker-content_th]:!text-[0px]
+  [&_.ant-picker-content_th]:after:!text-lg
+  [&_.ant-picker-content_th:nth-child(1)]:after:content-['Sun']
+  [&_.ant-picker-content_th:nth-child(2)]:after:content-['Mon']
+  [&_.ant-picker-content_th:nth-child(3)]:after:content-['Tue']
+  [&_.ant-picker-content_th:nth-child(4)]:after:content-['Wed']
+  [&_.ant-picker-content_th:nth-child(5)]:after:content-['Thu']
+  [&_.ant-picker-content_th:nth-child(6)]:after:content-['Fri']
+  [&_.ant-picker-content_th:nth-child(7)]:after:content-['Sat']
   [&_.ant-picker-cell-selected]:!bg-transparent [&_.ant-picker-cell-selected_.ant-picker-cell-inner]:!bg-transparent
 `;
 
@@ -83,18 +95,17 @@ const DailyRoutinePage: React.FC = () => {
       { name: "NPK", status: "In Progress" },
       { name: "Batubara", status: "Unavailable" },
     ],
-    // ...lanjutkan data
   };
 
   // Status icon rendering
   const renderStatusIcon = (status: "Done" | "In Progress" | "Unavailable") => {
     const baseClass =
-      "w-4 h-4 rounded-full flex justify-center items-center mr-3 text-[20.16px] font-semibold";
+      "w-3 h-3 rounded-full flex justify-center items-center mr-1.5 text-14 font-semibold";
 
     if (status === "Done") {
       return (
-        <div className={`${baseClass} bg-[#1268B3] text-[#F3F4F8]`}>
-          <AiOutlineCheck color="#F3F4F8" size={10} />
+        <div className={`${baseClass} bg-(--color-primary-300)`}>
+          <AiOutlineCheck color="#FFFFFF" size={8} />
         </div>
       );
     }
@@ -103,16 +114,16 @@ const DailyRoutinePage: React.FC = () => {
         <div
           className={`${baseClass} relative`}
           style={{
-            background: `conic-gradient(#F47920 0deg 240deg, #EEEFF1 240deg 360deg)`,
+            background: `conic-gradient(var(--color-secondary-300) 0deg 240deg, #EEEFF1 240deg 360deg)`,
           }}>
-          <div className="w-3.5 h-3.5 bg-[#F47920] border-[3px] border-[#F3f4f8] rounded-full absolute" />
+          <div className="w-2.5 h-2.5 bg-white border-2 border-white rounded-full absolute" />
         </div>
       );
     }
     if (status === "Unavailable") {
       return (
         <div
-          className={`${baseClass} bg-[#EEEFF1] text-[#B3B5BD] border-2 border-[#B3B5BD]`}></div>
+          className={`${baseClass} bg-[#EEEFF1] text-neutral-300 border-2 border-neutral-300`}></div>
       );
     }
     return null;
@@ -135,11 +146,11 @@ const DailyRoutinePage: React.FC = () => {
 
     // Tentukan status dominan
     if (statusCounts.Done === listData.length) {
-      return "#1268B3"; // Semua Done - biru
+      return "var(--color-primary-300)"; // Semua Done - blue-300
     } else if (statusCounts.Done > 0) {
-      return "#F47920"; // Ada yang Done tapi tidak semua - orange
+      return "var(--color-secondary-300)"; // Ada yang Done tapi tidak semua - orange-300
     } else {
-      return "#B3B5BD"; // Tidak ada yang Done - abu-abu
+      return "var(--color-neutral-300)"; // Tidak ada yang Done - abu-abu
     }
   };
 
@@ -213,28 +224,28 @@ const DailyRoutinePage: React.FC = () => {
                 onClick={() =>
                   !isNavigating && handleItemClick(currentDate, item)
                 }
-                className={`flex items-center text-sm mb-0.5 px-1 py-0.5 rounded transition-colors duration-200 relative ${
+                className={`flex items-center text-14 py-0.5 rounded transition-colors duration-200 relative ${
                   !isNavigating ? "hover:bg-[#f5f5f5]" : ""
                 }`}
                 style={{
                   color:
                     item.status === "Done"
-                      ? "#1268B3"
+                      ? "var(--color-primary-300)"
                       : item.status === "In Progress"
-                      ? "#F47920"
-                      : "#B3B5BD",
-                  fontWeight: item.status === "Done" ? 600 : 400,
+                      ? "var(--color-secondary-300)"
+                      : "var(--color-neutral-300)",
+                  fontWeight: 400,
                   cursor: isNavigating ? "wait" : "pointer",
                   opacity: isNavigating && !isCurrentlyClicked ? 0.5 : 1,
                 }}>
                 {isCurrentlyClicked ? (
-                  <Spin size="small" className="mr-3 text-[10px]" />
+                  <Spin size="small" className="mr-1.5 text-20" />
                 ) : (
                   renderStatusIcon(item.status)
                 )}
                 {item.name}
                 {isCurrentlyClicked && (
-                  <span className="ml-2 text-xs text-[#666]">Loading...</span>
+                  <span className="ml-2 text-20 text-[#666]">Loading...</span>
                 )}
               </li>
             );
@@ -277,7 +288,7 @@ const DailyRoutinePage: React.FC = () => {
     return (
       <div className="flex justify-center items-center h-[50vh] flex-col gap-4">
         <Spin size="large" />
-        <p className="text-base text-[#666] m-0">Loading...</p>
+        <p className="text-base text-neutral-500 m-0">Loading...</p>
       </div>
     );
   }
@@ -288,13 +299,13 @@ const DailyRoutinePage: React.FC = () => {
       {isNavigating && (
         <div className="fixed inset-0 bg-white/80 flex justify-center items-center z-50 flex-col gap-4">
           <Spin size="large" />
-          <p className="text-base text-[#666] m-0">
+          <p className="text-20 text-[#666] m-0">
             Navigating to {clickedItem?.name}...
           </p>
         </div>
       )}
 
-      <div className="customBreadcrumb separatorSpacing">
+      <div className="customBreadcrumb separatorSpacing flex items-center h-11">
         <Breadcrumb
           separator={<MdArrowForwardIos size={16} />}
           items={[
@@ -305,7 +316,7 @@ const DailyRoutinePage: React.FC = () => {
         />
       </div>
       <div className="flex justify-between pt-4">
-        <div className="flex items-center gap-2 text-2xl">
+        <div className="flex items-center gap-2 text-32">
           <HiOutlineChevronLeft
             size={24}
             onClick={handlePrevMonth}
@@ -316,32 +327,34 @@ const DailyRoutinePage: React.FC = () => {
           <HiOutlineChevronRight
             size={24}
             onClick={handleNextMonth}
-            className="cursor-pointer"
+            className="cursor-pointer text-32"
           />
         </div>
 
         <div className="flex items-center gap-2">
           <Select
-            style={{ width: 140, height: 36 }}
+            style={{ width: 160, height: 44 }}
             value={monthOptions[month]}
             onChange={handleMonthSelect}
             options={monthOptions.map((month) => ({
               label: month,
               value: month,
             }))}
+            className="text-16 font-bold"
           />
           <Select
-            style={{ width: 100, height: 36 }}
+            style={{ width: 100, height: 44 }}
             value={year}
             onChange={handleYearSelect}
             options={getYearOptions(
               dayjs().subtract(10, "year").year(),
               dayjs().add(10, "year").year()
             )}
+            className="text-16 font-bold"
           />
         </div>
       </div>
-      <hr className="my-5 border-none border-t-4 border-[#d9d9d9]" />
+      <hr className="my-5 border-t-4 border-neutral-200" />
       <div>
         <Calendar
           className={customCalendarStyles}
