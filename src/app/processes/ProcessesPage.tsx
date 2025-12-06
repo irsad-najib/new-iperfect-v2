@@ -209,18 +209,20 @@ const ProcessesPage: React.FC = () => {
       }),
       render: (_: unknown, record: ProcessRecord) => {
         return (
-          <Space size="middle" className="flex justify-center gap-1.5">
+          <Space
+            size="middle"
+            className="flex justify-center gap-1.5 flex-wrap">
             <Tooltip
               title="View logs"
               placement="bottom"
               color="var(--color-secondary-300)">
               <Button
-                className={`flex items-center justify-center h-12 w-12 p-3 rounded-lg border ${
+                className={`flex items-center justify-center h-10 w-10 sm:h-12 sm:w-12 p-2 sm:p-3 rounded-lg border ${
                   record.status === "Unavailable"
                     ? "bg-gray-200 text-neutral-500 cursor-not-allowed"
                     : "border-gray-200 hover:border-gray-300"
                 }`}>
-                <MdOutlineStickyNote2 size={40} />
+                <MdOutlineStickyNote2 className="text-2xl sm:text-3xl" />
               </Button>
             </Tooltip>
 
@@ -229,12 +231,12 @@ const ProcessesPage: React.FC = () => {
               placement="bottom"
               color="var(--color-secondary-300)">
               <Button
-                className={`flex items-center justify-center h-12 w-12 p-3 rounded-lg border ${
+                className={`flex items-center justify-center h-10 w-10 sm:h-12 sm:w-12 p-2 sm:p-3 rounded-lg border ${
                   record.status === "Unavailable"
                     ? "bg-gray-200 text-neutral-500 cursor-not-allowed"
                     : "border-gray-200 hover:border-gray-300"
                 }`}>
-                <MdUndo size={28} />
+                <MdUndo className="text-xl sm:text-2xl" />
               </Button>
             </Tooltip>
 
@@ -243,12 +245,12 @@ const ProcessesPage: React.FC = () => {
               placement="bottom"
               color="var(--color-secondary-300)">
               <Button
-                className={`flex items-center justify-center h-12 w-12 p-3 rounded-lg border ${
+                className={`flex items-center justify-center h-10 w-10 sm:h-12 sm:w-12 p-2 sm:p-3 rounded-lg border ${
                   record.status === "Unavailable"
                     ? "bg-gray-200 text-neutral-500 cursor-not-allowed"
                     : "border-gray-200 hover:border-gray-300"
                 }`}>
-                <MdRestartAlt size={28} />
+                <MdRestartAlt className="text-xl sm:text-2xl" />
               </Button>
             </Tooltip>
 
@@ -258,7 +260,7 @@ const ProcessesPage: React.FC = () => {
                 placement="bottom"
                 color="var(--color-secondary-300)">
                 <Button
-                  className={`flex items-center justify-center h-12 w-12 p-3 rounded-lg border ${
+                  className={`flex items-center justify-center h-10 w-10 sm:h-12 sm:w-12 p-2 sm:p-3 rounded-lg border ${
                     record.status === "Unavailable"
                       ? "bg-gray-200 text-neutral-500 cursor-not-allowed"
                       : "border-gray-200 hover:border-gray-300"
@@ -273,7 +275,7 @@ const ProcessesPage: React.FC = () => {
                       router.push("/processes/rawmat/compare");
                     }
                   }}>
-                  <MdCompareArrows size={28} />
+                  <MdCompareArrows className="text-xl sm:text-2xl" />
                 </Button>
               </Tooltip>
             )}
@@ -283,7 +285,7 @@ const ProcessesPage: React.FC = () => {
               placement="bottom"
               color="var(--color-secondary-300)">
               <Button
-                className={`flex items-center justify-center h-12 w-12 p-3 rounded-lg border ${
+                className={`flex items-center justify-center h-10 w-10 sm:h-12 sm:w-12 p-2 sm:p-3 rounded-lg border ${
                   record.status === "Unavailable"
                     ? "bg-gray-200 text-neutral-500 cursor-not-allowed"
                     : "border-gray-200 hover:border-gray-300"
@@ -306,7 +308,7 @@ const ProcessesPage: React.FC = () => {
                     router.push("/processes/rawmat");
                   }
                 }}>
-                <MdArrowForwardIos size={28} />
+                <MdArrowForwardIos className="text-xl sm:text-2xl" />
               </Button>
             </Tooltip>
           </Space>
@@ -334,14 +336,14 @@ const ProcessesPage: React.FC = () => {
         }
         return (
           <div className="flex justify-center items-center">
-            <div className="w-[175px]">
+            <div className="w-[175px] sm:w-[140px] lg:w-[175px]">
               <Progress
                 percent={progress}
                 strokeColor={getProgressColor(progress)}
                 trailColor="#F3F4F8"
                 format={(percent) => `${percent}%`}
                 status="normal"
-                className="[&_.ant-progress-text]:text-20 [&_.ant-progress-text]:font-semibold [&_.ant-progress-text]:ml-1.5 [&_.ant-progress-text]:shrink-0 [&_.ant-progress-outer]:w-full [&_.ant-progress-inner]:w-full"
+                className="[&_.ant-progress-text]:text-20 sm:[&_.ant-progress-text]:text-base [&_.ant-progress-text]:font-semibold [&_.ant-progress-text]:ml-1.5 [&_.ant-progress-text]:shrink-0 [&_.ant-progress-outer]:w-full [&_.ant-progress-inner]:w-full"
               />
             </div>
           </div>
@@ -365,12 +367,14 @@ const ProcessesPage: React.FC = () => {
       }),
       render: (lastModified: string, record: ProcessRecord) => {
         if (record.status === "Unavailable") {
-          return null; // or return null if you want it empty
+          return null;
         }
         return (
-          <div className="flex items-center justify-center">
-            <Avatar src={"/avatar.png"} size={28} />
-            <span className="text-20 text-gray-900">{lastModified}</span>
+          <div className="flex items-center justify-center gap-2">
+            <Avatar src={"/avatar.png"} size={28} className="sm:w-6 sm:h-6" />
+            <span className="text-20 sm:text-base text-gray-900 whitespace-nowrap">
+              {lastModified}
+            </span>
           </div>
         );
       },
@@ -421,11 +425,15 @@ const ProcessesPage: React.FC = () => {
   };
 
   return (
-    <div className="mx-4 my-5">
-      <Title level={4}>Processes</Title>
-      <div className="flex justify-between items-center mb-4 mt-7">
-        <div>
-          <span className="mr-3 text-gray-700">Pilih tanggal:</span>
+    <div className="mx-4 my-5 lg:mx-4 md:mx-3 sm:mx-2">
+      <Title level={4} className="text-2xl md:text-xl sm:text-lg">
+        Processes
+      </Title>
+      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-4 mt-7">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full lg:w-auto">
+          <span className="text-gray-700 text-base sm:text-sm whitespace-nowrap">
+            Pilih tanggal:
+          </span>
           <DatePicker
             value={selectedDate}
             onChange={(date) => {
@@ -433,30 +441,34 @@ const ProcessesPage: React.FC = () => {
             }}
             defaultValue={null}
             format="dddd, DD MMMM YYYY"
-            className="boldDatePicker"
+            className="boldDatePicker w-full sm:w-auto"
           />
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-2 w-full lg:w-auto">
           <Button
             type="primary"
-            className="w-auto h-11 text-20 rounded-md font-semibold"
+            className="flex-1 lg:flex-none lg:w-auto h-11 text-20 sm:text-base rounded-md font-semibold"
             onClick={handleresyncdata}
             loading={loading}>
             Re-fetch Data
           </Button>
           <Button
             type="primary"
-            className="bg-danger w-auto h-11 text-20 rounded-md font-semibold">
+            className="flex-1 lg:flex-none bg-danger lg:w-auto h-11 text-20 sm:text-base rounded-md font-semibold">
             Reset all
           </Button>
         </div>
       </div>
-      <Table
-        columns={columns}
-        dataSource={data}
-        pagination={false}
-        rowClassName={getRowClassName}
-      />
+      <div className="overflow-x-auto -mx-4 px-4 lg:mx-0 lg:px-0">
+        <Table
+          columns={columns}
+          dataSource={data}
+          pagination={false}
+          rowClassName={getRowClassName}
+          scroll={{ x: 1000 }}
+          className="responsive-table"
+        />
+      </div>
       {/* <div className="mt-11">
         <div className="flex justify-between items-center mb-4">
           <Title level={4}>Daily Report</Title>

@@ -61,6 +61,7 @@ body {
 
     /* Typography - Base */
     --font-8: 0.5rem; /* 8px */
+    --font-10: 0.6075rem; /* 9.72px */
     --font-14: 0.875rem; /* 14px */
     --font-12: 0.75rem; /* 12px */
     --font-16: 1rem; /* 16px */
@@ -196,6 +197,9 @@ body {
   .text-8 {
     font-size: var(--font-8) !important;
   }
+  .text-10 {
+    font-size: var(--font-10) !important;
+  }
   .text-14 {
     font-size: var(--font-14) !important;
   }
@@ -225,31 +229,3 @@ body {
 /* ========================================
    COMPONENT STYLES
    ======================================== */
-breadcrumbLink {
-  color: inherit;
-  text-decoration: none;
-  background: none !important;
-  border-radius: 0 !important;
-}
-
-.linkText {
-  display: inline-block;
-}
-.lastBreadcrumbItem {
-  font-weight: 600 !important;
-}
-
-.customBreadcrumb .ant-breadcrumb-link {
-  font-weight: 400;
-}
-.customBreadcrumb .ant-breadcrumb-link:hover {
-  background: none !important;
-  border-radius: 0 !important;
-}
-
-.separatorSpacing .ant-breadcrumb .ant-breadcrumb-separator {
-  margin: 0 6px !important;
-}
-.separatorSpacing .ant-breadcrumb .ant-breadcrumb-separator svg {
-  vertical-align: middle;
-}
