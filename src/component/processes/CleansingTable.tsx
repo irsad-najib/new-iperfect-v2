@@ -88,6 +88,9 @@ const CleansingTable: React.FC<CleansingTableProps> = ({
   }, [activeTab, data]);
 
   useEffect(() => {
+    // Only run on client-side
+    if (typeof window === "undefined") return;
+
     const handleJobComplete = (event: CustomEvent<string>) => {
       const jobId = event.detail;
 
@@ -145,7 +148,8 @@ const CleansingTable: React.FC<CleansingTableProps> = ({
   const handleRun = async (bagian_id: number) => {
     try {
       // Set loading state for this specific part
-      const tableRef = document.querySelector("table");
+      const tableRef =
+        typeof window !== "undefined" ? document.querySelector("table") : null;
       if (tableRef) {
         const event = new CustomEvent("setPartLoading", {
           detail: { bagianId: bagian_id, isLoading: true },
@@ -196,7 +200,8 @@ const CleansingTable: React.FC<CleansingTableProps> = ({
       console.error("Error running cleansing:", error);
 
       // Clear loading state on error
-      const tableRef = document.querySelector("table");
+      const tableRef =
+        typeof window !== "undefined" ? document.querySelector("table") : null;
       if (tableRef) {
         const event = new CustomEvent("setPartLoading", {
           detail: { bagianId: bagian_id, isLoading: false },
@@ -244,6 +249,16 @@ const CleansingTable: React.FC<CleansingTableProps> = ({
       title: "Item",
       dataIndex: "name",
       key: "name",
+      onHeaderCell: () => ({
+        style: {
+          fontFamily: "Outfit, sans-serif",
+          fontWeight: 600,
+          fontSize: "20.16px",
+          lineHeight: "20.16px",
+          letterSpacing: "0%",
+          textAlign: "center" as const,
+        },
+      }),
       render: (text: string, record: TableItem) => (
         <div className="flex items-center gap-4 text-20">
           {/* <Switch
@@ -270,6 +285,16 @@ const CleansingTable: React.FC<CleansingTableProps> = ({
       title: "Actions",
       key: "actions",
       width: 450,
+      onHeaderCell: () => ({
+        style: {
+          fontFamily: "Outfit, sans-serif",
+          fontWeight: 600,
+          fontSize: "20.16px",
+          lineHeight: "20.16px",
+          letterSpacing: "0%",
+          textAlign: "center" as const,
+        },
+      }),
       render: (record: TableItem) => (
         <div className="flex gap-2 justify-center">
           <Tooltip title="Run item" placement="bottom" color="#F47920">
@@ -329,6 +354,16 @@ const CleansingTable: React.FC<CleansingTableProps> = ({
       dataIndex: "lastRun",
       key: "lastRun",
       width: 300,
+      onHeaderCell: () => ({
+        style: {
+          fontFamily: "Outfit, sans-serif",
+          fontWeight: 600,
+          fontSize: "20.16px",
+          lineHeight: "20.16px",
+          letterSpacing: "0%",
+          textAlign: "center" as const,
+        },
+      }),
       render: (text: string, record: TableItem) => (
         <div className="flex items-center justify-center gap-2">
           {record.status !== "not-executed" && (
@@ -350,6 +385,16 @@ const CleansingTable: React.FC<CleansingTableProps> = ({
       dataIndex: "lastDuration",
       key: "lastDuration",
       width: 300,
+      onHeaderCell: () => ({
+        style: {
+          fontFamily: "Outfit, sans-serif",
+          fontWeight: 600,
+          fontSize: "20.16px",
+          lineHeight: "20.16px",
+          letterSpacing: "0%",
+          textAlign: "center" as const,
+        },
+      }),
       render: (text: string) => (
         <div className="text-center text-20 font-semibold">{text}</div>
       ),
@@ -361,6 +406,16 @@ const CleansingTable: React.FC<CleansingTableProps> = ({
       title: "Item",
       dataIndex: "name",
       key: "name",
+      onHeaderCell: () => ({
+        style: {
+          fontFamily: "Outfit, sans-serif",
+          fontWeight: 600,
+          fontSize: "20.16px",
+          lineHeight: "20.16px",
+          letterSpacing: "0%",
+          textAlign: "center" as const,
+        },
+      }),
       render: (text: string) => (
         <div className="flex items-center gap-4 text-20">
           {/* <Switch className="customSwitch" defaultChecked={true} /> */}
@@ -375,6 +430,16 @@ const CleansingTable: React.FC<CleansingTableProps> = ({
       title: "Actions",
       key: "actions",
       width: 450,
+      onHeaderCell: () => ({
+        style: {
+          fontFamily: "Outfit, sans-serif",
+          fontWeight: 600,
+          fontSize: "20.16px",
+          lineHeight: "20.16px",
+          letterSpacing: "0%",
+          textAlign: "center" as const,
+        },
+      }),
       render: (record: Lab) => (
         <div className="flex gap-2 justify-center">
           <Tooltip title="View result" placement="bottom" color="#F47920">
@@ -409,8 +474,8 @@ const CleansingTable: React.FC<CleansingTableProps> = ({
           {getPartsForActiveFactory().map((part) => (
             <Button
               key={part._id}
-              className={`customSecondaryButton ${
-                activePart === part.name ? "activeButton" : ""
+              className={`flex-1 text-neutral-900 lg:flex-none lg:w-auto h-9 text-16 sm:text-base rounded-md ${
+                activePart === part.name ? "bg-orange-500 text-white" : ""
               }`}
               onClick={() => setActivePart(part.name)}>
               {part.name}

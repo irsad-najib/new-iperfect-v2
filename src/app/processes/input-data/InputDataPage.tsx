@@ -15,6 +15,7 @@ import { useRouter } from "next/navigation";
 import { useDateContext } from "@/context/DateContext";
 import api from "@/utils/axios";
 import { saveAs } from "file-saver";
+import { HiHome } from "react-icons/hi2";
 
 const InputDataPage: React.FC = () => {
   const [selectedRowKey, setSelectedRowKey] = useState<number | null>(1);
@@ -263,6 +264,15 @@ const InputDataPage: React.FC = () => {
           />
         }
         items={[
+          {
+            title: (
+              <Link href="/daily-routines " className="breadcrumbLink">
+                <span className="text-neutral-300 text-20 font-semibold">
+                  <HiHome className="inline-block mr-1 mb-0.5" />
+                </span>
+              </Link>
+            ),
+          },
           {
             title: (
               <Link href="/processes" className="breadcrumbLink">

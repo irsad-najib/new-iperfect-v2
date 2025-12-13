@@ -18,6 +18,7 @@ import { useDateContext } from "@/context/DateContext";
 import api from "@/utils/axios";
 import axios from "axios";
 import Image from "next/image";
+import { HiHome } from "react-icons/hi";
 
 type JobStatusEvent = {
   job_id: string;
@@ -75,13 +76,21 @@ const CleansingPage: React.FC = () => {
   }>({});
   const [isStatusLoading, setIsStatusLoading] = useState(false);
   const { selectedDate, formattedDate } = useDateContext();
-  const [activeTab, setActiveTab] = useState(() => {
-    return localStorage.getItem("cleansingActiveTab") || "1";
-  });
+  const [activeTab, setActiveTab] = useState("1");
   const factoriesRef = useRef<Factory[]>([]);
   const partsRef = useRef<Part[]>([]);
   const isFirstMount = useRef(true);
   const [activePart, setActivePart] = useState<string>("");
+
+  // Initialize activeTab from localStorage on client-side only
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const savedTab = localStorage.getItem("cleansingActiveTab");
+      if (savedTab) {
+        setActiveTab(savedTab);
+      }
+    }
+  }, []);
 
   const updatePartsData = (
     parts: Part[],
@@ -379,7 +388,9 @@ const CleansingPage: React.FC = () => {
 
   const handleTabChange = async (key: string) => {
     setActiveTab(key);
-    localStorage.setItem("cleansingActiveTab", key);
+    if (typeof window !== "undefined") {
+      localStorage.setItem("cleansingActiveTab", key);
+    }
 
     const partsForFactory = partsData.filter(
       (part) => part.pabrik_id.toString() === key
@@ -691,22 +702,42 @@ const CleansingPage: React.FC = () => {
   return (
     <div className="p-4 sm:px-5 sm:py-4">
       <Breadcrumb
-        separator={<MdArrowForwardIos size={16} />}
+        separator={
+          <MdArrowForwardIos
+            size={16}
+            className="align-middle inline-block"
+            style={{ verticalAlign: "middle" }}
+          />
+        }
         items={[
           {
             title: (
-              <Link href="/processes" className="breadcrumbLink">
-                <span className="linkText">Processes</span>
+              <Link href="/daily-routines" className="breadcrumbLink">
+                <span className="text-neutral-300 text-20 font-semibold">
+                  <HiHome className="inline-block mr-1 mb-0.5" />
+                </span>
               </Link>
             ),
           },
           {
-            title: <span className="lastBreadcrumbItem">Cleansing</span>,
+            title: (
+              <Link href="/processes" className="breadcrumbLink">
+                <span className="text-neutral-300 text-20 font-semibold">
+                  Processes
+                </span>
+              </Link>
+            ),
+          },
+          {
+            title: (
+              <span className="text-neutral-900 text-20 font-semibold">
+                Cleansing
+              </span>
+            ),
           },
         ]}
-        className="customBreadcrumb separatorSpacing"
+        className="customBreadcrumb separatorSpacing mb-4"
       />
-
       <div className="flex items-center mt-7 mb-6">
         <DatePicker
           disabled
@@ -721,7 +752,7 @@ const CleansingPage: React.FC = () => {
           activeKey={activeTab}
           onChange={handleTabChange}
           items={items}
-          className="customTabs"
+          className="w-full text-20 [&_.ant-tabs-nav::before]:h-1 [&_.ant-tabs-nav::before]:bg-neutral-250 [&_.ant-tabs-tab]:text-center [&_.ant-tabs-tab]:items-center [&_.ant-tabs-tab]:justify-center [&_.ant-tabs-tab]:py-2 [&_.ant-tabs-tab]:px-4 [&_.ant-tabs-tab]:mx-1 [&_.ant-tabs-tab]:text-neutral-300 [&_.ant-tabs-tab]:font-semibold [&_.ant-tabs-tab-active]:rounded [&_.ant-tabs-tab-active_.ant-tabs-tab-btn]:text-black [&_.ant-tabs-tab-active_.ant-tabs-tab-btn]:font-semibold [&_.ant-tabs-ink-bar]:bg-orange-500 [&_.ant-tabs-ink-bar]:h-1"
         />
 
         <div className="flex gap-2 ml-2.5">
@@ -743,7 +774,9 @@ const CleansingPage: React.FC = () => {
                 },
               ],
             }}>
-            <Button type="default" className="customDangerButton btn-lg">
+            <Button
+              type="primary"
+              className="flex-1 text-white lg:flex-none bg-danger lg:w-auto h-11 text-20 sm:text-base rounded-md font-semibold">
               Reset all
               <MdArrowForwardIos
                 size={18}
@@ -773,7 +806,7 @@ const CleansingPage: React.FC = () => {
             }}>
             <Button
               type="primary"
-              className="customPrimaryButton btn-lg"
+              className="flex-1 text-white lg:flex-none lg:w-auto h-11 text-20 sm:text-base rounded-md font-semibold"
               icon={<MdPlayArrow size={28} />}>
               Run all
               <MdArrowForwardIos

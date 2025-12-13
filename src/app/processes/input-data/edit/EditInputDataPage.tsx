@@ -8,7 +8,7 @@ import { useSearchParams } from "next/navigation";
 import DataInputTable from "@/component/processes/DataInputTable";
 import { useDateContext } from "@/context/DateContext";
 import { useRouter } from "next/navigation";
-// import TestTable from "@/components/TestTable";
+import { HiHome } from "react-icons/hi";
 
 const SearchParamsWrapper: React.FC<{
   children: (key: number) => React.ReactNode;
@@ -59,6 +59,15 @@ const EditInputDataPage: React.FC = () => {
               items={[
                 {
                   title: (
+                    <Link href="/daily-routines" className="breadcrumbLink">
+                      <span className="text-neutral-300 text-20 font-semibold">
+                        <HiHome className="inline-block mr-1 mb-0.5" />
+                      </span>
+                    </Link>
+                  ),
+                },
+                {
+                  title: (
                     <Link
                       href="/processes"
                       className="no-underline text-inherit bg-transparent">
@@ -79,9 +88,9 @@ const EditInputDataPage: React.FC = () => {
                   title: <span className="font-semibold">Edit</span>,
                 },
               ]}
-              className="[&_.ant-breadcrumb-link]:font-normal [&_.ant-breadcrumb-link:hover]:bg-transparent [&_.ant-breadcrumb-separator]:mx-1.5 [&_.ant-breadcrumb-separator]:flex [&_.ant-breadcrumb-separator]:items-center"
+              className="[&_.ant-breadcrumb-link]:font-normal [&_.ant-breadcrumb-link:hover]:bg-transparent [&_.ant-breadcrumb-separator]:mx-1.5 [&_.ant-breadcrumb-separator]:flex [&_.ant-breadcrumb-separator]:items-center mb-4"
             />
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 justify-between">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 justify-between mb-4">
               <DatePicker
                 disabled
                 value={selectedDate}
