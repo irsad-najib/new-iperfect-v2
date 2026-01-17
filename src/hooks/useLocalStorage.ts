@@ -3,11 +3,11 @@
  * Custom hook untuk manage localStorage dengan type safety
  */
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useCallback } from "react";
 
 export function useLocalStorage<T>(
   key: string,
-  initialValue: T
+  initialValue: T,
 ): [T, (value: T | ((val: T) => T)) => void, () => void] {
   // State to store value
   const [storedValue, setStoredValue] = useState<T>(() => {
@@ -42,7 +42,7 @@ export function useLocalStorage<T>(
         console.warn(`Error setting localStorage key "${key}":`, error);
       }
     },
-    [key, storedValue]
+    [key, storedValue],
   );
 
   // Remove value from localStorage

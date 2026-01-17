@@ -14,7 +14,6 @@ import {
 import { useAuth } from "@/context/AuthContext";
 import { menuItems } from "@/config/menuConfig";
 import { useOpenKeys, useActiveRoute } from "@/hooks/useSidebar";
-import type { User } from "@/types";
 
 interface SidebarProps {
   isCollapsed: boolean;
@@ -45,11 +44,11 @@ const Sidebar: React.FC<SidebarProps> = ({
         setOpenKeys([key]);
       } else {
         setOpenKeys((prev) =>
-          prev.includes(key) ? prev.filter((k) => k !== key) : [...prev, key]
+          prev.includes(key) ? prev.filter((k) => k !== key) : [...prev, key],
         );
       }
     },
-    [isCollapsed, setIsCollapsed, setOpenKeys]
+    [isCollapsed, setIsCollapsed, setOpenKeys],
   );
 
   const handleTitleClick = useCallback(
@@ -58,7 +57,7 @@ const Sidebar: React.FC<SidebarProps> = ({
       e.stopPropagation();
       router.push(href);
     },
-    [router]
+    [router],
   );
 
   return (
@@ -251,7 +250,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                                         {child.children?.map((grandchild) => {
                                           if (grandchild.disabled) return null;
                                           const isGrandchildActive = isActive(
-                                            grandchild.href
+                                            grandchild.href,
                                           );
 
                                           return (

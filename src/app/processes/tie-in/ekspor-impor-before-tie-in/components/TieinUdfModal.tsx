@@ -93,7 +93,6 @@ const TieinUdfModal = ({
   const [showAddInputModal, setShowAddInputModal] = useState(false);
   const [editingInput, setEditingInput] = useState<UDFInput | null>(null);
   const [codeValue, setCodeValue] = useState("");
-  const [selectedTag, setSelectedTag] = useState<string>("");
   const [testResult, setTestResult] = useState<UdfResult | null>(null);
   const [udfLoading, setUdfLoading] = useState(false);
   const [udfData, setUdfData] = useState<UDFResponse | null>(null);
@@ -116,7 +115,7 @@ const TieinUdfModal = ({
 
       try {
         const response = await api.get(
-          `/udf/utils/available-inputs?tanggal=${formattedDate}`
+          `/udf/utils/available-inputs?tanggal=${formattedDate}`,
         );
         if (response.data) {
           setAvailableInputs(response.data);
@@ -145,7 +144,7 @@ const TieinUdfModal = ({
           setUdfData(response.data);
           setCodeValue(response.data.udf.code);
           const inputName = response.data?.inputs?.map(
-            (input) => input.var_name
+            (input) => input.var_name,
           );
           setHighlightWords(inputName);
         }
@@ -171,7 +170,6 @@ const TieinUdfModal = ({
     if (!isOpen) {
       setUdfData(null);
       setCodeValue("");
-      setSelectedTag("");
       setTestResult(null);
       setAvailableInputs([]);
       setEditingInput(null);
@@ -193,7 +191,7 @@ const TieinUdfModal = ({
             var_name,
             ref_name,
             timeframe_selection,
-          })
+          }),
         ),
         code: codeValue,
         tanggal: formattedDate,
@@ -203,7 +201,7 @@ const TieinUdfModal = ({
     }
   };
 
-  const handleUpdateUDF = async (name: string, template: string) => {
+  const handleUpdateUDF = async (name: string) => {
     // If it's from template, the template string will be "template" and we'll get the UDF ID
     if (onUpdateUDF) {
       onUpdateUDF(name);
@@ -285,7 +283,7 @@ const TieinUdfModal = ({
           inputs: prev.inputs.map((item) =>
             item._id === editingInput._id
               ? { ...item, ...processedInput }
-              : item
+              : item,
           ),
         };
       });
@@ -580,9 +578,9 @@ const TieinUdfModal = ({
                                 ? input.tie_in_adjustment_value?.toFixed(2)
                                 : "-"
                               : input.value !== undefined &&
-                                input.value !== null
-                              ? input.value?.toFixed(2)
-                              : "-"}
+                                  input.value !== null
+                                ? input.value?.toFixed(2)
+                                : "-"}
                           </span>
                           <div className="flex justify-center items-center min-w-[70px] border-none p-0">
                             <MdEditNote
@@ -691,7 +689,7 @@ const TieinUdfModal = ({
                             ? `${testResult?.std_out}\nlog:\n${JSON.stringify(
                                 testResult.log,
                                 null,
-                                4
+                                4,
                               )}`
                             : "No output message from the process."}
                         </div>

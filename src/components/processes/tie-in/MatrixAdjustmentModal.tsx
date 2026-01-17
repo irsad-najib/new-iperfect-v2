@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { Modal, Button, Form, InputNumber } from "antd";
 import { MdClose } from "react-icons/md";
 
@@ -30,7 +30,7 @@ const MatrixAdjustmentModal: React.FC<MatrixAdjustmentModalProps> = ({
   }, [isOpen, currentValue, form]);
 
   const handleConfirm = () => {
-    const newValue = form.getFieldValue('newValue') || currentValue;
+    const newValue = form.getFieldValue("newValue") || currentValue;
     onConfirm({ currentValue, newValue });
     onClose();
   };
@@ -80,10 +80,7 @@ const MatrixAdjustmentModal: React.FC<MatrixAdjustmentModalProps> = ({
           </Form.Item>
 
           <Form.Item label="New Value" name="newValue" className="mb-0">
-            <InputNumber
-              className="w-full"
-              precision={2}
-            />
+            <InputNumber className="w-full" precision={2} />
           </Form.Item>
         </Form>
       </div>

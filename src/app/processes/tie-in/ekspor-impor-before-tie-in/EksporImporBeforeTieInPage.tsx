@@ -110,7 +110,6 @@ const EksporImporBeforeTieInPage: React.FC = () => {
     max: number | null | undefined;
   } | null>(null);
   const [headers, setHeaders] = useState<TableHeader[]>([]);
-  const [isCompleted, setIsCompleted] = useState(false);
   const [isAdjusted, setIsAdjusted] = useState(false);
   const [defaultTableData, setDefaultTableData] = useState<ResponseRow[]>([]);
   const [adjustedTableData, setAdjustedTableData] = useState<ResponseRow[]>([]);
@@ -132,10 +131,10 @@ const EksporImporBeforeTieInPage: React.FC = () => {
       // Parallel fetch of adjusted and default data
       const [adjustedResponse, defaultResponse] = await Promise.allSettled([
         api.get<ApiResponse>(
-          `/tiein/kapasitas-tiein/get-by-args?tanggal=${formattedDate}&adjusted=true`
+          `/tiein/kapasitas-tiein/get-by-args?tanggal=${formattedDate}&adjusted=true`,
         ),
         api.get<ApiResponse>(
-          `/tiein/kapasitas-tiein/get-by-args?tanggal=${formattedDate}&adjusted=false`
+          `/tiein/kapasitas-tiein/get-by-args?tanggal=${formattedDate}&adjusted=false`,
         ),
       ]);
 
@@ -146,7 +145,6 @@ const EksporImporBeforeTieInPage: React.FC = () => {
       ) {
         setHeaders(adjustedResponse.value.data.column);
         setAdjustedTableData(adjustedResponse.value.data.row);
-        setIsCompleted(adjustedResponse.value.data.completed);
         setIsAdjusted(true);
       } else {
         setIsAdjusted(false);
@@ -270,7 +268,7 @@ const EksporImporBeforeTieInPage: React.FC = () => {
 
   const currentTableData = useMemo(
     () => (activeTab === "adjusted" ? adjustedTableData : defaultTableData),
-    [activeTab, adjustedTableData, defaultTableData]
+    [activeTab, adjustedTableData, defaultTableData],
   );
 
   // Optimized cell update handler
@@ -312,7 +310,7 @@ const EksporImporBeforeTieInPage: React.FC = () => {
 
         const response = await api.post(
           `/tiein/kapasitas-tiein/save`,
-          requestBody
+          requestBody,
         );
         if (response.data) {
           setDefaultTableData(response.data.row);
@@ -324,7 +322,7 @@ const EksporImporBeforeTieInPage: React.FC = () => {
         message.error("Failed to update tie-in data");
       }
     },
-    [selectedCell, dailyRunner, headers, currentTableData, fetchData]
+    [selectedCell, dailyRunner, headers, currentTableData, fetchData],
   );
 
   const handleAdjustConfirm = useCallback(async () => {
@@ -347,13 +345,12 @@ const EksporImporBeforeTieInPage: React.FC = () => {
       setLoading(true);
       try {
         const adjustedResponse = await api.get<ApiResponse>(
-          `/tiein/kapasitas-tiein/get-by-args?tanggal=${formattedDate}&adjusted=true`
+          `/tiein/kapasitas-tiein/get-by-args?tanggal=${formattedDate}&adjusted=true`,
         );
 
         if (adjustedResponse?.data) {
           setHeaders(adjustedResponse.data.column);
           setAdjustedTableData(adjustedResponse.data.row);
-          setIsCompleted(adjustedResponse.data.completed);
           setIsAdjusted(true);
         }
       } catch (error) {
@@ -378,7 +375,7 @@ const EksporImporBeforeTieInPage: React.FC = () => {
       setRevertAllLoading(true);
       try {
         await api.post(
-          `/tiein/kapasitas-tiein/adjustment/revert/all?tanggal=${formattedDate}&reason=${reasoning}`
+          `/tiein/kapasitas-tiein/adjustment/revert/all?tanggal=${formattedDate}&reason=${reasoning}`,
         );
         setActiveTab("before");
         fetchData();
@@ -391,7 +388,7 @@ const EksporImporBeforeTieInPage: React.FC = () => {
         setIsRevertModalOpen(false);
       }
     },
-    [formattedDate, fetchData]
+    [formattedDate, fetchData],
   );
 
   const handleRevert = useCallback(
@@ -421,7 +418,7 @@ const EksporImporBeforeTieInPage: React.FC = () => {
         setIsRevertModalOpen(false);
       }
     },
-    [dailyRunner, headers, currentTableData, fetchData]
+    [dailyRunner, headers, currentTableData, fetchData],
   );
 
   // Memoized columns configuration
@@ -472,10 +469,10 @@ const EksporImporBeforeTieInPage: React.FC = () => {
                 const isUdfAdjustment = record.rowIndex === "UDF Adjustment";
 
                 const unbalanceRow = currentTableData.find(
-                  (row) => row.rowIndex === "Unbalance"
+                  (row) => row.rowIndex === "Unbalance",
                 );
                 const maxToleranceRow = currentTableData.find(
-                  (row) => row.rowIndex === "Max Tolerance"
+                  (row) => row.rowIndex === "Max Tolerance",
                 );
                 const unbalanceValue = unbalanceRow?.data[header.key]?.value;
                 const maxToleranceValue =
@@ -595,10 +592,10 @@ const EksporImporBeforeTieInPage: React.FC = () => {
                           const cellLocation = `${record.rowIndex}-${header.title}`;
                           const cellUnit = header.unit;
                           const unbalanceRow = currentTableData.find(
-                            (row) => row.rowIndex === "Unbalance"
+                            (row) => row.rowIndex === "Unbalance",
                           );
                           const maxToleranceRow = currentTableData.find(
-                            (row) => row.rowIndex === "Max Tolerance"
+                            (row) => row.rowIndex === "Max Tolerance",
                           );
                           const unbalanceValue =
                             unbalanceRow?.data[header.key]?.value;
@@ -624,15 +621,15 @@ const EksporImporBeforeTieInPage: React.FC = () => {
                               locale: "id-ID",
                             })
                           : cellValue === null || cellValue === undefined
-                          ? "-"
-                          : cellValue}
+                            ? "-"
+                            : cellValue}
                       </div>
                     );
                   },
           },
         ],
       })),
-    [headers, currentTableData, activeTab, router]
+    [headers, currentTableData, activeTab, router],
   );
 
   const handleLoadConfig = async () => {};
@@ -713,7 +710,7 @@ const EksporImporBeforeTieInPage: React.FC = () => {
             className="boldDatePicker"
           />
         </div>
-        <div className="flex items-center gap-3 py-4 rounded-lg flex-shrink-0">
+        <div className="flex items-center gap-3 py-4 rounded-lg shrink-0">
           <span className="font-semibold">Config:</span>
           <div className="w-fit min-w-[200px] py-1 px-[11px] border border-[#d9d9d9] rounded-md bg-neutral-250">
             {loading ? "Loading..." : config?.name || selectedConfig}
@@ -767,7 +764,7 @@ const EksporImporBeforeTieInPage: React.FC = () => {
         <div className="flex items-center gap-2">
           {isAdjusted ? (
             <div className="flex gap-6">
-              <div className="flex gap-[10px] items-center">
+              <div className="flex gap-2.5 items-center">
                 <span className="text-black text-[16.8px] font-semibold">
                   Select version:
                 </span>
@@ -790,7 +787,7 @@ const EksporImporBeforeTieInPage: React.FC = () => {
                   </Button>
                 </div>
               </div>
-              <div className="flex gap-[10px] items-center">
+              <div className="flex gap-2.5 items-center">
                 <Button
                   className="customOtherButton"
                   onClick={() => setIsRevertModalOpen(true)}>
@@ -829,10 +826,10 @@ const EksporImporBeforeTieInPage: React.FC = () => {
                   row.rowIndex === "Unbalance"
                     ? "unbalance"
                     : row.rowIndex === "Max Tolerance"
-                    ? "max_tolerance"
-                    : row.rowIndex === "UDF Adjustment"
-                    ? "udf_adjustment"
-                    : row.key,
+                      ? "max_tolerance"
+                      : row.rowIndex === "UDF Adjustment"
+                        ? "udf_adjustment"
+                        : row.key,
               }))}
             columns={columns}
             pagination={false}
@@ -842,10 +839,13 @@ const EksporImporBeforeTieInPage: React.FC = () => {
             sticky={{
               offsetHeader: 0,
               offsetScroll: 0,
-              getContainer: () =>
-                document.querySelector(
-                  ".w-full.flex.items-stretch"
-                ) as HTMLElement,
+              getContainer:
+                typeof window !== "undefined"
+                  ? () =>
+                      document.querySelector(
+                        ".w-full.flex.items-stretch",
+                      ) as HTMLElement
+                  : undefined,
             }}
             scroll={{
               x: "max-content",

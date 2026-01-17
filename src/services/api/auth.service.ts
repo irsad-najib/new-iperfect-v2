@@ -4,7 +4,6 @@
  */
 
 import api from "@/utils/axios";
-import type { LoginResponse } from "@/types";
 
 export interface LoginCredentials {
   username: string;
@@ -24,7 +23,7 @@ export interface LoginApiResponse {
  * @returns Login response with API key and access token
  */
 export async function login(
-  credentials: LoginCredentials
+  credentials: LoginCredentials,
 ): Promise<LoginApiResponse> {
   const response = await api.post<LoginApiResponse>("/login", {
     username: credentials.username,

@@ -4,8 +4,7 @@ import React from "react";
 import CodeMirror from "@uiw/react-codemirror";
 import { python } from "@codemirror/lang-python";
 import { oneDark } from "@codemirror/theme-one-dark";
-import { Button } from "antd";
-import { useRouter, usePathname } from "next/navigation";
+import { usePathname } from "next/navigation";
 
 interface CodeEditorProps {
   selectedUDF: string;
@@ -18,25 +17,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
   loading = false,
   onCodeChange,
 }) => {
-  const router = useRouter();
   const pathname = usePathname() ?? "";
-
-  const initialCode = `class cal():
-    def __init__(self,a,b):
-        self.a = a
-        self.b = b
-    
-    def add(self):
-        return self.a + self.b
-    
-    def sub(self):
-        return self.a - self.b
-        
-    def multiply(self):
-        return self.a * self.b
-        
-    def divide(self):
-        return self.a / self.b`;
 
   const onChange = React.useCallback(
     (value: string) => {
@@ -44,7 +25,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
         onCodeChange(value);
       }
     },
-    [onCodeChange]
+    [onCodeChange],
   );
 
   const isEditUDFPage = pathname.includes("/edit-udf");

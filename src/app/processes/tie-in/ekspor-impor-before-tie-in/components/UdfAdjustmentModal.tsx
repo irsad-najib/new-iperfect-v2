@@ -23,7 +23,6 @@ import { HiCheckCircle } from "react-icons/hi";
 import api from "@/utils/axios";
 import { useDateContext } from "@/context/DateContext";
 import { formatNumber } from "@/utils/numberFormat";
-import { UdfResult } from "@/utils/udfUtils";
 import RevertModal from "./RevertModal";
 import { CodeEditor } from "@/components/processes/tie-in/CodeEditor";
 import { toSnakeCase } from "@/utils/stringUtils";
@@ -48,18 +47,6 @@ interface UDFOutput {
   udf_id: string;
   value?: number | null;
   tie_in_adjustment_value?: number | null;
-}
-
-interface UDF {
-  _id: string;
-  name: string;
-  code: string;
-  createdAt: number;
-}
-
-interface UDFResponse {
-  udf: UDF;
-  inputs: UDFInput[];
 }
 
 interface UDFInputOutput {
@@ -139,13 +126,11 @@ interface UdfAdjustmentModalProps {
 const UdfAdjustmentModal = ({
   isOpen,
   onClose,
-  udfCell,
   unbalance,
   max,
   cellLocation,
   cellUnit,
   udfId,
-  onUpdateUDF,
   activeTab,
   adjusted = false,
   loading,
@@ -154,15 +139,10 @@ const UdfAdjustmentModal = ({
   revertLoading,
 }: UdfAdjustmentModalProps) => {
   const { formattedDate } = useDateContext();
-  const [showAddUDFModal, setShowAddUDFModal] = useState(false);
-  const [editingInput, setEditingInput] = useState<UDFInput | null>(null);
   const [codeValue, setCodeValue] = useState("");
   // const [selectedTag, setSelectedTag] = useState<string>("");
-  const [testResult, setTestResult] = useState<UdfResult | null>(null);
   const [udfLoading, setUdfLoading] = useState(false);
   const [udfData, setUdfData] = useState<UDFSchema | null>(null);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [availableInputs, setAvailableInputs] = useState<any[]>([]);
   const [activeTestTab, setActiveTestTab] = useState("code");
   // const [localTab, setLocalTab] = useState<"before" | "adjusted">("adjusted");
   const [isRevertModalOpen, setIsRevertModalOpen] = useState(false);
@@ -172,26 +152,6 @@ const UdfAdjustmentModal = ({
   const [rowName, material] = cellLocation.split("-");
   const word = rowName.split(" ");
   const factory = word.slice(1).join(" ");
-
-  useEffect(() => {
-    const fetchAvailableInputs = async () => {
-      if (!formattedDate || !isOpen) return;
-
-      try {
-        const response = await api.get(
-          `/udf/utils/available-inputs?tanggal=${formattedDate}`,
-        );
-        if (response.data) {
-          setAvailableInputs(response.data);
-        }
-      } catch (error) {
-        console.error("Error fetching available inputs:", error);
-        message.error("Failed to fetch available inputs");
-      }
-    };
-
-    fetchAvailableInputs();
-  }, [formattedDate, isOpen]);
 
   useEffect(() => {
     const fetchUDFData = async () => {
@@ -239,17 +199,11 @@ const UdfAdjustmentModal = ({
       setUdfData(null);
       setCodeValue("");
       // setSelectedTag("");
-      setTestResult(null);
-      setAvailableInputs([]);
-      setEditingInput(null);
     }
   }, [isOpen]);
 
   if (!isOpen) return null;
 
-  const handleLoadTemplate = () => {
-    setShowAddUDFModal(true);
-  };
   const handleUpdateClick = async (execute: boolean) => {
     if (!udfData?.udf) return;
 
@@ -372,8 +326,7 @@ const UdfAdjustmentModal = ({
   // Filtered data hanya untuk tampilan
   const filteredGroupedInputs = Object.entries(
     udfData?.groupped_inputs || {},
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  ).filter(([groupName, groupData]) => {
+  ).filter(([groupName]) => {
     const name = groupName.startsWith("Impor-") ? groupName.slice(6) : null;
     return name && name.trim() !== "";
   });
@@ -384,8 +337,8 @@ const UdfAdjustmentModal = ({
   };
 
   const collapseItems: CollapseProps["items"] = filteredGroupedInputs.map(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
-    ([groupName, groupData]: [string, any], index) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ([groupName, groupData]: [string, any]) => {
       const inputs = groupData.input;
       const name = groupName.startsWith("Impor-") ? groupName.slice(6) : null;
 
@@ -473,7 +426,7 @@ const UdfAdjustmentModal = ({
         key: groupName,
         label: tableRowHeader,
         children: (
-          <div className="grid grid-cols-2 gap-4 w-full max-h-[34rem] overflow-x-auto overflow-y-auto rounded-lg p-4 bg-[#fafafa] [className={styles.tableContainer}_table]:w-full [className={styles.tableContainer}_table]:border-collapse [className={styles.tableContainer}_table]:rounded-lg [className={styles.tableContainer}_table]:overflow-hidden [className={styles.tableContainer}_table]:shadow-[0_2px_4px_rgba(0,0,0,0.1)] [className={styles.tableContainer}_th]:p-2 [className={styles.tableContainer}_th]:text-center [className={styles.tableContainer}_th]:border [className={styles.tableContainer}_th]:border-[#e6e6e6] [className={styles.tableContainer}_td]:p-2 [className={styles.tableContainer}_td]:text-center [className={styles.tableContainer}_td]:border [className={styles.tableContainer}_td]:border-[#e6e6e6]">
+          <div className="grid grid-cols-2 gap-4 w-full max-h-130 overflow-x-auto overflow-y-auto rounded-lg p-4 bg-[#fafafa] [className={styles.tableContainer}_table]:w-full [className={styles.tableContainer}_table]:border-collapse [className={styles.tableContainer}_table]:rounded-lg [className={styles.tableContainer}_table]:overflow-hidden [className={styles.tableContainer}_table]:shadow-[0_2px_4px_rgba(0,0,0,0.1)] [className={styles.tableContainer}_th]:p-2 [className={styles.tableContainer}_th]:text-center [className={styles.tableContainer}_th]:border [className={styles.tableContainer}_th]:border-[#e6e6e6] [className={styles.tableContainer}_td]:p-2 [className={styles.tableContainer}_td]:text-center [className={styles.tableContainer}_td]:border [className={styles.tableContainer}_td]:border-[#e6e6e6]">
             <div style={{ flex: 1 }}>
               <table style={{ width: "100%", borderCollapse: "collapse" }}>
                 <thead>
@@ -813,11 +766,11 @@ const UdfAdjustmentModal = ({
                       className={
                         unbalance && max
                           ? unbalance <= max
-                            ? styles.resourceDataValueBalance
-                            : styles.resourceDataValueUnbalance
-                          : styles.resourceDataValue
+                            ? "bg-[#00ad17] text-white px-3 py-1 ml-2 rounded-md text-[16.8px] font-normal"
+                            : "bg-[#e20301] text-white px-3 py-1 ml-2 rounded-md text-[16.8px] font-normal flex items-center justify-center"
+                          : "bg-[#e6e6e6] text-[#13162a] px-3 py-1 ml-2 rounded-md text-[16.8px] font-normal"
                       }>
-                      {formatNumber(unbalance)}
+                      {typeof unbalance === "number" && formatNumber(unbalance)}
                       {unbalance && max && unbalance > max ? (
                         <MdInfo
                           size={18}
@@ -854,11 +807,11 @@ const UdfAdjustmentModal = ({
                       className={
                         unbalance && max
                           ? unbalance <= max
-                            ? styles.resourceDataValueBalance
-                            : styles.resourceDataValueUnbalance
-                          : styles.resourceDataValue
+                            ? "bg-[#00ad17] text-white px-3 py-1 ml-2 rounded-md text-[16.8px] font-normal"
+                            : "bg-[#e20301] text-white px-3 py-1 ml-2 rounded-md text-[16.8px] font-normal flex items-center justify-center"
+                          : "bg-[#e6e6e6] text-[#13162a] px-3 py-1 ml-2 rounded-md text-[16.8px] font-normal"
                       }>
-                      {formatNumber(max)}
+                      {typeof max === "number" && formatNumber(max)}
                       {unbalance && max && unbalance > max ? (
                         <MdInfo
                           size={18}
@@ -884,7 +837,7 @@ const UdfAdjustmentModal = ({
               </div>
             </div>
             <div className="flex gap-6 w-full mt-[18px]">
-              <div className="flex-1 min-w-0 max-h-[43rem] overflow-y-auto [className={styles.leftSection}_.ant-collapse>.ant-collapse-item>.ant-collapse-header]:flex [className={styles.leftSection}_.ant-collapse>.ant-collapse-item>.ant-collapse-header]:items-center">
+              <div className="flex-1 min-w-0 max-h-172 overflow-y-auto [className={styles.leftSection}_.ant-collapse>.ant-collapse-item>.ant-collapse-header]:flex [className={styles.leftSection}_.ant-collapse>.ant-collapse-item>.ant-collapse-header]:items-center">
                 {/* Table header */}
                 <div className="grid grid-cols-[190px_160px_65px_110px_160px_64px_110px] items-center w-full px-4 py-3 bg-[#f1f2f3] border-b border-[#e6e6e6] [className={styles.tableHeader}_span]:font-semibold [className={styles.tableHeader}_span]:text-sm [className={styles.tableHeader}_span]:text-[#13162a] [className={styles.tableHeader}_span]:text-center">
                   <span>Fac.</span>
@@ -897,7 +850,7 @@ const UdfAdjustmentModal = ({
                 </div>
 
                 {/* Collapse with table-like rows */}
-                <div className="max-h-[43rem] overflow-y-auto">
+                <div className="max-h-172 overflow-y-auto">
                   <Collapse
                     items={collapseItems}
                     className="[className={styles.customTableCollapse}_.ant-collapse-item]:border [className={styles.customTableCollapse}_.ant-collapse-item]:border-[#e6e6e6] [className={styles.customTableCollapse}_.ant-collapse-item]:mb-2 [className={styles.customTableCollapse}_.ant-collapse-item]:rounded-lg [className={styles.customTableCollapse}_.ant-collapse-header]:p-0 [className={styles.customTableCollapse}_.ant-collapse-header]:bg-[#fafafa] [className={styles.customTableCollapse}_.ant-collapse-header]:rounded-t-lg [className={styles.customTableCollapse}_.ant-collapse-content]:border-t [className={styles.customTableCollapse}_.ant-collapse-content]:border-[#e6e6e6] [className={styles.customTableCollapse}_.ant-collapse-content-box]:p-0"
@@ -960,8 +913,8 @@ const UdfAdjustmentModal = ({
 
                 {/* <div className={styles.testSection}> */}
                 {activeTestTab === "test" && (
-                  <div className="flex flex-col gap-2 rounded-lg flex-grow py-1">
-                    <div className="flex justify-start items-start bg-[#eeeff1] rounded-md h-[38rem]">
+                  <div className="flex flex-col gap-2 rounded-lg grow py-1">
+                    <div className="flex justify-start items-start bg-[#eeeff1] rounded-md h-152">
                       <div className="text-sm text-[#111827] font-medium p-4 flex items-start justify-start h-full w-full bg-[#eeeff1] rounded-md">
                         {udfData !== null ? udfData.std_out : "-"}
                       </div>
@@ -970,12 +923,12 @@ const UdfAdjustmentModal = ({
                 )}
 
                 {activeTestTab === "debug" && (
-                  <div className="flex flex-col gap-2 rounded-lg flex-grow py-1">
+                  <div className="flex flex-col gap-2 rounded-lg grow py-1">
                     <div className="rounded overflow-hidden">
                       <div className="bg-[#e6e6e6] px-4 py-2 text-[16.8px] font-semibold text-center">
                         STDOUT
                       </div>
-                      <div className="bg-[#eeeff1] p-4 h-[36rem] overflow-auto [className={styles.stdoutContent}_table]:w-full [className={styles.stdoutContent}_table]:border-collapse [className={styles.stdoutContent}_table]:mt-2.5 [className={styles.stdoutContent}_th]:border [className={styles.stdoutContent}_th]:border-[#ddd] [className={styles.stdoutContent}_th]:p-2 [className={styles.stdoutContent}_th]:text-left [className={styles.stdoutContent}_th]:bg-[#f5f5f5] [className={styles.stdoutContent}_th]:font-semibold [className={styles.stdoutContent}_td]:border [className={styles.stdoutContent}_td]:border-[#ddd] [className={styles.stdoutContent}_td]:p-2 [className={styles.stdoutContent}_td]:text-left [className={styles.stdoutContent}_td]:break-words [className={styles.stdoutContent}_tr:nth-child(even)]:bg-[#f9f9f9]">
+                      <div className="bg-[#eeeff1] p-4 h-152 overflow-auto [className={styles.stdoutContent}_table]:w-full [className={styles.stdoutContent}_table]:border-collapse [className={styles.stdoutContent}_table]:mt-2.5 [className={styles.stdoutContent}_th]:border [className={styles.stdoutContent}_th]:border-[#ddd] [className={styles.stdoutContent}_th]:p-2 [className={styles.stdoutContent}_th]:text-left [className={styles.stdoutContent}_th]:bg-[#f5f5f5] [className={styles.stdoutContent}_th]:font-semibold [className={styles.stdoutContent}_td]:border [className={styles.stdoutContent}_td]:border-[#ddd] [className={styles.stdoutContent}_td]:p-2 [className={styles.stdoutContent}_td]:text-left [className={styles.stdoutContent}_td]:break-words [className={styles.stdoutContent}_tr:nth-child(even)]:bg-[#f9f9f9]">
                         {/* <div className={styles.stdoutMessage}>
                           {udfData !== null
                             ? `${udfData?.log}\nlog:\n${JSON.stringify(
