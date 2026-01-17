@@ -1,23 +1,21 @@
-import {
-  HiOutlineFlag,
-  HiOutlineDocumentDuplicate,
-  HiOutlineCalendar,
-} from "react-icons/hi";
+import { HiOutlineDocumentDuplicate } from "react-icons/hi";
 import { AiOutlineSetting } from "react-icons/ai";
 import { MdInfoOutline } from "react-icons/md";
 import { MenuItem } from "@/types";
+import { LuFactory } from "react-icons/lu";
+import { MdToday } from "react-icons/md";
 
 export const menuItems: MenuItem[] = [
   {
     key: "daily-routines",
-    label: "Daily Routines",
-    icon: <HiOutlineCalendar size={24} />,
+    label: "Daily",
+    icon: <MdToday size={24} />,
     href: "/daily-routines",
     children: [
       {
         key: "sub-processes",
-        label: "Process",
-        icon: <HiOutlineFlag size={24} />,
+        label: "Amur",
+        icon: <LuFactory size={24} />,
         href: "/processes",
         children: [
           {
@@ -35,14 +33,13 @@ export const menuItems: MenuItem[] = [
             key: "rawmat",
             label: "RawMat",
             href: "/processes/rawmat",
-            disabled: true,
           },
         ],
       },
       {
         key: "npk-sub",
         label: "NPK",
-        icon: <HiOutlineFlag size={24} />,
+        icon: <LuFactory size={24} />,
         href: "/npk",
         children: [
           {
@@ -65,7 +62,7 @@ export const menuItems: MenuItem[] = [
       {
         key: "bb-sub",
         label: "Boiler Batubara",
-        icon: <HiOutlineFlag size={24} />,
+        icon: <LuFactory size={24} />,
         href: "/bb",
         children: [
           {

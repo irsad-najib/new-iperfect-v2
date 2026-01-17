@@ -17,30 +17,20 @@ import { HiCheckCircle } from "react-icons/hi";
 import { useDateContext } from "@/context/DateContext";
 import { useRouter } from "next/navigation";
 import api from "@/utils/axios";
-import LogsModal from "./LogsModal";
+import LogsModal from "../LogsModal";
+import { Part, Lab } from "@/types";
 
-interface TableItem {
-  _id: string;
-  bagian_id: number;
-  name: string;
-  pabrik_id: number;
-  pabrik_name: string;
+/**
+ * Displays the list of cleansing parts and coordinating lab processes with per-item run actions.
+ * Supports both callback props and legacy DOM events to keep parent loading state in sync.
+ */
+
+interface TableItem extends Part {
   isActive?: boolean;
   lastRun?: string;
   lastDuration?: string;
-  status?: string;
   version?: string;
   user_profile_picture?: string;
-}
-
-interface Lab {
-  _id: string;
-  lab_id: number;
-  name: string;
-  pabrik_id: number;
-  bagian_id: number;
-  jenis_lab_id: number;
-  pabrik_name: string;
 }
 
 interface RunResponse {
@@ -58,26 +48,39 @@ interface CleansingTableProps {
   setActivePart: (part: string) => void;
   isLabLoading: boolean;
   loadingStates: { [key: string]: boolean };
+  onSetPartLoading?: (bagianId: number, isLoading: boolean) => void;
+  onRegisterJobs?: (jobs: Record<number, string>, bagianIds: number[]) => void;
+  runningJobs?: Record<number, string>;
 }
 
-const CleansingTable: React.FC<CleansingTableProps> = ({
-  activeTab,
-  data,
-  labData,
-  getPartsForActiveFactory,
-  activePart,
-  setActivePart,
-  isLabLoading,
-  loadingStates,
-}) => {
+const CleansingTable: React.FC<CleansingTableProps> = (props) => {
+  const {
+    activeTab,
+    data,
+    labData,
+    getPartsForActiveFactory,
+    activePart,
+    setActivePart,
+    isLabLoading,
+    loadingStates,
+    onSetPartLoading,
+    onRegisterJobs,
+    runningJobs: externalRunningJobs,
+  } = props;
   const { formattedDate } = useDateContext();
   const [tableData, setTableData] = useState<TableItem[]>([]);
-  const [runningJobs, setRunningJobs] = useState<{
-    [key: number]: string;
-  }>({});
+  const [internalRunningJobs, setInternalRunningJobs] = useState<
+    Record<number, string>
+  >({});
   const [isLogsModalOpen, setIsLogsModalOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<TableItem | null>(null);
   const router = useRouter();
+  const headerCellClass =
+    "font-semibold text-center text-[20.16px] leading-[20.16px] bg-neutral-250";
+
+  const setPartLoadingHandler = onSetPartLoading ?? (() => undefined);
+  const registerJobsHandler = onRegisterJobs ?? (() => undefined);
+  const runningJobs = externalRunningJobs ?? internalRunningJobs;
 
   useEffect(() => {
     const filteredData = data.filter(
@@ -88,75 +91,80 @@ const CleansingTable: React.FC<CleansingTableProps> = ({
   }, [activeTab, data]);
 
   useEffect(() => {
-    // Only run on client-side
-    if (typeof window === "undefined") return;
+    if (externalRunningJobs !== undefined || typeof window === "undefined") {
+      return;
+    }
 
-    const handleJobComplete = (event: CustomEvent<string>) => {
-      const jobId = event.detail;
-
-      // Clean up the runningJobs mapping
-      setRunningJobs((prev) => {
-        const newJobs = { ...prev };
-        // Find and remove the bagian_id that maps to this job_id
-        Object.entries(newJobs).forEach(([bagianId, currentJobId]) => {
-          if (currentJobId === jobId) {
-            delete newJobs[Number(bagianId)];
+    const handleJobComplete = (event: Event) => {
+      const customEvent = event as CustomEvent<string>;
+      const jobId = customEvent.detail;
+      setInternalRunningJobs((prev) => {
+        const updated: Record<number, string> = {};
+        Object.entries(prev).forEach(([bagianId, currentJobId]) => {
+          if (currentJobId !== jobId) {
+            updated[Number(bagianId)] = currentJobId;
           }
         });
-        return newJobs;
+        return updated;
       });
     };
 
-    const handleUpdateRunningJobs = (
-      event: CustomEvent<{ jobs: Record<number, string> }>
-    ) => {
-      const { jobs } = event.detail;
-      setRunningJobs((prev) => ({
+    const handleUpdateRunningJobs = (event: Event) => {
+      const customEvent = event as CustomEvent<{
+        jobs: Record<number, string>;
+      }>;
+      const { jobs } = customEvent.detail;
+      setInternalRunningJobs((prev) => ({
         ...prev,
         ...jobs,
       }));
     };
 
     const tableRef = document.querySelector("table");
-    if (tableRef) {
-      tableRef.addEventListener(
+
+    if (!tableRef) {
+      return;
+    }
+
+    tableRef.addEventListener(
+      "jobComplete",
+      handleJobComplete as EventListener
+    );
+    tableRef.addEventListener(
+      "updateRunningJobs",
+      handleUpdateRunningJobs as EventListener
+    );
+
+    return () => {
+      tableRef.removeEventListener(
         "jobComplete",
         handleJobComplete as EventListener
       );
-
-      tableRef.addEventListener(
+      tableRef.removeEventListener(
         "updateRunningJobs",
         handleUpdateRunningJobs as EventListener
       );
-    }
-
-    return () => {
-      if (tableRef) {
-        tableRef.removeEventListener(
-          "jobComplete",
-          handleJobComplete as EventListener
-        );
-
-        tableRef.removeEventListener(
-          "updateRunningJobs",
-          handleUpdateRunningJobs as EventListener
-        );
-      }
     };
-  }, []);
+  }, [externalRunningJobs]);
 
+  /**
+   * Trigger cleansing execution for a single part and notify the parent about loading state changes.
+   */
   const handleRun = async (bagian_id: number) => {
     try {
-      // Set loading state for this specific part
       const tableRef =
         typeof window !== "undefined" ? document.querySelector("table") : null;
+
+      // Set loading state for this specific part
+      setPartLoadingHandler(bagian_id, true);
       if (tableRef) {
-        const event = new CustomEvent("setPartLoading", {
-          detail: { bagianId: bagian_id, isLoading: true },
-          bubbles: true,
-          composed: true,
-        });
-        tableRef.dispatchEvent(event);
+        tableRef.dispatchEvent(
+          new CustomEvent("setPartLoading", {
+            detail: { bagianId: bagian_id, isLoading: true },
+            bubbles: true,
+            composed: true,
+          })
+        );
       }
 
       const dailyRunnerResponse = await api.get(
@@ -167,11 +175,15 @@ const CleansingTable: React.FC<CleansingTableProps> = ({
         console.error("No daily runner found for this part");
 
         // Clear loading state if no daily runner found
+        setPartLoadingHandler(bagian_id, false);
         if (tableRef) {
-          const event = new CustomEvent("setPartLoading", {
-            detail: { bagianId: bagian_id, isLoading: false },
-          });
-          tableRef.dispatchEvent(event);
+          tableRef.dispatchEvent(
+            new CustomEvent("setPartLoading", {
+              detail: { bagianId: bagian_id, isLoading: false },
+              bubbles: true,
+              composed: true,
+            })
+          );
         }
         return;
       }
@@ -186,27 +198,37 @@ const CleansingTable: React.FC<CleansingTableProps> = ({
 
       const jobId = runResponse.data.job_id;
 
-      // Store the job ID in runningJobs
-      setRunningJobs((prev) => ({ ...prev, [bagian_id]: jobId }));
+      // Inform parent about job registration to transition loading state tracking
+      registerJobsHandler({ [bagian_id]: jobId }, [bagian_id]);
 
-      // Dispatch an event to update the loading state in the parent component
+      if (externalRunningJobs === undefined) {
+        setInternalRunningJobs((prev) => ({ ...prev, [bagian_id]: jobId }));
+      }
+
       if (tableRef) {
-        const event = new CustomEvent("registerJob", {
-          detail: { bagianId: bagian_id, jobId: jobId },
-        });
-        tableRef.dispatchEvent(event);
+        tableRef.dispatchEvent(
+          new CustomEvent("registerJob", {
+            detail: { bagianId: bagian_id, jobId },
+            bubbles: true,
+            composed: true,
+          })
+        );
       }
     } catch (error) {
       console.error("Error running cleansing:", error);
 
       // Clear loading state on error
+      setPartLoadingHandler(bagian_id, false);
       const tableRef =
         typeof window !== "undefined" ? document.querySelector("table") : null;
       if (tableRef) {
-        const event = new CustomEvent("setPartLoading", {
-          detail: { bagianId: bagian_id, isLoading: false },
-        });
-        tableRef.dispatchEvent(event);
+        tableRef.dispatchEvent(
+          new CustomEvent("setPartLoading", {
+            detail: { bagianId: bagian_id, isLoading: false },
+            bubbles: true,
+            composed: true,
+          })
+        );
       }
     }
   };
@@ -232,16 +254,11 @@ const CleansingTable: React.FC<CleansingTableProps> = ({
     // Check if there's a running job for this part
     const jobId = runningJobs[record.bagian_id];
     if (jobId && loadingStates[jobId]) {
-      console.log(`Part ${record.bagian_id} is loading via job ${jobId}`);
       return true;
     }
 
     // Also check if there's a loading state directly for this part's bagian_id
-    const isLoading = loadingStates[record.bagian_id.toString()];
-    if (isLoading) {
-      console.log(`Part ${record.bagian_id} is loading directly`);
-    }
-    return isLoading;
+    return loadingStates[record.bagian_id.toString()];
   };
 
   const columns = [
@@ -250,14 +267,7 @@ const CleansingTable: React.FC<CleansingTableProps> = ({
       dataIndex: "name",
       key: "name",
       onHeaderCell: () => ({
-        style: {
-          fontFamily: "Outfit, sans-serif",
-          fontWeight: 600,
-          fontSize: "20.16px",
-          lineHeight: "20.16px",
-          letterSpacing: "0%",
-          textAlign: "center" as const,
-        },
+        className: headerCellClass,
       }),
       render: (text: string, record: TableItem) => (
         <div className="flex items-center gap-4 text-20">
@@ -286,14 +296,7 @@ const CleansingTable: React.FC<CleansingTableProps> = ({
       key: "actions",
       width: 450,
       onHeaderCell: () => ({
-        style: {
-          fontFamily: "Outfit, sans-serif",
-          fontWeight: 600,
-          fontSize: "20.16px",
-          lineHeight: "20.16px",
-          letterSpacing: "0%",
-          textAlign: "center" as const,
-        },
+        className: headerCellClass,
       }),
       render: (record: TableItem) => (
         <div className="flex gap-2 justify-center">
@@ -355,14 +358,7 @@ const CleansingTable: React.FC<CleansingTableProps> = ({
       key: "lastRun",
       width: 300,
       onHeaderCell: () => ({
-        style: {
-          fontFamily: "Outfit, sans-serif",
-          fontWeight: 600,
-          fontSize: "20.16px",
-          lineHeight: "20.16px",
-          letterSpacing: "0%",
-          textAlign: "center" as const,
-        },
+        className: headerCellClass,
       }),
       render: (text: string, record: TableItem) => (
         <div className="flex items-center justify-center gap-2">
@@ -386,14 +382,7 @@ const CleansingTable: React.FC<CleansingTableProps> = ({
       key: "lastDuration",
       width: 300,
       onHeaderCell: () => ({
-        style: {
-          fontFamily: "Outfit, sans-serif",
-          fontWeight: 600,
-          fontSize: "20.16px",
-          lineHeight: "20.16px",
-          letterSpacing: "0%",
-          textAlign: "center" as const,
-        },
+        className: headerCellClass,
       }),
       render: (text: string) => (
         <div className="text-center text-20 font-semibold">{text}</div>
@@ -407,14 +396,7 @@ const CleansingTable: React.FC<CleansingTableProps> = ({
       dataIndex: "name",
       key: "name",
       onHeaderCell: () => ({
-        style: {
-          fontFamily: "Outfit, sans-serif",
-          fontWeight: 600,
-          fontSize: "20.16px",
-          lineHeight: "20.16px",
-          letterSpacing: "0%",
-          textAlign: "center" as const,
-        },
+        className: headerCellClass,
       }),
       render: (text: string) => (
         <div className="flex items-center gap-4 text-20">
@@ -431,14 +413,7 @@ const CleansingTable: React.FC<CleansingTableProps> = ({
       key: "actions",
       width: 450,
       onHeaderCell: () => ({
-        style: {
-          fontFamily: "Outfit, sans-serif",
-          fontWeight: 600,
-          fontSize: "20.16px",
-          lineHeight: "20.16px",
-          letterSpacing: "0%",
-          textAlign: "center" as const,
-        },
+        className: headerCellClass,
       }),
       render: (record: Lab) => (
         <div className="flex gap-2 justify-center">

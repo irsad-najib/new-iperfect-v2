@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { ConfigProvider } from "antd";
 import theme from "@/theme";
 import { usePathname, useRouter } from "next/navigation";
-import { useAuth } from "@/hooks/useAuth";
+import { useRequireAuth } from "@/hooks/useRequireAuth";
 import { getDecodedAccess } from "@/utils/auth";
 import dynamic from "next/dynamic";
 import { AuthProvider } from "@/context/AuthContext";
@@ -29,7 +29,7 @@ const ClientLayout: React.FC<ClientLayoutProps> = ({ children }) => {
   const pathname = usePathname();
   const router = useRouter();
   const isLoginPage = pathname === "/";
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated, isLoading } = useRequireAuth();
   const access = getDecodedAccess();
 
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -98,7 +98,7 @@ const ClientLayout: React.FC<ClientLayoutProps> = ({ children }) => {
                         ? "md:ml-20"
                         : "md:ml-[300px]"
                       : ""
-                  } p-6 w-full`}>
+                  } p-6 w-full overflow-x-hidden`}>
                   <NotificationListener />
                   {children}
                 </main>

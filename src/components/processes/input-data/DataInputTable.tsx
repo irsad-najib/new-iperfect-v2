@@ -179,7 +179,7 @@ const DataInputTable = forwardRef<DataInputTableRef, DataInputTableProps>(
     if (error) return <div>Error: {error}</div>;
 
     return (
-      <div style={{ width: "100%", overflowX: "auto" }}>
+      <div className="w-full overflow-x-auto">
         <HotTable
           ref={hotRef}
           data={data}

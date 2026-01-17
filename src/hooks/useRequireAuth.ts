@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { isAuthenticated } from "@/utils/auth";
 
-export const useAuth = () => {
+export const useRequireAuth = () => {
   const router = useRouter();
   const [isLoading] = useState(false);
 

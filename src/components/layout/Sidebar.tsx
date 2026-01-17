@@ -30,7 +30,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   setIsMobileOpen,
 }) => {
   const router = useRouter();
-  const { user } = useAuth() as { user: User | null };
+  const { user } = useAuth();
   const { openKeys, setOpenKeys } = useOpenKeys();
   const { isActive } = useActiveRoute();
 
@@ -167,7 +167,12 @@ const Sidebar: React.FC<SidebarProps> = ({
                             {item.icon}
                           </span>
                           {!isCollapsed && (
-                            <span className="font-semibold text-20">
+                            <span
+                              className={`text-16 ${
+                                isSubMenuOpen || isItemActive
+                                  ? "font-bold text-orange-500"
+                                  : "font-semibold"
+                              }`}>
                               {item.label}
                             </span>
                           )}
@@ -212,10 +217,20 @@ const Sidebar: React.FC<SidebarProps> = ({
                                         onClick={(e) =>
                                           handleTitleClick(child.href || "#", e)
                                         }>
-                                        <span className="text-neutral-900">
+                                        <span
+                                          className={`${
+                                            isChildOpen || isChildActive
+                                              ? "text-orange-500"
+                                              : "text-neutral-900"
+                                          }`}>
                                           {child.icon}
                                         </span>
-                                        <span className="text-20 font-semibold">
+                                        <span
+                                          className={`text-16 ${
+                                            isChildOpen || isChildActive
+                                              ? "font-bold"
+                                              : "font-semibold"
+                                          }`}>
                                           {child.label}
                                         </span>
                                       </div>
@@ -244,10 +259,10 @@ const Sidebar: React.FC<SidebarProps> = ({
                                               key={grandchild.key}
                                               href={grandchild.href || "#"}
                                               className={`
-                                                block px-3 py-2 rounded-md text-20 transition-colors
+                                                block px-3 py-2 rounded-md text-16 transition-colors
                                                 ${
                                                   isGrandchildActive
-                                                    ? "text-orange-500 font-medium bg-orange-50"
+                                                    ? "text-orange-500 font-bold bg-orange-50"
                                                     : "text-gray-500 hover:text-gray-900 hover:bg-gray-50"
                                                 }
                                               `}>
@@ -263,10 +278,10 @@ const Sidebar: React.FC<SidebarProps> = ({
                                   <Link
                                     href={child.href || "#"}
                                     className={`
-                                      block px-3 py-2 rounded-md text-20 transition-colors
+                                      block px-3 py-2 rounded-md text-16 transition-colors
                                       ${
                                         isChildActive
-                                          ? "text-orange-500 font-medium bg-orange-50"
+                                          ? "text-orange-500 font-bold bg-orange-50"
                                           : "text-gray-500 hover:text-gray-900 hover:bg-gray-50"
                                       }
                                     `}>
@@ -307,7 +322,12 @@ const Sidebar: React.FC<SidebarProps> = ({
                           {item.icon}
                         </span>
                         {!isCollapsed && (
-                          <span className="font-medium text-20">
+                          <span
+                            className={`text-16 ${
+                              isItemActive
+                                ? "font-bold text-orange-500"
+                                : "font-medium"
+                            }`}>
                             {item.label}
                           </span>
                         )}
@@ -343,7 +363,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 
             {!isCollapsed && (
               <div className="flex-1 min-w-0">
-                <p className="text-20 font-semibold text-neutral-900 truncate">
+                <p className="text-16 font-semibold text-neutral-900 truncate">
                   {user?.username || "User"}
                 </p>
                 <p className="text-14 text-gray-500 truncate">Engineers</p>

@@ -22,7 +22,7 @@ import {
 } from "react-icons/md";
 import { useRouter } from "next/navigation";
 import { useDateContext } from "@/context/DateContext";
-import { useAuth } from "@/hooks/useAuth";
+import { useRequireAuth } from "@/hooks/useRequireAuth";
 import { getDecodedAccess } from "@/utils/auth";
 import dayjs from "dayjs";
 import api from "@/utils/axios";
@@ -45,7 +45,7 @@ const getProgressColor = (progress: number) => {
 };
 
 const ProcessesPage: React.FC = () => {
-  useAuth();
+  useRequireAuth();
 
   const { selectedDate, setSelectedDate } = useDateContext();
   const router = useRouter();

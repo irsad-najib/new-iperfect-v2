@@ -8,9 +8,9 @@ import { HiDownload } from "react-icons/hi";
 import Link from "next/link";
 import DataInputTable, {
   DataInputTableRef,
-} from "@/component/processes/DataInputTable";
-import UploadDataModal from "@/component/processes/UploadDataModal";
-import ConfirmationModal from "@/component/processes/ConfirmationModal";
+} from "@/components/processes/input-data/DataInputTable";
+import UploadDataModal from "@/components/processes/input-data/UploadDataModal";
+import ConfirmationModal from "@/components/processes/input-data/ConfirmationModal";
 import { useRouter } from "next/navigation";
 import { useDateContext } from "@/context/DateContext";
 import api from "@/utils/axios";
@@ -257,11 +257,7 @@ const InputDataPage: React.FC = () => {
     <div className="p-4 sm:p-5">
       <Breadcrumb
         separator={
-          <MdArrowForwardIos
-            size={16}
-            className="align-middle inline-block"
-            style={{ verticalAlign: "middle" }}
-          />
+          <MdArrowForwardIos size={16} className="align-middle inline-block" />
         }
         items={[
           {

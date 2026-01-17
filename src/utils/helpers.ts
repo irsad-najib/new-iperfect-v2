@@ -57,16 +57,6 @@ export function isEmpty(value: unknown): boolean {
 }
 
 /**
- * Format number with thousands separator
- */
-export function formatNumber(num: number, decimals = 0): string {
-  return new Intl.NumberFormat("id-ID", {
-    minimumFractionDigits: decimals,
-    maximumFractionDigits: decimals,
-  }).format(num);
-}
-
-/**
  * Safely parse JSON with fallback
  */
 export function safeJsonParse<T>(jsonString: string, fallback: T): T {

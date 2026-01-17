@@ -13,58 +13,28 @@ import {
 import { MdArrowForwardIos, MdPlayArrow, MdError } from "react-icons/md";
 import { HiCheckCircle } from "react-icons/hi";
 import Link from "next/link";
-import CleansingTable from "@/component/processes/CleansingTable";
+import CleansingTable from "@/components/processes/cleansing/CleansingTable";
 import { useDateContext } from "@/context/DateContext";
 import api from "@/utils/axios";
 import axios from "axios";
 import Image from "next/image";
 import { HiHome } from "react-icons/hi";
+import { Factory, Lab, Part, CleansingStatus } from "@/types";
 
 type JobStatusEvent = {
   job_id: string;
   status: "completed" | "failed";
 };
 
-interface Factory {
-  _id: string;
-  pabrik_id: number;
-  name: string;
-}
-
-interface Lab {
-  _id: string;
-  lab_id: number;
-  name: string;
-  pabrik_id: number;
-  bagian_id: number;
-  jenis_lab_id: number;
-  pabrik_name: string;
-}
-
-interface Part {
-  _id: string;
-  bagian_id: number;
-  name: string;
-  pabrik_id: number;
-  pabrik_name: string;
-  status?: string;
-}
-
-interface CleansingStatus {
-  pabrik_name: string;
-  bagian_name: string;
-  tanggal: string;
-  time_taken: number;
-  last_run: number;
-  status: string;
-  user_profile_picture: string;
-}
-
 interface RunResponse {
   message: string;
   job_id: string[];
 }
 
+/**
+ * Main page for monitoring and controlling cleansing processes across factories.
+ * Fetches metadata, subscribes to job status updates, and keeps UI state in sync with child tables.
+ */
 const CleansingPage: React.FC = () => {
   const [factories, setFactories] = useState<Factory[]>([]);
   const [partsData, setPartsData] = useState<Part[]>([]);
@@ -74,6 +44,7 @@ const CleansingPage: React.FC = () => {
   const [loadingStates, setLoadingStates] = useState<{
     [key: string]: boolean;
   }>({});
+  const [runningJobs, setRunningJobs] = useState<Record<number, string>>({});
   const [isStatusLoading, setIsStatusLoading] = useState(false);
   const { selectedDate, formattedDate } = useDateContext();
   const [activeTab, setActiveTab] = useState("1");
@@ -81,6 +52,89 @@ const CleansingPage: React.FC = () => {
   const partsRef = useRef<Part[]>([]);
   const isFirstMount = useRef(true);
   const [activePart, setActivePart] = useState<string>("");
+
+  const updatePartsLoadingState = useCallback(
+    (bagianIds: number[], isLoading: boolean) => {
+      setLoadingStates((prev) => {
+        const next = { ...prev };
+        bagianIds.forEach((id) => {
+          const key = id.toString();
+          if (isLoading) {
+            next[key] = true;
+          } else {
+            delete next[key];
+          }
+        });
+        return next;
+      });
+    },
+    []
+  );
+
+  const setPartLoadingState = useCallback(
+    (bagianId: number, isLoading: boolean) => {
+      updatePartsLoadingState([bagianId], isLoading);
+    },
+    [updatePartsLoadingState]
+  );
+
+  const registerJobsForParts = useCallback(
+    (jobs: Record<number, string>, bagianIds: number[]) => {
+      const previousJobIds = bagianIds
+        .map((id) => runningJobs[id])
+        .filter((jobId): jobId is string => Boolean(jobId));
+
+      setLoadingStates((prev) => {
+        const next = { ...prev };
+        bagianIds.forEach((id) => {
+          delete next[id.toString()];
+        });
+        previousJobIds.forEach((jobId) => {
+          delete next[jobId];
+        });
+        Object.values(jobs).forEach((jobId) => {
+          next[jobId] = true;
+        });
+        return next;
+      });
+
+      setRunningJobs((prev) => {
+        const next = { ...prev };
+        bagianIds.forEach((id) => {
+          if (!jobs[id]) {
+            delete next[id];
+          }
+        });
+        Object.entries(jobs).forEach(([bagianId, jobId]) => {
+          next[Number(bagianId)] = jobId;
+        });
+        return next;
+      });
+    },
+    [runningJobs]
+  );
+
+  const clearJobByJobId = useCallback((jobId: string) => {
+    setLoadingStates((prev) => {
+      const next = { ...prev };
+      delete next[jobId];
+      return next;
+    });
+
+    setRunningJobs((prev) => {
+      const updatedEntries = Object.entries(prev).filter(
+        ([, currentJobId]) => currentJobId !== jobId
+      );
+
+      return updatedEntries.reduce<Record<number, string>>(
+        (acc, [bagianId, currentJobId]) => {
+          acc[Number(bagianId)] = currentJobId;
+          return acc;
+        },
+        {}
+      );
+    });
+  }, []);
 
   // Initialize activeTab from localStorage on client-side only
   useEffect(() => {
@@ -92,80 +146,84 @@ const CleansingPage: React.FC = () => {
     }
   }, []);
 
-  const updatePartsData = (
-    parts: Part[],
-    factories: Factory[],
-    statusData: CleansingStatus[]
-  ) => {
-    const updatedPartsData = parts.map((item: Part) => {
-      const matchingFactory = factories.find(
-        (factory: Factory) => factory.pabrik_id === item.pabrik_id
-      );
+  const updatePartsData = useCallback(
+    (parts: Part[], factories: Factory[], statusData: CleansingStatus[]) => {
+      const updatedPartsData = parts.map((item: Part) => {
+        const matchingFactory = factories.find(
+          (factory: Factory) => factory.pabrik_id === item.pabrik_id
+        );
 
-      const matchingStatus = statusData.find(
-        (status: CleansingStatus) =>
-          status.pabrik_name === matchingFactory?.name &&
-          status.bagian_name === item.name
-      );
+        const matchingStatus = statusData.find(
+          (status: CleansingStatus) =>
+            status.pabrik_name === matchingFactory?.name &&
+            status.bagian_name === item.name
+        );
 
-      return {
-        ...item,
-        key: item._id,
-        pabrik_name: matchingFactory?.name || `Pabrik ${item.pabrik_id}`,
-        isActive: true,
-        version: "Version 1.0",
-        lastRun:
-          matchingStatus && matchingStatus.last_run
-            ? new Date(matchingStatus.last_run * 1000).toLocaleString("en-GB", {
-                day: "2-digit",
-                month: "2-digit",
-                year: "numeric",
-                hour: "2-digit",
-                minute: "2-digit",
-                hour12: false,
-              })
-            : "-",
-        lastDuration:
-          matchingStatus && matchingStatus.time_taken !== null
-            ? `${matchingStatus.time_taken} seconds`
-            : "-",
-        status: matchingStatus?.status || "pending",
-        user_profile_picture: matchingStatus?.user_profile_picture || "",
-      };
-    });
+        return {
+          ...item,
+          key: item._id,
+          pabrik_name: matchingFactory?.name || `Pabrik ${item.pabrik_id}`,
+          isActive: true,
+          version: "Version 1.0",
+          lastRun:
+            matchingStatus && matchingStatus.last_run
+              ? new Date(matchingStatus.last_run * 1000).toLocaleString(
+                  "en-GB",
+                  {
+                    day: "2-digit",
+                    month: "2-digit",
+                    year: "numeric",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    hour12: false,
+                  }
+                )
+              : "-",
+          lastDuration:
+            matchingStatus && matchingStatus.time_taken !== null
+              ? `${matchingStatus.time_taken} seconds`
+              : "-",
+          status: matchingStatus?.status || "pending",
+          user_profile_picture: matchingStatus?.user_profile_picture || "",
+        };
+      });
 
-    setPartsData(updatedPartsData);
+      setPartsData(updatedPartsData);
+    },
+    []
+  );
 
-    if (updatedPartsData.length > 0) {
-      setActivePart(updatedPartsData[0].name);
-    }
-  };
+  const updateLabData = useCallback(
+    (
+      labs: Lab[],
+      factories: Factory[]
+      // Hapus parameter activeFactoryId
+    ) => {
+      // Jangan filter berdasarkan activeFactoryId
+      // API sudah mengembalikan lab yang sesuai dengan bagian_id
+      const updatedLabData = labs.map((item: Lab) => {
+        const matchingFactory = factories.find(
+          (factory: Factory) => factory.pabrik_id === item.pabrik_id
+        );
 
-  const updateLabData = (
-    labs: Lab[],
-    factories: Factory[]
-    // Hapus parameter activeFactoryId
-  ) => {
-    // Jangan filter berdasarkan activeFactoryId
-    // API sudah mengembalikan lab yang sesuai dengan bagian_id
-    const updatedLabData = labs.map((item: Lab) => {
-      const matchingFactory = factories.find(
-        (factory: Factory) => factory.pabrik_id === item.pabrik_id
-      );
+        return {
+          ...item,
+          key: item._id,
+          pabrik_name: matchingFactory?.name || `Pabrik ${item.pabrik_id}`,
+          isActive: true,
+          version: "Version 1.0",
+        };
+      });
 
-      return {
-        ...item,
-        key: item._id,
-        pabrik_name: matchingFactory?.name || `Pabrik ${item.pabrik_id}`,
-        isActive: true,
-        version: "Version 1.0",
-      };
-    });
+      setLabData(updatedLabData);
+    },
+    []
+  );
 
-    setLabData(updatedLabData);
-  };
-
-  const fetchCleansingStatus = async (date: string) => {
+  /**
+   * Retrieve cleansing execution status for a specific date to hydrate table metadata and badges.
+   */
+  const fetchCleansingStatus = useCallback(async (date: string) => {
     try {
       // Only show loading state on first mount
       if (isFirstMount.current) {
@@ -193,7 +251,7 @@ const CleansingPage: React.FC = () => {
         isFirstMount.current = false;
       }
     }
-  };
+  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -230,9 +288,12 @@ const CleansingPage: React.FC = () => {
     };
 
     fetchData();
-  }, [formattedDate]);
+  }, [formattedDate, fetchCleansingStatus, updatePartsData]);
 
   const fetchLabsByBagian = useCallback(
+    /**
+     * Fetch labs associated with the currently selected part to populate the lab table.
+     */
     async (bagianId: number) => {
       setIsLabLoading(true);
       try {
@@ -258,14 +319,40 @@ const CleansingPage: React.FC = () => {
         setIsLabLoading(false);
       }
     },
-    [factories] // Hapus activeTab dari dependency array
-  ); // Tambahkan factories ke dependency array
+    [factories, updateLabData]
+  );
 
   useEffect(() => {
     if (factoriesRef.current.length > 0) {
       updatePartsData(partsRef.current, factoriesRef.current, cleansingStatus);
     }
-  }, [cleansingStatus]);
+  }, [cleansingStatus, updatePartsData]);
+
+  useEffect(() => {
+    if (partsData.length === 0) {
+      setActivePart("");
+      return;
+    }
+
+    setActivePart((currentActive) => {
+      const partsForActiveTab = partsData.filter(
+        (part) => part.pabrik_id.toString() === activeTab
+      );
+
+      if (partsForActiveTab.length === 0) {
+        return "";
+      }
+
+      if (
+        currentActive &&
+        partsForActiveTab.some((part) => part.name === currentActive)
+      ) {
+        return currentActive;
+      }
+
+      return partsForActiveTab[0].name;
+    });
+  }, [partsData, activeTab]);
 
   useEffect(() => {
     if (!activePart || partsData.length === 0) return;
@@ -289,6 +376,12 @@ const CleansingPage: React.FC = () => {
     }
   }, [activePart, partsData, fetchLabsByBagian, activeTab]); // Tambahkan activeTab ke dependency
 
+  const handleJobComplete = useCallback(
+    (jobId: string) => {
+      clearJobByJobId(jobId);
+    },
+    [clearJobByJobId]
+  );
   useEffect(() => {
     const eventSource = new EventSource(
       "https://iperfect.479067.my.id/api/sse"
@@ -325,66 +418,7 @@ const CleansingPage: React.FC = () => {
     return () => {
       eventSource.close();
     };
-  }, [formattedDate]);
-
-  useEffect(() => {
-    const handleSetPartLoading = (
-      event: CustomEvent<{ bagianId: number; isLoading: boolean }>
-    ) => {
-      const { bagianId, isLoading } = event.detail;
-      setLoadingStates((prev) => ({
-        ...prev,
-        [bagianId.toString()]: isLoading,
-      }));
-    };
-
-    const handleRegisterJob = (
-      event: CustomEvent<{ bagianId: number; jobId: string }>
-    ) => {
-      const { bagianId, jobId } = event.detail;
-      setLoadingStates((prev) => {
-        const newState = { ...prev };
-        delete newState[bagianId.toString()];
-        newState[jobId] = true;
-        return newState;
-      });
-    };
-
-    const observer = new MutationObserver(() => {
-      const table = document.querySelector("table");
-      if (table) {
-        table.addEventListener(
-          "setPartLoading",
-          handleSetPartLoading as EventListener
-        );
-        table.addEventListener(
-          "registerJob",
-          handleRegisterJob as EventListener
-        );
-        observer.disconnect();
-      }
-    });
-
-    observer.observe(document.body, {
-      childList: true,
-      subtree: true,
-    });
-
-    return () => {
-      observer.disconnect();
-      const table = document.querySelector("table");
-      if (table) {
-        table.removeEventListener(
-          "setPartLoading",
-          handleSetPartLoading as EventListener
-        );
-        table.removeEventListener(
-          "registerJob",
-          handleRegisterJob as EventListener
-        );
-      }
-    };
-  }, []);
+  }, [formattedDate, fetchCleansingStatus, handleJobComplete]);
 
   const handleTabChange = async (key: string) => {
     setActiveTab(key);
@@ -411,59 +445,41 @@ const CleansingPage: React.FC = () => {
     }
   };
 
-  const handleJobComplete = (jobId: string) => {
-    // Remove the job from loading states
-    setLoadingStates((prev) => {
-      const newState = { ...prev };
-      delete newState[jobId];
-      return newState;
-    });
-
-    // Dispatch event to the table component
-    const tableRef = document.querySelector("table");
-    if (tableRef) {
-      const event = new CustomEvent("jobComplete", { detail: jobId });
-      tableRef.dispatchEvent(event);
-    }
-  };
-
+  /**
+   * Trigger the cleansing workflow for every part in a single factory and map job IDs for UI feedback.
+   */
   const handleRunFactory = async (factoryId: string) => {
+    const factoryParts = partsData.filter(
+      (part) => part.pabrik_id.toString() === factoryId
+    );
+
+    if (factoryParts.length === 0) {
+      message.error("No parts found for this factory");
+      return;
+    }
+
+    const bagianIds = factoryParts.map((part) => part.bagian_id);
+    updatePartsLoadingState(bagianIds, true);
+
     try {
-      const factoryParts = partsData.filter(
-        (part) => part.pabrik_id.toString() === factoryId
-      );
-
-      if (factoryParts.length === 0) {
-        message.error("No parts found for this factory");
-        return;
-      }
-
-      // Set temporary loading states for UI feedback during API calls
-      const updatedLoadingStates = { ...loadingStates };
-      factoryParts.forEach((part) => {
-        updatedLoadingStates[part.bagian_id.toString()] = true;
-      });
-      setLoadingStates(updatedLoadingStates);
-
-      const dailyRunnerPromises = factoryParts.map((part) =>
-        api.get(
-          `/daily_runner/get-by-args?tanggal=${formattedDate}&tipe=cleaning&bagian_id=${part.bagian_id}`
+      const dailyRunnerResponses = await Promise.all(
+        factoryParts.map((part) =>
+          api.get(
+            `/daily_runner/get-by-args?tanggal=${formattedDate}&tipe=cleaning&bagian_id=${part.bagian_id}`
+          )
         )
       );
 
-      const dailyRunnerResponses = await Promise.all(dailyRunnerPromises);
-      const dailyRunnerIds = dailyRunnerResponses
-        .map((response) => response.data?._id)
-        .filter((id) => id);
+      const partsWithRunner = factoryParts.reduce((acc, part, index) => {
+        const runnerId = dailyRunnerResponses[index]?.data?._id;
+        if (runnerId) {
+          acc.push({ bagianId: part.bagian_id, dailyRunnerId: runnerId });
+        }
+        return acc;
+      }, [] as Array<{ bagianId: number; dailyRunnerId: string }>);
 
-      if (dailyRunnerIds.length === 0) {
-        // Clear temporary loading states if no daily runners found
-        const clearedLoadingStates = { ...loadingStates };
-        factoryParts.forEach((part) => {
-          delete clearedLoadingStates[part.bagian_id.toString()];
-        });
-        setLoadingStates(clearedLoadingStates);
-
+      if (partsWithRunner.length === 0) {
+        updatePartsLoadingState(bagianIds, false);
         message.error("No daily runners found for this factory");
         return;
       }
@@ -471,7 +487,7 @@ const CleansingPage: React.FC = () => {
       const response = await api.post<RunResponse>(
         "/daily_runner/execute/cleaning",
         {
-          daily_runner_id: dailyRunnerIds,
+          daily_runner_id: partsWithRunner.map((item) => item.dailyRunnerId),
         }
       );
 
@@ -483,48 +499,22 @@ const CleansingPage: React.FC = () => {
         } cleaning process started`
       );
 
-      if (response.data.job_id && response.data.job_id.length > 0) {
-        // Update loading states with job IDs and keep them active until SSE events
-        const newLoadingStates = { ...loadingStates };
-
-        // First, remove the temporary part-based loading states
-        factoryParts.forEach((part) => {
-          delete newLoadingStates[part.bagian_id.toString()];
-        });
-
-        // Then add the job-based loading states
-        response.data.job_id.forEach((jobId) => {
-          newLoadingStates[jobId] = true;
-        });
-
-        setLoadingStates(newLoadingStates);
-
-        // Create a mapping between parts and jobs for the table component
-        const partsToJobs = factoryParts.reduce((acc, part, index) => {
-          if (index < response.data.job_id.length) {
-            acc[part.bagian_id] = response.data.job_id[index];
+      const jobs = response.data.job_id || [];
+      if (jobs.length > 0) {
+        const jobMapping = partsWithRunner.reduce((acc, item, index) => {
+          const jobId = jobs[index];
+          if (jobId) {
+            acc[item.bagianId] = jobId;
           }
           return acc;
         }, {} as Record<number, string>);
 
-        // Update the runningJobs state in the table component
-        const tableRef = document.querySelector("table");
-        if (tableRef) {
-          const event = new CustomEvent("updateRunningJobs", {
-            detail: { jobs: partsToJobs },
-          });
-          tableRef.dispatchEvent(event);
-        }
+        registerJobsForParts(jobMapping, bagianIds);
+      } else {
+        updatePartsLoadingState(bagianIds, false);
       }
     } catch (error) {
-      // Clear temporary loading states on error
-      const clearedLoadingStates = { ...loadingStates };
-      partsData
-        .filter((part) => part.pabrik_id.toString() === factoryId)
-        .forEach((part) => {
-          delete clearedLoadingStates[part.bagian_id.toString()];
-        });
-      setLoadingStates(clearedLoadingStates);
+      updatePartsLoadingState(bagianIds, false);
 
       if (axios.isAxiosError(error) && error.response) {
         message.error(
@@ -538,29 +528,37 @@ const CleansingPage: React.FC = () => {
     }
   };
 
+  /**
+   * Run the cleansing workflow for all factories at once and keep the combined loading state consistent.
+   */
   const handleRunAllFactories = async () => {
-    try {
-      // Set temporary loading states for UI feedback
-      const updatedLoadingStates = { ...loadingStates };
-      partsData.forEach((part) => {
-        updatedLoadingStates[part.bagian_id.toString()] = true;
-      });
-      setLoadingStates(updatedLoadingStates);
+    if (partsData.length === 0) {
+      message.error("No parts available to run");
+      return;
+    }
 
-      const dailyRunnerPromises = partsData.map((part) =>
-        api.get(
-          `/daily_runner/get-by-args?tanggal=${formattedDate}&tipe=cleaning&bagian_id=${part.bagian_id}`
+    const bagianIds = partsData.map((part) => part.bagian_id);
+    updatePartsLoadingState(bagianIds, true);
+
+    try {
+      const dailyRunnerResponses = await Promise.all(
+        partsData.map((part) =>
+          api.get(
+            `/daily_runner/get-by-args?tanggal=${formattedDate}&tipe=cleaning&bagian_id=${part.bagian_id}`
+          )
         )
       );
 
-      const dailyRunnerResponses = await Promise.all(dailyRunnerPromises);
-      const dailyRunnerIds = dailyRunnerResponses
-        .map((response) => response.data?._id)
-        .filter((id) => id);
+      const partsWithRunner = partsData.reduce((acc, part, index) => {
+        const runnerId = dailyRunnerResponses[index]?.data?._id;
+        if (runnerId) {
+          acc.push({ bagianId: part.bagian_id, dailyRunnerId: runnerId });
+        }
+        return acc;
+      }, [] as Array<{ bagianId: number; dailyRunnerId: string }>);
 
-      if (dailyRunnerIds.length === 0) {
-        // Clear all loading states if no daily runners found
-        setLoadingStates({});
+      if (partsWithRunner.length === 0) {
+        updatePartsLoadingState(bagianIds, false);
         message.error("No daily runners found");
         return;
       }
@@ -568,48 +566,28 @@ const CleansingPage: React.FC = () => {
       const response = await api.post<RunResponse>(
         "/daily_runner/execute/cleaning",
         {
-          daily_runner_id: dailyRunnerIds,
+          daily_runner_id: partsWithRunner.map((item) => item.dailyRunnerId),
         }
       );
 
       message.success("All factories cleaning process started");
 
-      if (response.data.job_id && response.data.job_id.length > 0) {
-        // Update loading states with job IDs and keep them active until SSE events
-        const newLoadingStates = { ...loadingStates };
-
-        // First, remove the temporary part-based loading states
-        partsData.forEach((part) => {
-          delete newLoadingStates[part.bagian_id.toString()];
-        });
-
-        // Then add the job-based loading states
-        response.data.job_id.forEach((jobId) => {
-          newLoadingStates[jobId] = true;
-        });
-
-        setLoadingStates(newLoadingStates);
-
-        // Create a mapping between parts and jobs for the table component
-        const partsToJobs = partsData.reduce((acc, part, index) => {
-          if (index < response.data.job_id.length) {
-            acc[part.bagian_id] = response.data.job_id[index];
+      const jobs = response.data.job_id || [];
+      if (jobs.length > 0) {
+        const jobMapping = partsWithRunner.reduce((acc, item, index) => {
+          const jobId = jobs[index];
+          if (jobId) {
+            acc[item.bagianId] = jobId;
           }
           return acc;
         }, {} as Record<number, string>);
 
-        // Update the runningJobs state in the table component
-        const tableRef = document.querySelector("table");
-        if (tableRef) {
-          const event = new CustomEvent("updateRunningJobs", {
-            detail: { jobs: partsToJobs },
-          });
-          tableRef.dispatchEvent(event);
-        }
+        registerJobsForParts(jobMapping, bagianIds);
+      } else {
+        updatePartsLoadingState(bagianIds, false);
       }
     } catch (error) {
-      // Clear all loading states on error
-      setLoadingStates({});
+      updatePartsLoadingState(bagianIds, false);
 
       if (axios.isAxiosError(error) && error.response) {
         message.error(
@@ -631,21 +609,14 @@ const CleansingPage: React.FC = () => {
 
     if (factoryParts.length === 0) return false;
 
-    // Check if any part in this factory has a direct loading state
-    for (const part of factoryParts) {
+    return factoryParts.some((part) => {
       if (loadingStates[part.bagian_id.toString()]) {
         return true;
       }
-    }
 
-    // If we have any loading states at all, log them for debugging
-    if (Object.keys(loadingStates).length > 0) {
-      if (factoryId === activeTab) {
-        return Object.keys(loadingStates).length > 0;
-      }
-    }
-
-    return false;
+      const jobId = runningJobs[part.bagian_id];
+      return jobId ? Boolean(loadingStates[jobId]) : false;
+    });
   };
 
   const getFactoryStatus = (factoryId: string) => {
@@ -680,7 +651,7 @@ const CleansingPage: React.FC = () => {
               alt="Loading"
               width={20}
               height={20}
-              style={{ marginRight: "5px" }}
+              className="mr-1.5"
             />
           )}
           {getFactoryStatus(item.pabrik_id.toString()) === "completed" && (
@@ -703,11 +674,7 @@ const CleansingPage: React.FC = () => {
     <div className="p-4 sm:px-5 sm:py-4">
       <Breadcrumb
         separator={
-          <MdArrowForwardIos
-            size={16}
-            className="align-middle inline-block"
-            style={{ verticalAlign: "middle" }}
-          />
+          <MdArrowForwardIos size={16} className="inline-block align-middle" />
         }
         items={[
           {
@@ -778,10 +745,7 @@ const CleansingPage: React.FC = () => {
               type="primary"
               className="flex-1 text-white lg:flex-none bg-danger lg:w-auto h-11 text-20 sm:text-base rounded-md font-semibold">
               Reset all
-              <MdArrowForwardIos
-                size={18}
-                style={{ transform: "rotate(90deg)" }}
-              />
+              <MdArrowForwardIos size={18} className="rotate-90" />
             </Button>
           </Dropdown>
           <Dropdown
@@ -809,10 +773,7 @@ const CleansingPage: React.FC = () => {
               className="flex-1 text-white lg:flex-none lg:w-auto h-11 text-20 sm:text-base rounded-md font-semibold"
               icon={<MdPlayArrow size={28} />}>
               Run all
-              <MdArrowForwardIos
-                size={18}
-                style={{ transform: "rotate(90deg)" }}
-              />
+              <MdArrowForwardIos size={18} className="rotate-90" />
             </Button>
           </Dropdown>
         </div>
@@ -828,12 +789,14 @@ const CleansingPage: React.FC = () => {
           activeTab={activeTab}
           data={partsData}
           labData={labData}
-          onJobComplete={handleJobComplete}
           getPartsForActiveFactory={getPartsForActiveFactory}
           activePart={activePart}
           setActivePart={setActivePart}
           isLabLoading={isLabLoading}
           loadingStates={loadingStates}
+          onSetPartLoading={setPartLoadingState}
+          onRegisterJobs={registerJobsForParts}
+          runningJobs={runningJobs}
         />
       )}
     </div>

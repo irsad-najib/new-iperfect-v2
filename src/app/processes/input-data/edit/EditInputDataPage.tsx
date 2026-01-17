@@ -5,7 +5,7 @@ import { Breadcrumb, DatePicker, Button, Switch, message } from "antd";
 import { MdArrowForwardIos, MdRestartAlt, MdOutlineUndo } from "react-icons/md";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import DataInputTable from "@/component/processes/DataInputTable";
+import DataInputTable from "@/components/processes/input-data/DataInputTable";
 import { useDateContext } from "@/context/DateContext";
 import { useRouter } from "next/navigation";
 import { HiHome } from "react-icons/hi";

@@ -104,6 +104,9 @@ body {
   .bg-neutral-200 {
     background-color: var(--color-neutral-200) !important;
   }
+  .bg-neutral-250 {
+    background-color: var(--color-neutral-250) !important;
+  }
   .bg-neutral-300 {
     background-color: var(--color-neutral-300) !important;
   }
@@ -150,6 +153,9 @@ body {
   }
   .text-neutral-200 {
     color: var(--color-neutral-200) !important;
+  }
+  .text-neutral-250 {
+    color: var(--color-neutral-250) !important;
   }
   .text-neutral-300 {
     color: var(--color-neutral-300) !important;
