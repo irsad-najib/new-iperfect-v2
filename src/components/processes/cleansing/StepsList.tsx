@@ -78,7 +78,7 @@ const StepsList: React.FC<StepsListProps> = ({
 
     try {
       const udfKey = Object.entries(udfIdsMap).find(
-        ([_, id]) => id === stepToDelete.id
+        ([_, id]) => id === stepToDelete.id,
       )?.[0];
 
       if (!udfKey) {
@@ -96,7 +96,7 @@ const StepsList: React.FC<StepsListProps> = ({
       if (response.status === 200) {
         message.success("UDF deleted successfully");
         setStepData((prevSteps) =>
-          prevSteps.filter((s) => s.id !== stepToDelete.id)
+          prevSteps.filter((s) => s.id !== stepToDelete.id),
         );
 
         if (activeViewStep === stepToDelete.id) {
@@ -117,6 +117,7 @@ const StepsList: React.FC<StepsListProps> = ({
     setStepToDelete(null);
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const onDragEnd = async (result: any) => {
     if (!result.destination) return;
 
@@ -131,7 +132,7 @@ const StepsList: React.FC<StepsListProps> = ({
     items.forEach((step) => {
       // Find the original key for this step
       const originalKey = Object.entries(udfIdsMap).find(
-        ([_, id]) => id === step.id
+        ([_, id]) => id === step.id,
       )?.[0];
       if (originalKey) {
         // Ensure the key is a string
@@ -162,6 +163,7 @@ const StepsList: React.FC<StepsListProps> = ({
     return null;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const StepItem = ({ step, index, provided }: any) => (
     <div
       className="flex items-center gap-2 select-none"
@@ -191,8 +193,8 @@ const StepsList: React.FC<StepsListProps> = ({
               onChange={(checked) => {
                 setStepData((prevData) =>
                   prevData.map((item) =>
-                    item.id === step.id ? { ...item, active: checked } : item
-                  )
+                    item.id === step.id ? { ...item, active: checked } : item,
+                  ),
                 );
               }}
             />

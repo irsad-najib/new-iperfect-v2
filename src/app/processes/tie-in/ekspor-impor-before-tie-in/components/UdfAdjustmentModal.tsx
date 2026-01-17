@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, useMemo, useCallback, memo } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Button,
   Modal,
@@ -63,6 +63,7 @@ interface UDFResponse {
 }
 
 interface UDFInputOutput {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   input: any;
   _id: string;
   var_name: string;
@@ -125,6 +126,7 @@ interface UdfAdjustmentModalProps {
   activeTab: string;
   tieinProfileId?: string;
   adjusted?: boolean;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   setAdjustedTableData?: (data: any) => void;
   loading: boolean;
   setLoading: (loading: boolean) => void;
@@ -155,13 +157,14 @@ const UdfAdjustmentModal = ({
   const [showAddUDFModal, setShowAddUDFModal] = useState(false);
   const [editingInput, setEditingInput] = useState<UDFInput | null>(null);
   const [codeValue, setCodeValue] = useState("");
-  const [selectedTag, setSelectedTag] = useState<string>("");
+  // const [selectedTag, setSelectedTag] = useState<string>("");
   const [testResult, setTestResult] = useState<UdfResult | null>(null);
   const [udfLoading, setUdfLoading] = useState(false);
   const [udfData, setUdfData] = useState<UDFSchema | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [availableInputs, setAvailableInputs] = useState<any[]>([]);
   const [activeTestTab, setActiveTestTab] = useState("code");
-  const [localTab, setLocalTab] = useState<"before" | "adjusted">("adjusted");
+  // const [localTab, setLocalTab] = useState<"before" | "adjusted">("adjusted");
   const [isRevertModalOpen, setIsRevertModalOpen] = useState(false);
   const [highlightWords, setHighlightWords] = useState<string[]>([]);
   const [activeCollapseKeys, setActiveCollapseKeys] = useState<string[]>([]);
@@ -176,7 +179,7 @@ const UdfAdjustmentModal = ({
 
       try {
         const response = await api.get(
-          `/udf/utils/available-inputs?tanggal=${formattedDate}`
+          `/udf/utils/available-inputs?tanggal=${formattedDate}`,
         );
         if (response.data) {
           setAvailableInputs(response.data);
@@ -203,13 +206,13 @@ const UdfAdjustmentModal = ({
               tanggal: formattedDate,
               material: toSnakeCase(material),
             },
-          }
+          },
         );
         if (response.data) {
           setUdfData(response.data);
           setCodeValue(response.data.udf.code);
           const inputName = response.data?.inputs_ekspor?.map(
-            (input) => input.var_name
+            (input) => input.var_name,
           );
           setHighlightWords(inputName);
         }
@@ -235,7 +238,7 @@ const UdfAdjustmentModal = ({
     if (!isOpen) {
       setUdfData(null);
       setCodeValue("");
-      setSelectedTag("");
+      // setSelectedTag("");
       setTestResult(null);
       setAvailableInputs([]);
       setEditingInput(null);
@@ -269,7 +272,7 @@ const UdfAdjustmentModal = ({
             material: toSnakeCase(material),
             execute: execute,
           },
-        }
+        },
       );
       console.log("UDF updated successfully:", response.data.log);
 
@@ -294,7 +297,7 @@ const UdfAdjustmentModal = ({
     }
   };
 
-  const handleResetUdf = () => {};
+  // const handleResetUdf = () => {};
 
   const handleRevertClick = () => {
     setIsRevertModalOpen(true);
@@ -302,7 +305,7 @@ const UdfAdjustmentModal = ({
 
   const handleCopy = (
     value: string | number | undefined | null,
-    event?: React.MouseEvent
+    event?: React.MouseEvent,
   ) => {
     // Stop event propagation to prevent collapse toggle
     if (event) {
@@ -361,13 +364,15 @@ const UdfAdjustmentModal = ({
 
   // Calculate total of ALL inputs for % calculation (tidak difilter)
   const totalInputsValue = Object.values(udfData?.groupped_inputs || {}).reduce(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (sum: number, group: any) => sum + (group.input?.value || 0),
-    0
+    0,
   );
 
   // Filtered data hanya untuk tampilan
   const filteredGroupedInputs = Object.entries(
-    udfData?.groupped_inputs || {}
+    udfData?.groupped_inputs || {},
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
   ).filter(([groupName, groupData]) => {
     const name = groupName.startsWith("Impor-") ? groupName.slice(6) : null;
     return name && name.trim() !== "";
@@ -379,6 +384,7 @@ const UdfAdjustmentModal = ({
   };
 
   const collapseItems: CollapseProps["items"] = filteredGroupedInputs.map(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
     ([groupName, groupData]: [string, any], index) => {
       const inputs = groupData.input;
       const name = groupName.startsWith("Impor-") ? groupName.slice(6) : null;
@@ -423,7 +429,7 @@ const UdfAdjustmentModal = ({
           <span>
             {inputs.tie_in_adjustment_value != null
               ? formatNumber(
-                  (inputs.value || 0) + inputs.tie_in_adjustment_value
+                  (inputs.value || 0) + inputs.tie_in_adjustment_value,
                 )
               : "-"}
           </span>
@@ -455,12 +461,12 @@ const UdfAdjustmentModal = ({
       // Get outputs for import and export based on ref_name matching
       const importOutputs =
         udfData?.outputs_impor?.filter(
-          (output) => output.ref_name === groupName
+          (output) => output.ref_name === groupName,
         ) || [];
 
       const exportOutputs =
         udfData?.outputs_ekspor?.filter(
-          (output) => output.ref_name === eksporGroupName
+          (output) => output.ref_name === eksporGroupName,
         ) || [];
 
       return {
@@ -500,6 +506,7 @@ const UdfAdjustmentModal = ({
                 </thead>
                 <tbody>
                   {importOutputs.length > 0 ? (
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     importOutputs.map((output: any, outputIndex: number) => (
                       <tr key={output._id || outputIndex}>
                         <td className="bg-[#f47920] text-white font-semibold flex items-center justify-between px-3 min-w-0">
@@ -521,7 +528,7 @@ const UdfAdjustmentModal = ({
                           {output.tie_in_adjustment_value != null
                             ? formatNumber(
                                 (output.value || 0) +
-                                  output.tie_in_adjustment_value
+                                  output.tie_in_adjustment_value,
                               )
                             : "-"}
                         </td>
@@ -576,6 +583,7 @@ const UdfAdjustmentModal = ({
                 </thead>
                 <tbody>
                   {exportOutputs.length > 0 ? (
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     exportOutputs.map((output: any, outputIndex: number) => (
                       <tr key={output._id || outputIndex}>
                         <td className="bg-[#1268b3] text-white font-semibold p-2 px-3 flex items-center justify-between min-w-0">
@@ -597,7 +605,7 @@ const UdfAdjustmentModal = ({
                           {output.tie_in_adjustment_value != null
                             ? formatNumber(
                                 (output.value || 0) +
-                                  output.tie_in_adjustment_value
+                                  output.tie_in_adjustment_value,
                               )
                             : "-"}
                         </td>
@@ -622,7 +630,7 @@ const UdfAdjustmentModal = ({
           </div>
         ),
       };
-    }
+    },
   );
 
   return (

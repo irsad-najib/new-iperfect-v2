@@ -33,6 +33,7 @@ const TieinLogModal: React.FC<TieinLogModalProps> = memo(
       setError(null);
 
       try {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const params: any = {
           tanggal: formattedDate,
           type: logType,
@@ -40,7 +41,7 @@ const TieinLogModal: React.FC<TieinLogModalProps> = memo(
 
         const response = await api.get<LogResponse>(
           "/utils/kapasitas-tiein-log/all",
-          { params }
+          { params },
         );
 
         if (response.data && response.data.message) {
@@ -48,6 +49,7 @@ const TieinLogModal: React.FC<TieinLogModalProps> = memo(
         } else {
           setLogHtml("");
         }
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (err: any) {
         console.error("Error fetching logs:", err);
         setError(err.response?.data?.message || "Failed to fetch logs");
@@ -153,7 +155,7 @@ const TieinLogModal: React.FC<TieinLogModalProps> = memo(
         {renderLogContent()}
       </Modal>
     );
-  }
+  },
 );
 
 TieinLogModal.displayName = "TieinLogModal";

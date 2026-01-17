@@ -14,6 +14,7 @@ interface DailyRunner {
   _id: string;
   tanggal: string;
   config_type: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   output: any[];
   pipeline_id: string;
   bagian_id: number;
@@ -46,7 +47,7 @@ const LoadConfigModal: React.FC<LoadConfigModalProps> = ({
         const pipelineType = isLabData ? "cleaning-lab" : "cleaning";
 
         const response = await api.get<PipelineConfig[]>(
-          `/pipeline/utils/available-pipeline?pipeline_type=${pipelineType}`
+          `/pipeline/utils/available-pipeline?pipeline_type=${pipelineType}`,
         );
         setConfigs(response.data);
       } catch (error) {
@@ -97,7 +98,7 @@ const LoadConfigModal: React.FC<LoadConfigModalProps> = ({
         // Update daily runner with new pipeline id
         const updateResponse = await api.put(
           `/daily_runner/${dailyRunner._id}`,
-          updatePayload
+          updatePayload,
         );
 
         if (updateResponse.status === 200) {
@@ -114,7 +115,7 @@ const LoadConfigModal: React.FC<LoadConfigModalProps> = ({
   };
 
   const filteredConfigs = configs.filter((config) =>
-    config.display_name.toLowerCase().includes(searchTerm.toLowerCase())
+    config.display_name.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   return (

@@ -42,7 +42,7 @@ interface TieinDistribusiUdfModalProps {
   onUpdateUDF?: (
     value: string,
     limit: number | null,
-    limit_udf_id: string | null
+    limit_udf_id: string | null,
   ) => void;
   material: string;
   unit: string;
@@ -85,8 +85,6 @@ const TieinDistribusiUdfModal = ({
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [availableInputs, setAvailableInputs] = useState<any[]>([]);
   const [activeTestTab, setActiveTestTab] = useState("code");
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [udfExecResult, setUdfExecResult] = useState<any>(null);
   const [testLoading, setTestLoading] = useState(false);
   const [highlightWords, setHighlightWords] = useState<string[]>([]);
 
@@ -97,7 +95,7 @@ const TieinDistribusiUdfModal = ({
 
       try {
         const response = await api.get(
-          `/udf/utils/available-inputs?tanggal=${formattedDate}`
+          `/udf/utils/available-inputs?tanggal=${formattedDate}`,
         );
         if (response.data) {
           setAvailableInputs(response.data);
@@ -126,7 +124,7 @@ const TieinDistribusiUdfModal = ({
           setUdfData(response.data);
           setCodeValue(response.data.udf.code);
           const inputName = response.data?.inputs?.map(
-            (input) => input.var_name
+            (input) => input.var_name,
           );
           setHighlightWords(inputName);
         }
@@ -188,7 +186,7 @@ const TieinDistribusiUdfModal = ({
             var_name,
             ref_name,
             timeframe_selection,
-          })
+          }),
         ),
         code: codeValue,
         tanggal: formattedDate,
@@ -222,17 +220,16 @@ const TieinDistribusiUdfModal = ({
               var_name,
               ref_name,
               timeframe_selection,
-            })
+            }),
           ),
           code: codeValue,
           tanggal: formattedDate,
         });
-        setUdfExecResult(execResult);
         if (onUpdateUDF && response.data.udf._id) {
           onUpdateUDF(
             exporter,
             execResult.result_output,
-            response.data.udf._id
+            response.data.udf._id,
           );
         }
       }
@@ -288,7 +285,7 @@ const TieinDistribusiUdfModal = ({
             inputs: prev.inputs.map((item) =>
               item._id === editingInput._id
                 ? { ...item, ...processedInput }
-                : item
+                : item,
             ),
           };
         });
@@ -323,7 +320,7 @@ const TieinDistribusiUdfModal = ({
       setShowAddInputModal(false);
       setEditingInput(null);
     },
-    [editingInput, udfId]
+    [editingInput, udfId],
   );
 
   const handleDeleteInput = useCallback(
@@ -350,7 +347,7 @@ const TieinDistribusiUdfModal = ({
 
       message.success("Input deleted");
     },
-    [udfId, udfData]
+    [udfId, udfData],
   );
 
   const handleResetUdf = () => {};
@@ -597,6 +594,7 @@ const TieinDistribusiUdfModal = ({
                   <Button
                     onClick={handleRunTest}
                     type="primary"
+                    loading={testLoading}
                     className="customSecondaryButton btn-md">
                     Run test
                   </Button>
@@ -634,7 +632,7 @@ const TieinDistribusiUdfModal = ({
                             ? `${testResult?.std_out}\nlog:\n${JSON.stringify(
                                 testResult.log,
                                 null,
-                                4
+                                4,
                               )}`
                             : "No output message from the process."}
                         </div>

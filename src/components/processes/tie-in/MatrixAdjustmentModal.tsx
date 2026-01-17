@@ -22,16 +22,15 @@ const MatrixAdjustmentModal: React.FC<MatrixAdjustmentModalProps> = ({
   toUnit,
 }) => {
   const [form] = Form.useForm();
-  const [newValue, setNewValue] = useState<number>(currentValue);
 
   useEffect(() => {
     if (isOpen) {
       form.setFieldsValue({ newValue: currentValue });
-      setNewValue(currentValue);
     }
   }, [isOpen, currentValue, form]);
 
   const handleConfirm = () => {
+    const newValue = form.getFieldValue('newValue') || currentValue;
     onConfirm({ currentValue, newValue });
     onClose();
   };
@@ -82,8 +81,6 @@ const MatrixAdjustmentModal: React.FC<MatrixAdjustmentModalProps> = ({
 
           <Form.Item label="New Value" name="newValue" className="mb-0">
             <InputNumber
-              value={newValue}
-              onChange={(value) => setNewValue(value || 0)}
               className="w-full"
               precision={2}
             />
