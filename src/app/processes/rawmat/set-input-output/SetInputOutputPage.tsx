@@ -15,7 +15,6 @@ import {
 } from "antd";
 import { MdAdd, MdArrowForwardIos, MdDelete, MdEditNote } from "react-icons/md";
 import Link from "next/link";
-import styles from "./SetInputOutputPage.module.css";
 import { useDateContext } from "@/context/DateContext";
 import { useRouter } from "next/navigation";
 import api from "@/utils/axios";
@@ -213,7 +212,7 @@ const SetInputOutputPage = () => {
 
   const tabItems = rawmatConfig?.config.map((config) => ({
     label: (
-      <span className={styles.tabLabel}>
+      <span className="flex items-center gap-2">
         {/* {getFactoryStatus(config.pabrik_id.toString()) === "loading" && (
             <Image
               src="/images/breathing.gif"
@@ -376,7 +375,7 @@ const SetInputOutputPage = () => {
     },
     {
       title: (
-        <div className={styles.buttonHeader}>
+        <div className="flex justify-center w-[80px]">
           <Button
             icon={<MdAdd size={24} />}
             type="primary"
@@ -440,7 +439,7 @@ const SetInputOutputPage = () => {
     },
     {
       title: (
-        <div className={styles.buttonHeader}>
+        <div className="flex justify-center w-[80px]">
           <Button
             icon={<MdAdd size={24} />}
             type="primary"
@@ -479,15 +478,19 @@ const SetInputOutputPage = () => {
   const inputTotal = calculateInputTotal();
   const outputTotal = calculateOutputTotal();
 
+  const resourceTableClassName =
+    "[&_.ant-table-thead>tr>th]:!bg-[#e6e6e6] [&_.ant-table-tbody>tr>td]:!bg-[#f1f2f3] [&_.ant-table-thead>tr>th]:!border-[#e6e6e6] [&_.ant-table-tbody>tr>td]:!border-[#e6e6e6]";
+  const summaryRowClassName = "[&_td]:!bg-[#b3b5bd] [&_td]:!font-semibold";
+
   const inputHeader = (
-    <div className={styles.collapseHeader}>
-      <div className={styles.collapseTitle}>
+    <div className="flex items-center justify-between w-full">
+      <div className="flex items-center gap-2 font-semibold text-[20.16px]">
         <span>Input resources</span>
-        <span className={styles.resourceCount}>{inputData.length}</span>
+        <span className="text-[#f47920] text-[16.8px]">{inputData.length}</span>
       </div>
-      <div className={styles.collapseTotal}>
+      <div className="flex items-center gap-2 font-semibold text-[20.16px]">
         <span>Total:</span>
-        <span className={styles.totalValue}>
+        <span className="text-[16.8px] font-normal bg-[#e6e6e6] py-1 px-3 rounded-md">
           {formatNumberWithoutRounding(inputTotal)}
         </span>
       </div>
@@ -495,14 +498,16 @@ const SetInputOutputPage = () => {
   );
 
   const outputHeader = (
-    <div className={styles.collapseHeader}>
-      <div className={styles.collapseTitle}>
+    <div className="flex items-center justify-between w-full">
+      <div className="flex items-center gap-2 font-semibold text-[20.16px]">
         <span>Output resources</span>
-        <span className={styles.resourceCount}>{outputData.length}</span>
+        <span className="text-[#f47920] text-[16.8px]">
+          {outputData.length}
+        </span>
       </div>
-      <div className={styles.collapseTotal}>
+      <div className="flex items-center gap-2 font-semibold text-[20.16px]">
         <span>Total:</span>
-        <span className={styles.totalValue}>
+        <span className="text-[16.8px] font-normal bg-[#e6e6e6] py-1 px-3 rounded-md">
           {formatNumberWithoutRounding(outputTotal)}
         </span>
       </div>
@@ -519,11 +524,11 @@ const SetInputOutputPage = () => {
           columns={inputColumns as any}
           dataSource={inputData}
           pagination={false}
-          className={styles.resourceTable}
+          className={resourceTableClassName}
           bordered
           summary={() => (
             <Table.Summary fixed>
-              <Table.Summary.Row className={styles.summaryRow}>
+              <Table.Summary.Row className={summaryRowClassName}>
                 <Table.Summary.Cell index={0} colSpan={2} align="center">
                   Total
                 </Table.Summary.Cell>
@@ -545,10 +550,10 @@ const SetInputOutputPage = () => {
           columns={outputColumns as any}
           dataSource={outputData}
           pagination={false}
-          className={styles.resourceTable}
+          className={resourceTableClassName}
           summary={() => (
             <Table.Summary fixed>
-              <Table.Summary.Row className={styles.summaryRow}>
+              <Table.Summary.Row className={summaryRowClassName}>
                 <Table.Summary.Cell index={0} colSpan={2}>
                   Total
                 </Table.Summary.Cell>
@@ -771,8 +776,8 @@ const SetInputOutputPage = () => {
   };
 
   return (
-    <div className={styles.container}>
-      <div className={styles.breadcrumbButtonContainer}>
+    <div className="py-4 px-5 h-full">
+      <div className="flex items-center justify-between">
         <Breadcrumb
           separator={<MdArrowForwardIos size={16} />}
           items={breadcrumbItems}
@@ -780,22 +785,17 @@ const SetInputOutputPage = () => {
         />
         <Button
           type="default"
-          className={`customSecondaryButton btn-md ${styles.buttonMargin}`}
+          className="customSecondaryButton btn-md mr-12"
           onClick={() => setIsNextStepModalVisible(true)}>
-          <span className={styles.nextButtonText}>Next: </span>
-          <span className={styles.nextButtonBoldText}>
-            Set Ratio Performance Figure
-          </span>
-          <HiOutlineArrowNarrowRight
-            size={24}
-            className={styles.nextButtonIcon}
-          />
+          <span className="font-normal">Next: </span>
+          <span className="font-semibold">Set Ratio Performance Figure</span>
+          <HiOutlineArrowNarrowRight size={24} className="ml-1" />
         </Button>
       </div>
 
-      <div className={styles.header}>
-        <div className={styles.dateSection}>
-          <span>Date:</span>
+      <div className="flex justify-between items-center my-7">
+        <div className="flex items-center gap-3">
+          <span className="text-[#777986]">Date:</span>
           <DatePicker
             disabled
             value={selectedDate}
@@ -804,9 +804,9 @@ const SetInputOutputPage = () => {
           />
         </div>
 
-        <div className={styles.configSection}>
-          <span>Config input output:</span>
-          <div className={styles.configSelect}>
+        <div className="flex items-center gap-3">
+          <span className="font-semibold">Config input output:</span>
+          <div className="w-fit min-w-[200px] py-1 px-[11px] border border-[#d9d9d9] rounded-md bg-[#e6e6e6]">
             {loadingData ? "Loading..." : rawmatConfig?.name}
           </div>
           <Dropdown
@@ -881,84 +881,96 @@ const SetInputOutputPage = () => {
       />
 
       {activeDataGroup && (
-        <div className={styles.tableContainer}>
+        <div className="flex rounded-lg">
           <div>
-            <div className={styles.dataColumn}>
-              <div className={styles.columnHeader}>Table Group</div>
-              {activeDataGroup.table_groups.map((table_group) => (
-                <div
-                  key={table_group.name}
-                  className={`${styles.dataCell} ${
-                    table_group.name === selectedTableGroup
-                      ? styles.selectedCell
-                      : ""
-                  }`}
-                  onClick={() => setSelectedTableGroup(table_group.name)}>
-                  <div className={styles.statusIcon}>
-                    {table_group.completed === true ? (
-                      <div className={styles.completedIcon}>
-                        <AiOutlineCheck color="#F3F4F8" size={16} />
-                      </div>
-                    ) : (
-                      <div className={styles.pendingIcon}>
-                        <AiOutlineLoading3Quarters size={24} color="#F47920" />
-                        <div className={styles.pendingIconDot}></div>
-                      </div>
-                    )}
-                  </div>
-                  <span
-                    className={`${styles.dataCellText} ${
+            <div className="flex flex-col w-[287px] flex-none">
+              <div className="bg-[#e6e6e6] p-3 font-semibold border border-[#e8e8e8] flex justify-center items-center text-[20.16px] h-[45px] shrink-0">
+                Table Group
+              </div>
+              <div className="overflow-y-auto">
+                {activeDataGroup.table_groups.map((table_group) => (
+                  <div
+                    key={table_group.name}
+                    className={`flex items-center gap-3 bg-white p-4 cursor-pointer border-b border-l border-[#e8e8e8] ${
                       table_group.name === selectedTableGroup
-                        ? styles.selectedCellText
+                        ? "bg-[#eeeff1]"
                         : ""
-                    }`}>
-                    {table_group.name}
-                  </span>
-                  <MdArrowForwardIos
-                    className={styles.dataCellArrow}
-                    size={20}
-                  />
-                </div>
-              ))}
+                    }`}
+                    onClick={() => setSelectedTableGroup(table_group.name)}>
+                    <div className="mr-3">
+                      {table_group.completed === true ? (
+                        <div className="w-6 h-6 rounded-full bg-[#1268b3] flex items-center justify-center">
+                          <AiOutlineCheck color="#F3F4F8" size={16} />
+                        </div>
+                      ) : (
+                        <div className="relative">
+                          <AiOutlineLoading3Quarters
+                            size={24}
+                            color="#F47920"
+                          />
+                          <div className="absolute w-3 h-3 rounded-full bg-[#f47920] top-[40%] left-1/2 -translate-x-1/2 -translate-y-1/2" />
+                        </div>
+                      )}
+                    </div>
+                    <span
+                      className={`flex-1 font-normal ${
+                        table_group.name === selectedTableGroup
+                          ? "font-semibold"
+                          : ""
+                      }`}>
+                      {table_group.name}
+                    </span>
+                    <MdArrowForwardIos className="text-[#13162a]" size={20} />
+                  </div>
+                ))}
+              </div>
             </div>
-            <div className={styles.columnHeader}>Unbalance</div>
-            <div className={styles.unbalanceRow}>
-              <div className={styles.unbalanceColumnTitle}>Input total</div>
-              <div className={styles.unbalanceColumnValue}>
+            <div className="bg-[#e6e6e6] p-3 font-semibold border border-[#e8e8e8] flex justify-center items-center text-[20.16px] h-[45px] shrink-0">
+              Unbalance
+            </div>
+            <div className="flex text-[16.8px]">
+              <div className="bg-[#e6e6e6] flex-1 text-center py-[14px] px-[6px]">
+                Input total
+              </div>
+              <div className="bg-[#f1f2f3] flex-1 text-center py-[14px] px-[6px] border border-[#e6e6e6]">
                 {formatNumberWithoutRounding(inputTotal)}
               </div>
             </div>
-            <div className={styles.unbalanceRow}>
-              <div className={styles.unbalanceColumnTitle}>Output total</div>
-              <div className={styles.unbalanceColumnValue}>
+            <div className="flex text-[16.8px]">
+              <div className="bg-[#e6e6e6] flex-1 text-center py-[14px] px-[6px]">
+                Output total
+              </div>
+              <div className="bg-[#f1f2f3] flex-1 text-center py-[14px] px-[6px] border border-[#e6e6e6]">
                 {formatNumberWithoutRounding(outputTotal)}
               </div>
             </div>
-            <div className={styles.unbalanceRow}>
-              <div className={styles.unbalanceColumnTitle2}>
+            <div className="flex text-[16.8px]">
+              <div className="bg-[#404252] flex-1 text-center text-white py-[14px] px-[6px] border border-[#e6e6e6]">
                 Unbalance value
               </div>
               <div
                 className={
                   formatNumberWithoutRounding(inputTotal - outputTotal) === "0"
-                    ? styles.unbalanceColumnValue2
-                    : styles.unbalance
+                    ? "bg-[#00ad17] flex-1 text-center text-white py-[14px] px-[6px] border border-[#e6e6e6]"
+                    : "bg-[#e20301] flex-1 text-center text-white py-[14px] px-[6px] border border-[#e6e6e6]"
                 }>
                 {formatNumberWithoutRounding(inputTotal - outputTotal)}
               </div>
             </div>
           </div>
-          <div className={styles.viewerColumn}>
-            <div className={styles.columnHeader}>Input and Outputs</div>
-            <div className={styles.viewerCell}>
+          <div className="flex-1 h-[calc(100vh-250px)] max-w-[calc(100%-287px)] border-x border-b border-[#e8e8e8]">
+            <div className="bg-[#e6e6e6] p-3 font-semibold border border-[#e8e8e8] flex justify-center items-center text-[20.16px] h-[45px] shrink-0">
+              Input and Outputs
+            </div>
+            <div className="bg-white p-4 flex-1 flex flex-col justify-between overflow-y-auto">
               {selectedTableGroup !== null ? (
                 <>
-                  <div className={styles.viewerContent}>
-                    <div className={styles.tableItemsContainer}>
-                      <span className={styles.tableItemsLabel}>
+                  <div className="grow">
+                    <div className="flex items-center gap-3 mb-5">
+                      <span className="font-semibold text-[16.8px]">
                         Table items:
                       </span>
-                      <div className={styles.buttonTabs}>
+                      <div className="flex flex-1 flex-wrap gap-3">
                         {activeTableGroup?.table_items.map((table_item) => (
                           <Button
                             key={table_item.name}
