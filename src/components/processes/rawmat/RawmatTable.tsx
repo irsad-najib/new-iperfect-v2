@@ -50,9 +50,8 @@ const RawmatTable = ({ formattedDate }: RawmatTableProps) => {
 
   /* ================= SSE ================= */
   useEffect(() => {
-    const eventSource = new EventSource(
-      "https://iperfect.479067.my.id/api/sse",
-    );
+    const apiurl = process.env.NEXT_PUBLIC_API_URL;
+    const eventSource = new EventSource(`${apiurl}/api/sse`);
 
     eventSource.onmessage = (event) => {
       const eventData: JobStatusEvent = JSON.parse(event.data);

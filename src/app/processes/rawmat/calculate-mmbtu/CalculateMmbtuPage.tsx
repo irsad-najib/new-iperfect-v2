@@ -19,8 +19,8 @@ import api from "@/utils/axios";
 import { HiOutlineArrowNarrowRight } from "react-icons/hi";
 import { AiOutlineLoading3Quarters, AiOutlineCheck } from "react-icons/ai";
 import MmbtuModal from "@/components/processes/rawmat/calculate-mmbtu/MmbtuModal";
-import DeleteInputOutputDataModal from "@/components/processes/rawmat/calculate-mmbtu/DeleteInputOutputDataModal";
-import NextStepModal from "@/components/processes/rawmat/calculate-mmbtu/NextStepModal";
+import DeleteInputOutputDataModal from "@/components/processes/rawmat/DeleteInputOutputDataModal";
+import NextStepModal from "@/components/processes/rawmat/NextStepModal";
 import { formatNumberWithoutRounding } from "@/utils/numberFormat";
 
 interface PabrikConfig {

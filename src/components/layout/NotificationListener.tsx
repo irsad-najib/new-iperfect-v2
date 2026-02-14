@@ -62,10 +62,9 @@ function NotificationListener() {
     }
   }, [user, fetchNotifications]);
 
+  const apiurl = process.env.NEXT_PUBLIC_API_URL;
   useEffect(() => {
-    const eventSource = new EventSource(
-      "https://iperfect.479067.my.id/api/sse"
-    );
+    const eventSource = new EventSource(`${apiurl}/api/sse`);
 
     eventSource.onmessage = async (event) => {
       const eventData: JobStatusEvent = JSON.parse(event.data);
@@ -88,7 +87,7 @@ function NotificationListener() {
     const handleClickOutside = (event: MouseEvent) => {
       const notificationBox = document.getElementById("notification-box");
       const notificationContainer = document.getElementById(
-        "notification-container"
+        "notification-container",
       );
 
       if (notificationBox && notificationContainer) {
@@ -167,8 +166,8 @@ function NotificationListener() {
                       {notification.status === "completed"
                         ? "Successfully executed"
                         : notification.status === "failed"
-                        ? "Error occurred"
-                        : "Process is in progress"}
+                          ? "Error occurred"
+                          : "Process is in progress"}
                     </div>
                   </div>
                   <div
@@ -186,7 +185,7 @@ function NotificationListener() {
                           hour: "2-digit",
                           minute: "2-digit",
                           hour12: false,
-                        }
+                        },
                       )}
                     </span>{" "}
                     by {notification.username}
