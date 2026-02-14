@@ -105,7 +105,6 @@ interface ResourceRowData {
 const SetInputOutputPage = () => {
   const router = useRouter();
   const { selectedDate, formattedDate } = useDateContext();
-  const [loadingConfig, setLoadingConfig] = useState(false);
   const [loadingData, setLoadingData] = useState(false);
   const [rawmatConfig, setRawmatConfig] = useState<RawmatConfig | null>(null);
   const [rawmatData, setRawmatData] = useState<RawmatData | null>(null);
@@ -177,7 +176,6 @@ const SetInputOutputPage = () => {
   useEffect(() => {
     const fetchRawmatConfig = async () => {
       try {
-        setLoadingConfig(true);
         const response = await api.get<RawmatConfig>(
           "/rawmat/config/get-by-args",
           {
@@ -194,8 +192,6 @@ const SetInputOutputPage = () => {
       } catch (error) {
         console.error("Error fetching rawmat config:", error);
         message.error("Failed to fetch rawmat configuration");
-      } finally {
-        setLoadingConfig(false);
       }
     };
 
@@ -375,7 +371,7 @@ const SetInputOutputPage = () => {
     },
     {
       title: (
-        <div className="flex justify-center w-[80px]">
+        <div className="flex justify-center w-20">
           <Button
             icon={<MdAdd size={24} />}
             type="primary"
@@ -439,7 +435,7 @@ const SetInputOutputPage = () => {
     },
     {
       title: (
-        <div className="flex justify-center w-[80px]">
+        <div className="flex justify-center w-20">
           <Button
             icon={<MdAdd size={24} />}
             type="primary"
@@ -929,30 +925,30 @@ const SetInputOutputPage = () => {
               Unbalance
             </div>
             <div className="flex text-[16.8px]">
-              <div className="bg-[#e6e6e6] flex-1 text-center py-[14px] px-[6px]">
+              <div className="bg-[#e6e6e6] flex-1 text-center py-3.5 px-1.5">
                 Input total
               </div>
-              <div className="bg-[#f1f2f3] flex-1 text-center py-[14px] px-[6px] border border-[#e6e6e6]">
+              <div className="bg-[#f1f2f3] flex-1 text-center py-3.5 px-1.5 border border-[#e6e6e6]">
                 {formatNumberWithoutRounding(inputTotal)}
               </div>
             </div>
             <div className="flex text-[16.8px]">
-              <div className="bg-[#e6e6e6] flex-1 text-center py-[14px] px-[6px]">
+              <div className="bg-[#e6e6e6] flex-1 text-center py-3.5 px-1.5">
                 Output total
               </div>
-              <div className="bg-[#f1f2f3] flex-1 text-center py-[14px] px-[6px] border border-[#e6e6e6]">
+              <div className="bg-[#f1f2f3] flex-1 text-center py-3.5 px-1.5 border border-[#e6e6e6]">
                 {formatNumberWithoutRounding(outputTotal)}
               </div>
             </div>
             <div className="flex text-[16.8px]">
-              <div className="bg-[#404252] flex-1 text-center text-white py-[14px] px-[6px] border border-[#e6e6e6]">
+              <div className="bg-[#404252] flex-1 text-center text-white py-3.5 px-1.5 border border-[#e6e6e6]">
                 Unbalance value
               </div>
               <div
                 className={
                   formatNumberWithoutRounding(inputTotal - outputTotal) === "0"
-                    ? "bg-[#00ad17] flex-1 text-center text-white py-[14px] px-[6px] border border-[#e6e6e6]"
-                    : "bg-[#e20301] flex-1 text-center text-white py-[14px] px-[6px] border border-[#e6e6e6]"
+                    ? "bg-[#00ad17] flex-1 text-center text-white py-3.5 px-1.5 border border-[#e6e6e6]"
+                    : "bg-[#e20301] flex-1 text-center text-white py-3.5 px-1.5 border border-[#e6e6e6]"
                 }>
                 {formatNumberWithoutRounding(inputTotal - outputTotal)}
               </div>
