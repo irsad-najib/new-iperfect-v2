@@ -309,7 +309,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                         }
                       `}>
                       {isItemActive && (
-                        <div className="absolute left-0 top-0 bottom-0 w-1 bg-[#F47920] rounded-r-full" />
+                        <div className="absolute left-0 top-0 bottom-0 w-1 bg-secondary-300 rounded-r-full" />
                       )}
                       <div className="flex items-center gap-3">
                         <span
@@ -340,7 +340,7 @@ const Sidebar: React.FC<SidebarProps> = ({
         </div>
 
         {/* User Profile Section */}
-        <div className="p-4 border-t border-gray-200 bg-[#F3F4F8]">
+        <div className="p-4 border-t border-gray-200 bg-neutral-100">
           <div
             className={`flex items-center ${
               isCollapsed ? "justify-center" : "gap-3"

@@ -120,21 +120,25 @@ const TieinLogModal: React.FC<TieinLogModalProps> = memo(
           type="default"
           icon={<HiDownload size={24} />}
           onClick={handleDownload}
-          className="flex items-center justify-center text-[#f47920] ml-0 border border-[#404252] rounded w-9 h-9 p-0 hover:text-[#d86b18] hover:bg-[rgba(244,121,32,0.1)] hover:border-[#404252] disabled:text-[#d9d9d9] disabled:border-[#404252]"
+          className="flex items-center justify-center text-secondary-300 ml-0 border border-neutral-700 rounded w-9 h-9 p-0 hover:text-[#d86b18] hover:bg-[rgba(244,121,32,0.1)] hover:border-neutral-700 disabled:text-[#d9d9d9] disabled:border-neutral-700"
           disabled={!logHtml || logHtml.includes("No Data Found")}
         />
         <span className="flex-1">View log Tie In</span>
         <div className="flex mr-8">
           <Button
-            className={`customSecondaryButton ${
-              logType === "revert" ? "activeButton" : ""
+            className={`bg-transparent border rounded px-4 h-9 flex items-center justify-center font-semibold hover:bg-secondary-300 hover:border-secondary-300 hover:text-neutral-100 active:bg-neutral-500 active:border-neutral-500 disabled:bg-neutral-300 disabled:border-neutral-300 disabled:text-[#eeeff1] ${
+              logType === "revert"
+                ? "bg-secondary-300 border-secondary-300 border-2 text-neutral-100"
+                : "border-neutral-700 text-neutral-900"
             }`}
             onClick={() => setLogType("revert")}>
             Revert log
           </Button>
           <Button
-            className={`customSecondaryButton ${
-              logType === "adjustment" ? "activeButton" : ""
+            className={`bg-transparent border rounded px-4 h-9 flex items-center justify-center font-semibold hover:bg-secondary-300 hover:border-secondary-300 hover:text-neutral-100 active:bg-neutral-500 active:border-neutral-500 disabled:bg-neutral-300 disabled:border-neutral-300 disabled:text-[#eeeff1] ${
+              logType === "adjustment"
+                ? "bg-secondary-300 border-secondary-300 border-2 text-neutral-100"
+                : "border-neutral-700 text-neutral-900"
             }`}
             onClick={() => setLogType("adjustment")}>
             Adjustment log

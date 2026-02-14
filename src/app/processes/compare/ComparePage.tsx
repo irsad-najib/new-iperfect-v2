@@ -140,7 +140,7 @@ export default function ComparePage() {
         const partsResponse = await api.get("/bagian");
         const partsWithFactoryNames = partsResponse.data.map((item: Part) => {
           const matchingFactory = fetchedFactories.find(
-            (factory: Factory) => factory.pabrik_id === item.pabrik_id
+            (factory: Factory) => factory.pabrik_id === item.pabrik_id,
           );
 
           return {
@@ -291,7 +291,7 @@ export default function ComparePage() {
     const activeResult = comparisonResults.find(
       (result) =>
         result.pabrik_id === activeFactoryId &&
-        result.bagian_name === activePart
+        result.bagian_name === activePart,
     );
 
     if (!activeResult?.data_found) {
@@ -455,7 +455,7 @@ export default function ComparePage() {
       <div className="overflow-x-auto">
         <Table
           // Custom table styling using global CSS classes (defined in globals.css)
-          className="[&_.ant-table-thead>tr>th]:bg-[#e6e6e6] [&_.ant-table-thead>tr>th]:font-semibold [&_.ant-table-thead>tr>th]:text-center [&_.ant-table-thead>tr>th>.ant-table-cell-content]:justify-center [&_.ant-table-tbody>tr>td]:text-center [&_.ant-table-tbody>tr>td.default-bg]:bg-[#eeeff1] [&_.ant-table-cell]:text-[16.8px]"
+          className="[&_.ant-table-thead>tr>th]:bg-neutral-250 [&_.ant-table-thead>tr>th]:font-semibold [&_.ant-table-thead>tr>th]:text-center [&_.ant-table-thead>tr>th>.ant-table-cell-content]:justify-center [&_.ant-table-tbody>tr>td]:text-center [&_.ant-table-tbody>tr>td.default-bg]:bg-[#eeeff1] [&_.ant-table-cell]:text-[16.8px]"
           columns={columns}
           dataSource={filteredData}
           rowKey="alias"
@@ -471,7 +471,7 @@ export default function ComparePage() {
             position: ["bottomRight"],
             // Pagination styling with Tailwind classes
             className:
-              "my-4 [&_.ant-pagination-item-active]:bg-[#1268b3] [&_.ant-pagination-item-active]:border-[#1268b3] [&_.ant-pagination-item-active_a]:text-white [&_.ant-select-selector]:rounded [&_.ant-pagination-options]:ml-4",
+              "my-4 [&_.ant-pagination-item-active]:bg-primary-300 [&_.ant-pagination-item-active]:border-primary-300 [&_.ant-pagination-item-active_a]:text-white [&_.ant-select-selector]:rounded [&_.ant-pagination-options]:ml-4",
             onChange: (page, size) => {
               setCurrentPage(page);
               setPageSize(size);
@@ -512,7 +512,7 @@ export default function ComparePage() {
 
       {/* Date Picker Section - Responsive */}
       <div className="flex items-center mt-7 mb-6">
-        <span className="text-[#777986] mr-3"></span>
+        <span className="text-neutral-500 mr-3"></span>
         <DatePicker
           disabled
           value={selectedDate}
@@ -569,7 +569,7 @@ export default function ComparePage() {
         <Button
           type="primary"
           onClick={handleCompare}
-          className="customPrimaryButton btn-lg w-full sm:w-auto"
+          className="bg-primary-300 border-primary-300 rounded px-4 h-11 text-xl flex items-center justify-center font-semibold text-neutral-100 hover:bg-primary-700 hover:border-primary-700 active:bg-neutral-900 active:border-neutral-900 disabled:bg-neutral-300 disabled:border-neutral-300 w-full sm:w-auto"
           loading={isComparing}>
           Compare
         </Button>
@@ -582,7 +582,7 @@ export default function ComparePage() {
           onChange={(key) => {
             setActiveTab(key);
             const partsForFactory = partsData.filter(
-              (part) => part.pabrik_id.toString() === key
+              (part) => part.pabrik_id.toString() === key,
             );
             if (partsForFactory.length > 0) {
               setActivePart(partsForFactory[0].name);
@@ -604,19 +604,19 @@ export default function ComparePage() {
             <Button
               type="default"
               icon={<MdOutlineUndo size={24} />}
-              className="w-11 h-11 border border-[#404252] flex items-center justify-center p-1 bg-transparent"
+              className="w-11 h-11 border border-neutral-700 flex items-center justify-center p-1 bg-transparent"
             />
             <Button
               type="default"
               icon={<MdRestartAlt size={24} />}
-              className="w-11 h-11 border border-[#404252] flex items-center justify-center p-1 bg-transparent"
+              className="w-11 h-11 border border-neutral-700 flex items-center justify-center p-1 bg-transparent"
             />
           </div>
           <Button
             type="primary"
             onClick={handleSave}
             disabled={!editMode}
-            className="customPrimaryButton btn-lg w-full sm:w-auto">
+            className="bg-primary-300 border-primary-300 rounded px-4 h-11 text-xl flex items-center justify-center font-semibold text-neutral-100 hover:bg-primary-700 hover:border-primary-700 active:bg-neutral-900 active:border-neutral-900 disabled:bg-neutral-300 disabled:border-neutral-300 w-full sm:w-auto">
             Save
           </Button>
         </div>
@@ -631,8 +631,10 @@ export default function ComparePage() {
               {getPartsForActiveFactory().map((part) => (
                 <Button
                   key={part._id}
-                  className={`customSecondaryButton ${
-                    activePart === part.name ? "activeButton" : ""
+                  className={`bg-transparent border rounded px-4 h-9 flex items-center justify-center font-semibold hover:bg-secondary-300 hover:border-secondary-300 hover:text-neutral-100 active:bg-neutral-500 active:border-neutral-500 disabled:bg-neutral-300 disabled:border-neutral-300 disabled:text-[#eeeff1] ${
+                    activePart === part.name
+                      ? "bg-secondary-300 border-secondary-300 border-2 text-neutral-100"
+                      : "border-neutral-700 text-neutral-900"
                   }`}
                   onClick={() => setActivePart(part.name)}>
                   {part.name}
@@ -642,7 +644,7 @@ export default function ComparePage() {
 
             {/* Filter toggle - Align right on desktop, full width on mobile */}
             <div className="flex items-center justify-end text-[16.8px] whitespace-nowrap w-full lg:w-auto">
-              <span className="mr-2 text-[#404252]">
+              <span className="mr-2 text-neutral-700">
                 Show only different data
               </span>
               <Switch
@@ -658,7 +660,7 @@ export default function ComparePage() {
       {/* Main Content Area - Comparison table or message */}
       <div className="flex-1 bg-[#eeeff1] rounded-lg p-4 sm:p-6 mb-6">
         {typeof getPartContent() === "string" ? (
-          <div className="text-center text-[#b3b5bd] py-12 text-[20.16px] font-normal">
+          <div className="text-center text-neutral-300 py-12 text-[20.16px] font-normal">
             {getPartContent()}
           </div>
         ) : (

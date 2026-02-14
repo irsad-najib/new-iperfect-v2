@@ -4,11 +4,11 @@ import { MdClose, MdDelete, MdEditNote, MdInfo } from "react-icons/md";
 import { HiCheckCircle } from "react-icons/hi";
 import api from "@/utils/axios";
 import { useDateContext } from "@/context/DateContext";
-import AddInputModal from "@/components/processes/tie-in/AddInputModal";
+import AddInputModal from "@/components/processes/AddInputModal";
 import { formatNumber } from "@/utils/numberFormat";
 import { executeUdf, UdfResult } from "@/utils/udfUtils";
 import { getDataSource } from "@/utils/dataSourceUtils";
-import { CodeEditor } from "@/components/processes/tie-in/CodeEditor";
+import { CodeEditor } from "@/components/processes/CodeEditor";
 
 interface UDFInput {
   _id: string;
@@ -390,49 +390,49 @@ const TieinDistribusiUdfModal = ({
                   <span className="text-black text-[16.8px] font-semibold">
                     Material:{" "}
                   </span>
-                  <span className="bg-neutral-250 py-1 px-3 ml-[9px] mr-[18px] rounded-md text-[#13162a] text-[16.8px] font-normal">
+                  <span className="bg-neutral-250 py-1 px-3 ml-[9px] mr-[18px] rounded-md text-neutral-900 text-[16.8px] font-normal">
                     {material}
                   </span>
                   <span className="text-black text-[16.8px] font-semibold">
                     Unit:
                   </span>
-                  <span className="bg-neutral-250 py-1 px-3 ml-[9px] mr-[18px] rounded-md text-[#13162a] text-[16.8px] font-normal">
+                  <span className="bg-neutral-250 py-1 px-3 ml-[9px] mr-[18px] rounded-md text-neutral-900 text-[16.8px] font-normal">
                     {unit}
                   </span>
                   <span className="text-black text-[16.8px] font-semibold">
                     Row:
                   </span>
-                  <span className="bg-neutral-250 py-1 px-3 ml-[9px] mr-[18px] rounded-md text-[#13162a] text-[16.8px] font-normal">
+                  <span className="bg-neutral-250 py-1 px-3 ml-[9px] mr-[18px] rounded-md text-neutral-900 text-[16.8px] font-normal">
                     {row}
                   </span>
                   <span className="text-black text-[16.8px] font-semibold">
                     Importer:
                   </span>
-                  <span className="bg-neutral-250 py-1 px-3 ml-[9px] mr-[18px] rounded-md text-[#13162a] text-[16.8px] font-normal">
+                  <span className="bg-neutral-250 py-1 px-3 ml-[9px] mr-[18px] rounded-md text-neutral-900 text-[16.8px] font-normal">
                     {importer}
                   </span>
                   <span className="text-black text-[16.8px] font-semibold">
                     Exporter:
                   </span>
-                  <span className="bg-neutral-250 py-1 px-3 ml-[9px] mr-[18px] rounded-md text-[#13162a] text-[16.8px] font-normal">
+                  <span className="bg-neutral-250 py-1 px-3 ml-[9px] mr-[18px] rounded-md text-neutral-900 text-[16.8px] font-normal">
                     {exporter}
                   </span>
                   <span className="text-black text-[16.8px] font-semibold">
                     Max value result:
                   </span>
-                  <span className="bg-neutral-250 py-1 px-3 ml-[9px] mr-[18px] rounded-md text-[#13162a] text-[16.8px] font-normal">
+                  <span className="bg-neutral-250 py-1 px-3 ml-[9px] mr-[18px] rounded-md text-neutral-900 text-[16.8px] font-normal">
                     {maxValue ? maxValue : "-"}
                   </span>
                 </div>
                 <div className="flex gap-1.5">
                   <Button
                     onClick={handleResetUdf}
-                    className="customSecondaryButton">
+                    className="bg-transparent border border-neutral-700 rounded px-4 h-9 flex items-center justify-center font-semibold text-neutral-900 hover:bg-secondary-300 hover:border-secondary-300 hover:text-neutral-100 active:bg-neutral-500 active:border-neutral-500 active:text-neutral-900 disabled:bg-neutral-300 disabled:border-neutral-300 disabled:text-[#eeeff1]">
                     Reset UDF
                   </Button>
                   <Button
                     onClick={handleLoadTemplate}
-                    className="customSecondaryButton">
+                    className="bg-transparent border border-neutral-700 rounded px-4 h-9 flex items-center justify-center font-semibold text-neutral-900 hover:bg-secondary-300 hover:border-secondary-300 hover:text-neutral-100 active:bg-neutral-500 active:border-neutral-500 active:text-neutral-900 disabled:bg-neutral-300 disabled:border-neutral-300 disabled:text-[#eeeff1]">
                     Load template
                   </Button>
 
@@ -440,7 +440,7 @@ const TieinDistribusiUdfModal = ({
                     type="primary"
                     onClick={handleFinishOrUpdateClick}
                     loading={loading || modifyLoading}
-                    className="customPrimaryButton">
+                    className="bg-primary-300 border-primary-300 rounded px-4 h-9 flex items-center justify-center font-semibold text-neutral-100 hover:bg-primary-700 hover:border-primary-700 active:bg-neutral-900 active:border-neutral-900 disabled:bg-neutral-300 disabled:border-neutral-300">
                     Finish
                   </Button>
                 </div>
@@ -454,9 +454,9 @@ const TieinDistribusiUdfModal = ({
                     className={`py-1 px-3 ml-[9px] mr-[18px] rounded-md text-[16.8px] font-normal ${
                       unbalance
                         ? unbalance > 0
-                          ? "bg-[#00ad17] text-white"
+                          ? "bg-success text-white"
                           : "bg-danger text-white justify-center"
-                        : "bg-neutral-250 text-[#13162a]"
+                        : "bg-neutral-250 text-neutral-900"
                     }`}>
                     {unbalance !== null && unbalance !== undefined
                       ? formatNumber(unbalance, {
@@ -471,7 +471,7 @@ const TieinDistribusiUdfModal = ({
                     ) : null}
                   </span>
                 </div>
-                <span className="bg-neutral-250 py-1 px-3 ml-[9px] mr-[18px] rounded-md text-[#13162a] text-[16.8px] font-normal">
+                <span className="bg-neutral-250 py-1 px-3 ml-[9px] mr-[18px] rounded-md text-neutral-900 text-[16.8px] font-normal">
                   Last saved:{" "}
                   <span className="font-semibold">2 minutes ago</span>
                 </span>
@@ -486,42 +486,42 @@ const TieinDistribusiUdfModal = ({
                     </h3>
                     <Button
                       onClick={() => setShowAddInputModal(true)}
-                      className="customSecondaryButton btn-md">
+                      className="bg-transparent border border-neutral-700 rounded px-4 h-9 flex items-center justify-center font-semibold text-neutral-900 hover:bg-secondary-300 hover:border-secondary-300 hover:text-neutral-100 active:bg-neutral-500 active:border-neutral-500 active:text-neutral-900 disabled:bg-neutral-300 disabled:border-neutral-300 disabled:text-[#eeeff1]">
                       Add input
                     </Button>
                   </div>
-                  <div className="bg-white border border-[#b3b5bd] rounded-lg p-4 h-[600px] max-h-max overflow-hidden">
+                  <div className="bg-white border border-neutral-300 rounded-lg p-4 h-[600px] max-h-max overflow-hidden">
                     <div className="flex flex-col gap-0.5 h-full overflow-y-auto scrollbar-thin scrollbar-thumb-[#b3b5bd] scrollbar-track-[#f1f1f1] hover:scrollbar-thumb-[#9598a1] scrollbar-thumb-rounded">
                       <div className="grid grid-cols-[150px_150px_minmax(0,2fr)_70px_120px_70px] gap-1.5 pb-2.5 sticky top-0 bg-white z-[1]">
-                        <span className="text-14 font-semibold text-[#13162a] text-center whitespace-nowrap overflow-hidden text-ellipsis px-2">
+                        <span className="text-14 font-semibold text-neutral-900 text-center whitespace-nowrap overflow-hidden text-ellipsis px-2">
                           Nama
                         </span>
-                        <span className="text-14 font-semibold text-[#13162a] text-center whitespace-nowrap overflow-hidden text-ellipsis px-2">
+                        <span className="text-14 font-semibold text-neutral-900 text-center whitespace-nowrap overflow-hidden text-ellipsis px-2">
                           Data Source
                         </span>
-                        <span className="text-14 font-semibold text-[#13162a] text-center whitespace-nowrap overflow-hidden text-ellipsis px-2">
+                        <span className="text-14 font-semibold text-neutral-900 text-center whitespace-nowrap overflow-hidden text-ellipsis px-2">
                           Data Path
                         </span>
-                        <span className="text-14 font-semibold text-[#13162a] text-center whitespace-nowrap overflow-hidden text-ellipsis px-2">
+                        <span className="text-14 font-semibold text-neutral-900 text-center whitespace-nowrap overflow-hidden text-ellipsis px-2">
                           Default
                         </span>
-                        <span className="text-14 font-semibold text-[#13162a] text-center whitespace-nowrap overflow-hidden text-ellipsis px-2">
+                        <span className="text-14 font-semibold text-neutral-900 text-center whitespace-nowrap overflow-hidden text-ellipsis px-2">
                           Value
                         </span>
-                        <span className="text-14 font-semibold text-[#13162a] text-center"></span>
+                        <span className="text-14 font-semibold text-neutral-900 text-center"></span>
                       </div>
                       {udfData?.inputs?.map((input, index) => (
                         <div
                           key={input._id || index}
-                          className="grid grid-cols-[150px_150px_minmax(0,2fr)_70px_120px_70px] gap-1.5 border-b border-[#b3b5bd] rounded-md">
+                          className="grid grid-cols-[150px_150px_minmax(0,2fr)_70px_120px_70px] gap-1.5 border-b border-neutral-300 rounded-md">
                           <span
                             title={input.var_name}
-                            className="text-14 text-[#13162a] font-normal block p-2 min-h-[38px] border border-[#b3b5bd] rounded-md whitespace-nowrap overflow-hidden text-ellipsis text-center leading-[22px] bg-secondary-300 text-white !border-secondary-300 !font-semibold">
+                            className="text-14 text-neutral-900 font-normal block p-2 min-h-[38px] border border-neutral-300 rounded-md whitespace-nowrap overflow-hidden text-ellipsis text-center leading-[22px] bg-secondary-300 text-white !border-secondary-300 !font-semibold">
                             {input.var_name}
                           </span>
                           <span
                             title={getDataSource(input.ref_name)}
-                            className="text-14 text-[#13162a] font-normal block p-2 min-h-[38px] border border-[#b3b5bd] rounded-md whitespace-nowrap overflow-hidden text-ellipsis text-center leading-[22px]">
+                            className="text-14 text-neutral-900 font-normal block p-2 min-h-[38px] border border-neutral-300 rounded-md whitespace-nowrap overflow-hidden text-ellipsis text-center leading-[22px]">
                             {input.ref_name !== undefined &&
                             input.ref_name !== null
                               ? getDataSource(input.ref_name)
@@ -529,10 +529,10 @@ const TieinDistribusiUdfModal = ({
                           </span>
                           <span
                             title={input.ref_name}
-                            className="text-14 text-[#13162a] font-normal block p-2 min-h-[38px] border border-[#b3b5bd] rounded-md whitespace-nowrap overflow-hidden text-ellipsis text-center leading-[22px] rtl">
+                            className="text-14 text-neutral-900 font-normal block p-2 min-h-[38px] border border-neutral-300 rounded-md whitespace-nowrap overflow-hidden text-ellipsis text-center leading-[22px] rtl">
                             {input.ref_name}
                           </span>
-                          <span className="text-14 text-[#13162a] font-normal block p-2 min-h-[38px] border border-[#b3b5bd] rounded-md whitespace-nowrap overflow-hidden text-ellipsis text-center leading-[22px]">
+                          <span className="text-14 text-neutral-900 font-normal block p-2 min-h-[38px] border border-neutral-300 rounded-md whitespace-nowrap overflow-hidden text-ellipsis text-center leading-[22px]">
                             {input.default_value !== undefined
                               ? input.default_value
                               : "-"}
@@ -543,7 +543,7 @@ const TieinDistribusiUdfModal = ({
                                 ? input.value.toString()
                                 : undefined
                             }
-                            className="text-14 text-[#13162a] font-normal block p-2 min-h-[38px] border border-[#b3b5bd] rounded-md whitespace-nowrap overflow-hidden text-ellipsis text-center leading-[22px]">
+                            className="text-14 text-neutral-900 font-normal block p-2 min-h-[38px] border border-neutral-300 rounded-md whitespace-nowrap overflow-hidden text-ellipsis text-center leading-[22px]">
                             {input.value
                               ? formatNumber(input.value, {
                                   decimals: 2,
@@ -554,12 +554,12 @@ const TieinDistribusiUdfModal = ({
                           <div className="flex justify-center items-center min-w-[70px] !border-none !p-0">
                             <MdEditNote
                               size={28}
-                              className="text-[18px] cursor-pointer text-[#13162a] hover:opacity-70 mt-0.5"
+                              className="text-[18px] cursor-pointer text-neutral-900 hover:opacity-70 mt-0.5"
                               onClick={() => handleEditInput(input)}
                             />
                             <MdDelete
                               size={24}
-                              className="text-[18px] cursor-pointer text-[#13162a] hover:opacity-70"
+                              className="text-[18px] cursor-pointer text-neutral-900 hover:opacity-70"
                               onClick={() => handleDeleteInput(input._id)}
                             />
                           </div>
@@ -595,7 +595,7 @@ const TieinDistribusiUdfModal = ({
                     onClick={handleRunTest}
                     type="primary"
                     loading={testLoading}
-                    className="customSecondaryButton btn-md">
+                    className="bg-transparent border border-neutral-700 rounded px-4 h-9 flex items-center justify-center font-semibold text-neutral-900 hover:bg-secondary-300 hover:border-secondary-300 hover:text-neutral-100 active:bg-neutral-500 active:border-neutral-500 active:text-neutral-900 disabled:bg-neutral-300 disabled:border-neutral-300 disabled:text-[#eeeff1]">
                     Run test
                   </Button>
                 </div>

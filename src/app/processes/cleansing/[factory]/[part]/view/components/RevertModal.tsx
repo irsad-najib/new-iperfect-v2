@@ -161,7 +161,7 @@ const RevertModal: React.FC<RevertModalProps> = ({
         </div>
       </div>
 
-      <div className="text-[14px] text-[#777986] mt-4">
+      <div className="text-[14px] text-neutral-500 mt-4">
         This will revert the modified value back to the original value.
       </div>
     </div>
@@ -173,12 +173,12 @@ const RevertModal: React.FC<RevertModalProps> = ({
   const renderStep2 = () => (
     <div className="px-6 py-4">
       <div className="flex items-start gap-3 mb-6">
-        <MdInfo className="text-[#F47920] flex-shrink-0 mt-1" size={24} />
+        <MdInfo className="text-secondary-300 flex-shrink-0 mt-1" size={24} />
         <div>
           <div className="text-[16px] font-semibold mb-2">
             Are you sure you want to revert this modification?
           </div>
-          <div className="text-[14px] text-[#777986]">
+          <div className="text-[14px] text-neutral-500">
             The value for <span className="font-semibold">{tag}</span> at field{" "}
             <span className="font-semibold">{getFieldDisplayName(field)}</span>{" "}
             will be reverted from{" "}
@@ -188,7 +188,7 @@ const RevertModal: React.FC<RevertModalProps> = ({
         </div>
       </div>
 
-      <div className="bg-[#fff3e0] border-l-4 border-[#F47920] px-4 py-3 rounded">
+      <div className="bg-[#fff3e0] border-l-4 border-secondary-300 px-4 py-3 rounded">
         <div className="text-[14px] text-[#333]">
           <strong>Warning:</strong> This action cannot be undone. The modified
           value will be permanently removed.

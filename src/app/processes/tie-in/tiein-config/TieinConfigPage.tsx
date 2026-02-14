@@ -10,6 +10,7 @@ import {
   Space,
   Modal,
   Tooltip,
+  Dropdown,
 } from "antd";
 import {
   MdArrowForwardIos,
@@ -61,8 +62,9 @@ interface TieinConfigResponse {
 /* ================= PAGE ================= */
 
 const TieinConfigPage = () => {
-  const { selectedDate, formattedDate } = useDateContext();
+  const { selectedDate, formattedDate, setSelectedDate } = useDateContext();
   const router = useRouter();
+  const selectedConfig = "Default Config";
 
   const [loading, setLoading] = useState(false);
   const [tieinConfig, setTieinConfig] = useState<TieinConfigResponse | null>(
@@ -73,6 +75,10 @@ const TieinConfigPage = () => {
   const [configToDelete, setConfigToDelete] = useState<PabrikConfig | null>(
     null,
   );
+
+  const handleRedirect = () => {
+    router.push("/processes/tie-in/ekspor-impor-before-tie-in");
+  };
 
   /* ================= FETCH ================= */
 
@@ -183,6 +189,10 @@ const TieinConfigPage = () => {
     [],
   );
 
+  // const handleLoadConfig = () => {
+  //   setIsLoadConfigModalVisible(true);
+  // };
+
   const mainColumns: ColumnsType<PabrikData> = useMemo(
     () => [
       { title: "No", dataIndex: "key", align: "center" as const, width: "5%" },
@@ -204,29 +214,147 @@ const TieinConfigPage = () => {
     [],
   );
 
-  /* ================= UI ================= */
-
   return (
-    <div className="p-5">
-      <div className="flex justify-between mb-5">
+    <div className="p-4 px-5">
+      <div className="flex justify-between items-center mr-12">
         <Breadcrumb
-          separator={<MdArrowForwardIos />}
+          separator={<MdArrowForwardIos size={16} />}
           items={[
-            { title: <Link href="/processes">Processes</Link> },
-            { title: <Link href="/processes/tie-in">Tie In</Link> },
-            { title: "Set Config" },
+            {
+              title: (
+                <Link
+                  href="/processes"
+                  className="text-neutral-300 hover:text-neutral-900 transition-colors">
+                  <span className="text-2xl font-semibold">Processes</span>
+                </Link>
+              ),
+            },
+            {
+              title: (
+                <Link
+                  href="/processes/tie-in"
+                  className="text-neutral-300 hover:text-neutral-900 transition-colors">
+                  <span className="text-2xl font-semibold">Tie in</span>
+                </Link>
+              ),
+            },
+            {
+              title: (
+                <span className="text-neutral-900 text-2xl font-semibold">
+                  Set Config
+                </span>
+              ),
+            },
           ]}
+          className="[&_.ant-breadcrumb-separator]:mx-1.5 [&_.ant-breadcrumb-separator]:flex [&_.ant-breadcrumb-separator]:items-center"
         />
-
         <Button
-          onClick={() =>
-            router.push("/processes/tie-in/ekspor-impor-before-tie-in")
-          }>
-          Next <HiOutlineArrowNarrowRight />
+          type="default"
+          className="bg-transparent border border-neutral-700 rounded px-4 h-9 flex items-center justify-center font-semibold text-neutral-900 hover:bg-secondary-300 hover:border-secondary-300 hover:text-neutral-100 active:bg-neutral-500 active:border-neutral-500 active:text-neutral-900 disabled:bg-neutral-300 disabled:border-neutral-300 disabled:text-[#eeeff1]"
+          onClick={handleRedirect}>
+          <span className="font-normal">Next: </span>
+          <span className="font-semibold">Kapasitas Ekspor Impor</span>
+          <HiOutlineArrowNarrowRight size={24} className="ml-1" />
         </Button>
       </div>
 
-      <DatePicker disabled value={selectedDate} />
+      <div className="flex justify-between items-center mb-[18px] mt-7">
+        <div>
+          <DatePicker
+            disabled
+            value={selectedDate}
+            onChange={(date) => {
+              if (date) setSelectedDate(date);
+            }}
+            defaultValue={null}
+            format="dddd, DD MMMM YYYY"
+            className="[&_.ant-picker-input>input]:font-semibold"
+          />
+        </div>
+        <div className="flex gap-3 items-center">
+          <span>Config Tie In:</span>
+          <div className="w-fit px-1 py-1.5 min-w-52 border bg-neutral-250 rounded-md border-[#d9d9d9]">
+            {loading ? "Loading..." : tieinConfig?.name || selectedConfig}
+          </div>
+          <Dropdown
+            menu={{
+              items: [
+                {
+                  key: "1",
+                  label: "Load default config",
+                  // disabled: !config,
+                },
+                {
+                  key: "2",
+                  label: "Load other config",
+                  // disabled: !config,
+                },
+              ],
+            }}>
+            <Button
+              type="default"
+              loading={loading}
+              // onClick={handleLoadConfig}
+              className="bg-transparent border border-neutral-700 rounded px-4 h-9 flex items-center justify-center font-semibold text-neutral-900 hover:bg-secondary-300 hover:border-secondary-300 hover:text-neutral-100 active:bg-neutral-500 active:border-neutral-500 active:text-neutral-900 disabled:bg-neutral-300 disabled:border-neutral-300 disabled:text-[#eeeff1]"
+              // disabled={!dailyRunner?.pipeline_id}
+            >
+              Load config
+              <MdArrowForwardIos
+                size={18}
+                style={{ transform: "rotate(90deg)" }}
+              />
+            </Button>
+          </Dropdown>
+
+          <Dropdown
+            menu={{
+              items: [
+                {
+                  key: "1",
+                  label: "Save as new default",
+                  // disabled: !pipeline,
+                  // onClick: handleSetDefault,
+                },
+                {
+                  key: "2",
+                  label: "Save as new tie in config",
+                  // disabled: !pipeline,
+                },
+              ],
+            }}>
+            <Button
+              type="primary"
+              className="bg-primary-300 border-primary-300 rounded px-4 h-9 flex items-center justify-center font-semibold text-neutral-100 hover:bg-primary-700 hover:border-primary-700 active:bg-neutral-900 active:border-neutral-900 disabled:bg-neutral-300 disabled:border-neutral-300">
+              Save
+              <MdArrowForwardIos
+                size={18}
+                style={{ transform: "rotate(90deg)" }}
+              />
+            </Button>
+          </Dropdown>
+          <Button
+            type="default"
+            loading={loading}
+            // onClick={handleDeleteConfig}
+            // disabled={!dailyRunner?.pipeline_id}
+          >
+            <MdDelete size={24} />
+          </Button>
+          {/* <Button
+            type="primary"
+            className="bg-primary-300 hover:bg-primary-500! border-0 h-11 text-20 rounded-lg font-semibold flex items-center gap-2"
+            onClick={() => router.push("/processes/tie-in/tiein-config")}>
+            <MdSettings size={28} />
+            Set tie in config
+          </Button>
+          <Button
+            type="primary"
+            className="bg-danger hover:bg-danger! border-0 h-11 text-20 rounded-lg font-semibold flex items-center gap-2">
+            <MdRestartAlt size={28} />
+            Reset all
+          </Button> */}
+        </div>
+      </div>
 
       <Table
         rowKey={(r) => r.key}

@@ -10,14 +10,14 @@ import {
 } from "react-icons/hi";
 import api from "@/utils/axios";
 import { useDateContext } from "@/context/DateContext";
-import AddInputModal from "@/components/processes/tie-in/AddInputModal";
+import AddInputModal from "@/components/processes/AddInputModal";
 import { formatNumber } from "@/utils/numberFormat";
 // TODO: Create AddUDFModal component
 import AddUDFModal from "@/components/processes/cleansing/AddUDFModal";
 import { executeUdf, UdfResult } from "@/utils/udfUtils";
 import RevertModal from "./RevertModal";
 import { getDataSource } from "@/utils/dataSourceUtils";
-import { CodeEditor } from "@/components/processes/tie-in/CodeEditor";
+import { CodeEditor } from "@/components/processes/CodeEditor";
 
 interface UDFInput {
   _id: string;
@@ -365,31 +365,31 @@ const TieinUdfModal = ({
                   <span className="text-black text-[16.8px] font-semibold">
                     Material: {""}
                   </span>
-                  <span className="bg-[#e6e6e6] px-3 py-1 ml-2 mr-[18px] rounded-md text-[#13162a] text-[16.8px] font-normal">
+                  <span className="bg-neutral-250 px-3 py-1 ml-2 mr-[18px] rounded-md text-neutral-900 text-[16.8px] font-normal">
                     {columnName}
                   </span>
                   <span className="text-black text-[16.8px] font-semibold">
                     Unit:{""}
                   </span>
-                  <span className="bg-[#e6e6e6] px-3 py-1 ml-2 mr-[18px] rounded-md text-[#13162a] text-[16.8px] font-normal">
+                  <span className="bg-neutral-250 px-3 py-1 ml-2 mr-[18px] rounded-md text-neutral-900 text-[16.8px] font-normal">
                     {cellUnit}
                   </span>
                   <span className="text-black text-[16.8px] font-semibold">
                     Factory:{""}
                   </span>
-                  <span className="bg-[#e6e6e6] px-3 py-1 ml-2 mr-[18px] rounded-md text-[#13162a] text-[16.8px] font-normal">
+                  <span className="bg-neutral-250 px-3 py-1 ml-2 mr-[18px] rounded-md text-neutral-900 text-[16.8px] font-normal">
                     {factory}
                   </span>
                   <span className="text-black text-[16.8px] font-semibold">
                     Activity:{""}
                   </span>
-                  <span className="bg-[#e6e6e6] px-3 py-1 ml-2 mr-[18px] rounded-md text-[#13162a] text-[16.8px] font-normal">
+                  <span className="bg-neutral-250 px-3 py-1 ml-2 mr-[18px] rounded-md text-neutral-900 text-[16.8px] font-normal">
                     {activity}
                   </span>
                   <span className="text-black text-[16.8px] font-semibold">
                     Cell result:{""}
                   </span>
-                  <span className="bg-[#e6e6e6] px-3 py-1 ml-2 mr-[18px] rounded-md text-[#13162a] text-[16.8px] font-normal">
+                  <span className="bg-neutral-250 px-3 py-1 ml-2 mr-[18px] rounded-md text-neutral-900 text-[16.8px] font-normal">
                     {typeof udfCell === "number"
                       ? formatNumber(udfCell, { decimals: 2, locale: "id-ID" })
                       : udfCell}
@@ -400,12 +400,12 @@ const TieinUdfModal = ({
                     <>
                       <Button
                         onClick={handleResetUdf}
-                        className="customSecondaryButton">
+                        className="bg-transparent border border-neutral-700 rounded px-4 h-9 flex items-center justify-center font-semibold text-neutral-900 hover:bg-secondary-300 hover:border-secondary-300 hover:text-neutral-100 active:bg-neutral-500 active:border-neutral-500 active:text-neutral-900 disabled:bg-neutral-300 disabled:border-neutral-300 disabled:text-[#eeeff1]">
                         Reset UDF
                       </Button>
                       <Button
                         onClick={handleLoadTemplate}
-                        className="customSecondaryButton">
+                        className="bg-transparent border border-neutral-700 rounded px-4 h-9 flex items-center justify-center font-semibold text-neutral-900 hover:bg-secondary-300 hover:border-secondary-300 hover:text-neutral-100 active:bg-neutral-500 active:border-neutral-500 active:text-neutral-900 disabled:bg-neutral-300 disabled:border-neutral-300 disabled:text-[#eeeff1]">
                         Load template
                       </Button>
                     </>
@@ -422,16 +422,20 @@ const TieinUdfModal = ({
                         </span>
                         <div style={{ display: "flex" }}>
                           <Button
-                            className={`customSecondaryButton ${
-                              localTab === "before" ? "activeButton" : ""
+                            className={`bg-transparent border rounded px-4 h-9 flex items-center justify-center font-semibold hover:bg-secondary-300 hover:border-secondary-300 hover:text-neutral-100 active:bg-neutral-500 active:border-neutral-500 disabled:bg-neutral-300 disabled:border-neutral-300 disabled:text-[#eeeff1] ${
+                              localTab === "before"
+                                ? "bg-secondary-300 border-secondary-300 border-2 text-neutral-100"
+                                : "border-neutral-700 text-neutral-900"
                             }`}
                             onClick={() => setLocalTab("before")}>
                             <HiLockClosed size={18} />
                             Before
                           </Button>
                           <Button
-                            className={`customSecondaryButton ${
-                              localTab === "adjusted" ? "activeButton" : ""
+                            className={`bg-transparent border rounded px-4 h-9 flex items-center justify-center font-semibold hover:bg-secondary-300 hover:border-secondary-300 hover:text-neutral-100 active:bg-neutral-500 active:border-neutral-500 disabled:bg-neutral-300 disabled:border-neutral-300 disabled:text-[#eeeff1] ${
+                              localTab === "adjusted"
+                                ? "bg-secondary-300 border-secondary-300 border-2 text-neutral-100"
+                                : "border-neutral-700 text-neutral-900"
                             }`}
                             onClick={() => setLocalTab("adjusted")}>
                             <HiOutlineAdjustments size={18} />
@@ -440,7 +444,7 @@ const TieinUdfModal = ({
                         </div>
                       </div>
                       <Button
-                        className="customOtherButton"
+                        className="bg-transparent border border-neutral-700 rounded px-4 h-9 flex items-center justify-center font-semibold text-neutral-900 hover:bg-secondary-300 hover:border-secondary-300 hover:text-neutral-100 active:bg-neutral-500 active:border-neutral-500 active:text-neutral-900 disabled:bg-neutral-300 disabled:border-neutral-300 disabled:text-[#eeeff1]"
                         onClick={handleRevertClick}>
                         Revert UDF
                       </Button>
@@ -450,7 +454,7 @@ const TieinUdfModal = ({
                     type="primary"
                     onClick={handleUpdateClick}
                     loading={loading}
-                    className="customPrimaryButton"
+                    className="bg-primary-300 border-primary-300 rounded px-4 h-9 flex items-center justify-center font-semibold text-neutral-100 hover:bg-primary-700 hover:border-primary-700 active:bg-neutral-900 active:border-neutral-900 disabled:bg-neutral-300 disabled:border-neutral-300"
                     disabled={adjusted && activeTab === "before"}>
                     Update UDF
                   </Button>
@@ -515,7 +519,7 @@ const TieinUdfModal = ({
                     )}
                   </span>
                 </div>
-                <span className="bg-[#e6e6e6] px-3 py-1 ml-2 mr-[18px] rounded-md text-[#13162a] text-[16.8px] font-normal">
+                <span className="bg-neutral-250 px-3 py-1 ml-2 mr-[18px] rounded-md text-neutral-900 text-[16.8px] font-normal">
                   Last saved:{" "}
                   <span className="font-semibold">2 minutes ago</span>
                 </span>
@@ -528,13 +532,13 @@ const TieinUdfModal = ({
                     <h3>Inputs</h3>
                     <Button
                       onClick={() => setShowAddInputModal(true)}
-                      className="customSecondaryButton btn-md"
+                      className="bg-transparent border border-neutral-700 rounded px-4 h-9 flex items-center justify-center font-semibold text-neutral-900 hover:bg-secondary-300 hover:border-secondary-300 hover:text-neutral-100 active:bg-neutral-500 active:border-neutral-500 active:text-neutral-900 disabled:bg-neutral-300 disabled:border-neutral-300 disabled:text-[#eeeff1]"
                       disabled={adjusted && activeTab === "before"}>
                       Add input
                     </Button>
                   </div>
-                  <div className="bg-white border border-[#b3b5bd] rounded-lg p-4 h-[600px] max-h-max overflow-hidden">
-                    <div className="flex flex-col gap-0.5 h-full overflow-y-auto [className={styles.inputList}::-webkit-scrollbar]:w-2 [className={styles.inputList}::-webkit-scrollbar-track]:bg-[#f1f1f1] [className={styles.inputList}::-webkit-scrollbar-track]:rounded [className={styles.inputList}::-webkit-scrollbar-thumb]:bg-[#b3b5bd] [className={styles.inputList}::-webkit-scrollbar-thumb]:rounded [className={styles.inputList}::-webkit-scrollbar-thumb:hover]:bg-[#9598a1]">
+                  <div className="bg-white border border-neutral-300 rounded-lg p-4 h-[600px] max-h-max overflow-hidden">
+                    <div className="flex flex-col gap-0.5 h-full overflow-y-auto [className={styles.inputList}::-webkit-scrollbar]:w-2 [className={styles.inputList}::-webkit-scrollbar-track]:bg-[#f1f1f1] [className={styles.inputList}::-webkit-scrollbar-track]:rounded [className={styles.inputList}::-webkit-scrollbar-thumb]:bg-neutral-300 [className={styles.inputList}::-webkit-scrollbar-thumb]:rounded [className={styles.inputList}::-webkit-scrollbar-thumb:hover]:bg-[#9598a1]">
                       <div className="grid grid-cols-[150px_150px_minmax(0,2fr)_70px_120px_70px] gap-1.5 pb-2.5 sticky top-0 bg-white z-10">
                         <span>Nama</span>
                         <span>Data Path</span>
@@ -585,7 +589,7 @@ const TieinUdfModal = ({
                           <div className="flex justify-center items-center min-w-[70px] border-none p-0">
                             <MdEditNote
                               size={28}
-                              className={`text-[#13162a] cursor-pointer hover:opacity-70 mt-0.5 ${
+                              className={`text-neutral-900 cursor-pointer hover:opacity-70 mt-0.5 ${
                                 adjusted && activeTab === "before"
                                   ? "opacity-70"
                                   : ""
@@ -598,7 +602,7 @@ const TieinUdfModal = ({
                             />
                             <MdDelete
                               size={24}
-                              className={`text-[#13162a] cursor-pointer hover:opacity-70 ${
+                              className={`text-neutral-900 cursor-pointer hover:opacity-70 ${
                                 adjusted && activeTab === "before"
                                   ? "opacity-70"
                                   : ""
@@ -641,7 +645,7 @@ const TieinUdfModal = ({
                   <Button
                     onClick={handleRunTest}
                     type="primary"
-                    className="customSecondaryButton btn-md"
+                    className="bg-transparent border border-neutral-700 rounded px-4 h-9 flex items-center justify-center font-semibold text-neutral-900 hover:bg-secondary-300 hover:border-secondary-300 hover:text-neutral-100 active:bg-neutral-500 active:border-neutral-500 active:text-neutral-900 disabled:bg-neutral-300 disabled:border-neutral-300 disabled:text-[#eeeff1]"
                     loading={testLoading}>
                     Run test
                   </Button>
@@ -680,7 +684,7 @@ const TieinUdfModal = ({
                 {activeTestTab === "debug" && (
                   <div className="flex flex-col gap-2 rounded-lg flex-grow py-1">
                     <div className="rounded overflow-hidden">
-                      <div className="bg-[#e6e6e6] px-4 py-2 text-[16.8px] font-semibold text-center">
+                      <div className="bg-neutral-250 px-4 py-2 text-[16.8px] font-semibold text-center">
                         STDOUT
                       </div>
                       <div className="bg-[#eeeff1] p-4 h-[36rem] overflow-auto">

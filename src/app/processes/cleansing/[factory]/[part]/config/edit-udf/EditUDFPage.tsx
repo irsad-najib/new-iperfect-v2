@@ -376,7 +376,7 @@ const EditUDFPage: React.FC = () => {
           />
           <Button
             type="default"
-            className="bg-[#f3f4f8] border-[#404252] w-full sm:w-auto"
+            className="bg-neutral-100 border-neutral-700 w-full sm:w-auto"
             onClick={handleRunTestClick}
             loading={isTestLoading}>
             Run test
@@ -428,7 +428,7 @@ const EditUDFPage: React.FC = () => {
       <Modal
         title={
           <div className="flex items-center gap-2">
-            <MdInfo className="text-[#F47920]" size={32} />
+            <MdInfo className="text-secondary-300" size={32} />
             <span>You are about to update the current UDF</span>
           </div>
         }
@@ -459,7 +459,7 @@ const EditUDFPage: React.FC = () => {
             </h2>
             <div className="flex items-center gap-3">
               <span className="text-sm font-semibold">Recent tested tag:</span>
-              <div className="bg-[#e6e6e6] px-4 py-2 rounded-lg text-sm">
+              <div className="bg-neutral-250 px-4 py-2 rounded-lg text-sm">
                 {lastTestedTag || "none"}
               </div>
             </div>
@@ -475,7 +475,7 @@ const EditUDFPage: React.FC = () => {
           <div className="mt-2.5 rounded-lg">
             <span className="text-[20.16px] font-semibold">Test Result</span>
             <Table
-              className="bg-white mt-[13px] [&_.ant-table-thead>tr>th]:bg-[#e6e6e6] [&_.ant-table-thead>tr>th]:text-center [&_.ant-table-thead>tr>th]:p-2 [&_.ant-table-thead>tr>th]:text-[16.8px] [&_.ant-table-thead>tr>th]:font-semibold [&_.ant-table-tbody>tr>td]:text-center [&_.ant-table-tbody>tr>td]:p-2 [&_.ant-table-tbody>tr>td]:text-[16.8px] [&_.ant-table-tbody>tr>td]:bg-[#eeeff1] [&_.ant-table-measure-row]:hidden"
+              className="bg-white mt-[13px] [&_.ant-table-thead>tr>th]:bg-neutral-250 [&_.ant-table-thead>tr>th]:text-center [&_.ant-table-thead>tr>th]:p-2 [&_.ant-table-thead>tr>th]:text-[16.8px] [&_.ant-table-thead>tr>th]:font-semibold [&_.ant-table-tbody>tr>td]:text-center [&_.ant-table-tbody>tr>td]:p-2 [&_.ant-table-tbody>tr>td]:text-[16.8px] [&_.ant-table-tbody>tr>td]:bg-[#eeeff1] [&_.ant-table-measure-row]:hidden"
               columns={columns}
               dataSource={transformTestResults()}
               pagination={false}
@@ -490,7 +490,7 @@ const EditUDFPage: React.FC = () => {
 
           {/* STDOUT Section */}
           <div className="rounded overflow-hidden mb-4">
-            <div className="bg-[#e6e6e6] px-4 py-2 text-[16.8px] font-semibold text-center">
+            <div className="bg-neutral-250 px-4 py-2 text-[16.8px] font-semibold text-center">
               STDOUT
             </div>
             <div className="bg-[#eeeff1] p-4">
@@ -502,7 +502,7 @@ const EditUDFPage: React.FC = () => {
 
           {/* Debug Logs Table */}
           <Table
-            className="bg-white [&_.ant-table-thead>tr>th]:bg-[#e6e6e6] [&_.ant-table-thead>tr>th]:text-center [&_.ant-table-thead>tr>th]:p-2 [&_.ant-table-thead>tr>th]:text-[16.8px] [&_.ant-table-thead>tr>th]:font-semibold [&_.ant-table-tbody>tr>td]:text-center [&_.ant-table-tbody>tr>td]:p-2 [&_.ant-table-tbody>tr>td]:text-[16.8px] [&_.ant-table-tbody>tr>td]:bg-[#eeeff1]"
+            className="bg-white [&_.ant-table-thead>tr>th]:bg-neutral-250 [&_.ant-table-thead>tr>th]:text-center [&_.ant-table-thead>tr>th]:p-2 [&_.ant-table-thead>tr>th]:text-[16.8px] [&_.ant-table-thead>tr>th]:font-semibold [&_.ant-table-tbody>tr>td]:text-center [&_.ant-table-tbody>tr>td]:p-2 [&_.ant-table-tbody>tr>td]:text-[16.8px] [&_.ant-table-tbody>tr>td]:bg-[#eeeff1]"
             columns={[
               {
                 title: "Level",

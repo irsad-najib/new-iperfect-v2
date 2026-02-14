@@ -24,7 +24,7 @@ import api from "@/utils/axios";
 import { useDateContext } from "@/context/DateContext";
 import { formatNumber } from "@/utils/numberFormat";
 import RevertModal from "./RevertModal";
-import { CodeEditor } from "@/components/processes/tie-in/CodeEditor";
+import { CodeEditor } from "@/components/processes/CodeEditor";
 import { toSnakeCase } from "@/utils/stringUtils";
 
 interface UDFInput {
@@ -360,7 +360,7 @@ const UdfAdjustmentModal = ({
 
       // Table row as collapse header
       const tableRowHeader = (
-        <div className="grid grid-cols-[160px_160px_65px_110px_160px_65px_110px] items-center w-full px-4 py-3 [className={styles.tableRowHeader}_span]:font-semibold [className={styles.tableRowHeader}_span]:text-sm [className={styles.tableRowHeader}_span]:text-[#13162a] [className={styles.tableRowHeader}_span]:text-center">
+        <div className="grid grid-cols-[160px_160px_65px_110px_160px_65px_110px] items-center w-full px-4 py-3 [className={styles.tableRowHeader}_span]:font-semibold [className={styles.tableRowHeader}_span]:text-sm [className={styles.tableRowHeader}_span]:text-neutral-900 [className={styles.tableRowHeader}_span]:text-center">
           <span>{name}</span>
           <div
             style={{
@@ -426,7 +426,7 @@ const UdfAdjustmentModal = ({
         key: groupName,
         label: tableRowHeader,
         children: (
-          <div className="grid grid-cols-2 gap-4 w-full max-h-130 overflow-x-auto overflow-y-auto rounded-lg p-4 bg-[#fafafa] [className={styles.tableContainer}_table]:w-full [className={styles.tableContainer}_table]:border-collapse [className={styles.tableContainer}_table]:rounded-lg [className={styles.tableContainer}_table]:overflow-hidden [className={styles.tableContainer}_table]:shadow-[0_2px_4px_rgba(0,0,0,0.1)] [className={styles.tableContainer}_th]:p-2 [className={styles.tableContainer}_th]:text-center [className={styles.tableContainer}_th]:border [className={styles.tableContainer}_th]:border-[#e6e6e6] [className={styles.tableContainer}_td]:p-2 [className={styles.tableContainer}_td]:text-center [className={styles.tableContainer}_td]:border [className={styles.tableContainer}_td]:border-[#e6e6e6]">
+          <div className="grid grid-cols-2 gap-4 w-full max-h-130 overflow-x-auto overflow-y-auto rounded-lg p-4 bg-[#fafafa] [className={styles.tableContainer}_table]:w-full [className={styles.tableContainer}_table]:border-collapse [className={styles.tableContainer}_table]:rounded-lg [className={styles.tableContainer}_table]:overflow-hidden [className={styles.tableContainer}_table]:shadow-[0_2px_4px_rgba(0,0,0,0.1)] [className={styles.tableContainer}_th]:p-2 [className={styles.tableContainer}_th]:text-center [className={styles.tableContainer}_th]:border [className={styles.tableContainer}_th]:border-neutral-250 [className={styles.tableContainer}_td]:p-2 [className={styles.tableContainer}_td]:text-center [className={styles.tableContainer}_td]:border [className={styles.tableContainer}_td]:border-neutral-250">
             <div style={{ flex: 1 }}>
               <table style={{ width: "100%", borderCollapse: "collapse" }}>
                 <thead>
@@ -462,7 +462,7 @@ const UdfAdjustmentModal = ({
                     // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     importOutputs.map((output: any, outputIndex: number) => (
                       <tr key={output._id || outputIndex}>
-                        <td className="bg-[#f47920] text-white font-semibold flex items-center justify-between px-3 min-w-0">
+                        <td className="bg-secondary-300 text-white font-semibold flex items-center justify-between px-3 min-w-0">
                           <Tooltip title={output.var_name} placement="topLeft">
                             <span className="max-w-[100px] whitespace-nowrap overflow-hidden text-ellipsis inline-block align-middle">
                               {output.var_name}
@@ -539,7 +539,7 @@ const UdfAdjustmentModal = ({
                     // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     exportOutputs.map((output: any, outputIndex: number) => (
                       <tr key={output._id || outputIndex}>
-                        <td className="bg-[#1268b3] text-white font-semibold p-2 px-3 flex items-center justify-between min-w-0">
+                        <td className="bg-primary-300 text-white font-semibold p-2 px-3 flex items-center justify-between min-w-0">
                           <Tooltip title={output.var_name} placement="topLeft">
                             <span className="max-w-[100px] whitespace-nowrap overflow-hidden text-ellipsis inline-block align-middle">
                               {output.var_name}
@@ -626,7 +626,7 @@ const UdfAdjustmentModal = ({
                     <span className="text-black text-[16.8px] font-semibold">
                       Material: {""}
                     </span>
-                    <span className="bg-[#e6e6e6] px-3 py-1 ml-2 rounded-md text-[#13162a] text-[16.8px] font-normal">
+                    <span className="bg-neutral-250 px-3 py-1 ml-2 rounded-md text-neutral-900 text-[16.8px] font-normal">
                       {material}
                     </span>
                   </div>
@@ -634,7 +634,7 @@ const UdfAdjustmentModal = ({
                     <span className="text-black text-[16.8px] font-semibold">
                       Total Imports:{""}
                     </span>
-                    <span className="bg-[#e6e6e6] px-3 py-1 ml-2 rounded-md text-[#13162a] text-[16.8px] font-normal">
+                    <span className="bg-neutral-250 px-3 py-1 ml-2 rounded-md text-neutral-900 text-[16.8px] font-normal">
                       {cellUnit}
                     </span>
                   </div>
@@ -642,7 +642,7 @@ const UdfAdjustmentModal = ({
                     <span className="text-black text-[16.8px] font-semibold">
                       Total Exports:{""}
                     </span>
-                    <span className="bg-[#e6e6e6] px-3 py-1 ml-2 rounded-md text-[#13162a] text-[16.8px] font-normal">
+                    <span className="bg-neutral-250 px-3 py-1 ml-2 rounded-md text-neutral-900 text-[16.8px] font-normal">
                       {factory}
                     </span>
                   </div>
@@ -711,7 +711,7 @@ const UdfAdjustmentModal = ({
                         type="default"
                         loading={loading}
                         // onClick={handleLoadConfig}
-                        className="customOtherButton"
+                        className="bg-transparent border border-neutral-700 rounded px-4 h-9 flex items-center justify-center font-semibold text-neutral-900 hover:bg-secondary-300 hover:border-secondary-300 hover:text-neutral-100 active:bg-neutral-500 active:border-neutral-500 active:text-neutral-900 disabled:bg-neutral-300 disabled:border-neutral-300 disabled:text-[#eeeff1]"
                         // disabled={!dailyRunner?.pipeline_id}
                       >
                         Save as
@@ -722,7 +722,7 @@ const UdfAdjustmentModal = ({
                       </Button>
                     </Dropdown>
                     <Button
-                      className="customOtherButton"
+                      className="bg-transparent border border-neutral-700 rounded px-4 h-9 flex items-center justify-center font-semibold text-neutral-900 hover:bg-secondary-300 hover:border-secondary-300 hover:text-neutral-100 active:bg-neutral-500 active:border-neutral-500 active:text-neutral-900 disabled:bg-neutral-300 disabled:border-neutral-300 disabled:text-[#eeeff1]"
                       onClick={handleRevertClick}>
                       Revert
                     </Button>
@@ -731,7 +731,7 @@ const UdfAdjustmentModal = ({
                     type="primary"
                     onClick={() => handleUpdateClick(true)}
                     loading={loading}
-                    className="customPrimaryButton"
+                    className="bg-primary-300 border-primary-300 rounded px-4 h-9 flex items-center justify-center font-semibold text-neutral-100 hover:bg-primary-700 hover:border-primary-700 active:bg-neutral-900 active:border-neutral-900 disabled:bg-neutral-300 disabled:border-neutral-300"
                     disabled={adjusted && activeTab === "before"}>
                     <MdPlayArrow size={22} />
                     Run adjustment
@@ -740,7 +740,7 @@ const UdfAdjustmentModal = ({
                     type="primary"
                     onClick={() => handleUpdateClick(false)}
                     loading={loading}
-                    className="customPrimaryButton"
+                    className="bg-primary-300 border-primary-300 rounded px-4 h-9 flex items-center justify-center font-semibold text-neutral-100 hover:bg-primary-700 hover:border-primary-700 active:bg-neutral-900 active:border-neutral-900 disabled:bg-neutral-300 disabled:border-neutral-300"
                     disabled={adjusted && activeTab === "before"}>
                     Update UDF
                   </Button>
@@ -766,9 +766,9 @@ const UdfAdjustmentModal = ({
                       className={
                         unbalance && max
                           ? unbalance <= max
-                            ? "bg-[#00ad17] text-white px-3 py-1 ml-2 rounded-md text-[16.8px] font-normal"
-                            : "bg-[#e20301] text-white px-3 py-1 ml-2 rounded-md text-[16.8px] font-normal flex items-center justify-center"
-                          : "bg-[#e6e6e6] text-[#13162a] px-3 py-1 ml-2 rounded-md text-[16.8px] font-normal"
+                            ? "bg-success text-white px-3 py-1 ml-2 rounded-md text-[16.8px] font-normal"
+                            : "bg-danger text-white px-3 py-1 ml-2 rounded-md text-[16.8px] font-normal flex items-center justify-center"
+                          : "bg-neutral-250 text-neutral-900 px-3 py-1 ml-2 rounded-md text-[16.8px] font-normal"
                       }>
                       {typeof unbalance === "number" && formatNumber(unbalance)}
                       {unbalance && max && unbalance > max ? (
@@ -807,9 +807,9 @@ const UdfAdjustmentModal = ({
                       className={
                         unbalance && max
                           ? unbalance <= max
-                            ? "bg-[#00ad17] text-white px-3 py-1 ml-2 rounded-md text-[16.8px] font-normal"
-                            : "bg-[#e20301] text-white px-3 py-1 ml-2 rounded-md text-[16.8px] font-normal flex items-center justify-center"
-                          : "bg-[#e6e6e6] text-[#13162a] px-3 py-1 ml-2 rounded-md text-[16.8px] font-normal"
+                            ? "bg-success text-white px-3 py-1 ml-2 rounded-md text-[16.8px] font-normal"
+                            : "bg-danger text-white px-3 py-1 ml-2 rounded-md text-[16.8px] font-normal flex items-center justify-center"
+                          : "bg-neutral-250 text-neutral-900 px-3 py-1 ml-2 rounded-md text-[16.8px] font-normal"
                       }>
                       {typeof max === "number" && formatNumber(max)}
                       {unbalance && max && unbalance > max ? (
@@ -830,7 +830,7 @@ const UdfAdjustmentModal = ({
                     </span>
                   </div>
                 </div>
-                <span className="bg-[#e6e6e6] px-3 py-1 ml-2 rounded-md text-[#13162a] text-[16.8px] font-normal">
+                <span className="bg-neutral-250 px-3 py-1 ml-2 rounded-md text-neutral-900 text-[16.8px] font-normal">
                   Last saved:{" "}
                   <span className="font-semibold">2 minutes ago</span>
                 </span>
@@ -839,7 +839,7 @@ const UdfAdjustmentModal = ({
             <div className="flex gap-6 w-full mt-[18px]">
               <div className="flex-1 min-w-0 max-h-172 overflow-y-auto [className={styles.leftSection}_.ant-collapse>.ant-collapse-item>.ant-collapse-header]:flex [className={styles.leftSection}_.ant-collapse>.ant-collapse-item>.ant-collapse-header]:items-center">
                 {/* Table header */}
-                <div className="grid grid-cols-[190px_160px_65px_110px_160px_64px_110px] items-center w-full px-4 py-3 bg-[#f1f2f3] border-b border-[#e6e6e6] [className={styles.tableHeader}_span]:font-semibold [className={styles.tableHeader}_span]:text-sm [className={styles.tableHeader}_span]:text-[#13162a] [className={styles.tableHeader}_span]:text-center">
+                <div className="grid grid-cols-[190px_160px_65px_110px_160px_64px_110px] items-center w-full px-4 py-3 bg-[#f1f2f3] border-b border-neutral-250 [className={styles.tableHeader}_span]:font-semibold [className={styles.tableHeader}_span]:text-sm [className={styles.tableHeader}_span]:text-neutral-900 [className={styles.tableHeader}_span]:text-center">
                   <span>Fac.</span>
                   <span>Impor Needs</span>
                   <span>%</span>
@@ -853,7 +853,7 @@ const UdfAdjustmentModal = ({
                 <div className="max-h-172 overflow-y-auto">
                   <Collapse
                     items={collapseItems}
-                    className="[className={styles.customTableCollapse}_.ant-collapse-item]:border [className={styles.customTableCollapse}_.ant-collapse-item]:border-[#e6e6e6] [className={styles.customTableCollapse}_.ant-collapse-item]:mb-2 [className={styles.customTableCollapse}_.ant-collapse-item]:rounded-lg [className={styles.customTableCollapse}_.ant-collapse-header]:p-0 [className={styles.customTableCollapse}_.ant-collapse-header]:bg-[#fafafa] [className={styles.customTableCollapse}_.ant-collapse-header]:rounded-t-lg [className={styles.customTableCollapse}_.ant-collapse-content]:border-t [className={styles.customTableCollapse}_.ant-collapse-content]:border-[#e6e6e6] [className={styles.customTableCollapse}_.ant-collapse-content-box]:p-0"
+                    className="[className={styles.customTableCollapse}_.ant-collapse-item]:border [className={styles.customTableCollapse}_.ant-collapse-item]:border-neutral-250 [className={styles.customTableCollapse}_.ant-collapse-item]:mb-2 [className={styles.customTableCollapse}_.ant-collapse-item]:rounded-lg [className={styles.customTableCollapse}_.ant-collapse-header]:p-0 [className={styles.customTableCollapse}_.ant-collapse-header]:bg-[#fafafa] [className={styles.customTableCollapse}_.ant-collapse-header]:rounded-t-lg [className={styles.customTableCollapse}_.ant-collapse-content]:border-t [className={styles.customTableCollapse}_.ant-collapse-content]:border-neutral-250 [className={styles.customTableCollapse}_.ant-collapse-content-box]:p-0"
                     ghost
                     activeKey={activeCollapseKeys}
                     onChange={handleCollapseChange}
@@ -925,7 +925,7 @@ const UdfAdjustmentModal = ({
                 {activeTestTab === "debug" && (
                   <div className="flex flex-col gap-2 rounded-lg grow py-1">
                     <div className="rounded overflow-hidden">
-                      <div className="bg-[#e6e6e6] px-4 py-2 text-[16.8px] font-semibold text-center">
+                      <div className="bg-neutral-250 px-4 py-2 text-[16.8px] font-semibold text-center">
                         STDOUT
                       </div>
                       <div className="bg-[#eeeff1] p-4 h-152 overflow-auto [className={styles.stdoutContent}_table]:w-full [className={styles.stdoutContent}_table]:border-collapse [className={styles.stdoutContent}_table]:mt-2.5 [className={styles.stdoutContent}_th]:border [className={styles.stdoutContent}_th]:border-[#ddd] [className={styles.stdoutContent}_th]:p-2 [className={styles.stdoutContent}_th]:text-left [className={styles.stdoutContent}_th]:bg-[#f5f5f5] [className={styles.stdoutContent}_th]:font-semibold [className={styles.stdoutContent}_td]:border [className={styles.stdoutContent}_td]:border-[#ddd] [className={styles.stdoutContent}_td]:p-2 [className={styles.stdoutContent}_td]:text-left [className={styles.stdoutContent}_td]:break-words [className={styles.stdoutContent}_tr:nth-child(even)]:bg-[#f9f9f9]">

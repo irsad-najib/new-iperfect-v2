@@ -408,7 +408,7 @@ const DataTable: React.FC<DataTableProps> = ({
 
   return (
     <Table
-      className="bg-white [&_.ant-table-thead>tr>th]:bg-[#e6e6e6] [&_.ant-table-thead>tr>th]:text-center [&_.ant-table-thead>tr>th]:p-2 [&_.ant-table-thead>tr>th]:text-[16.8px] [&_.ant-table-thead>tr>th]:font-semibold [&_.ant-table-tbody>tr>td]:p-0 [&_.ant-table-measure-row]:hidden"
+      className="bg-white [&_.ant-table-thead>tr>th]:bg-neutral-250 [&_.ant-table-thead>tr>th]:text-center [&_.ant-table-thead>tr>th]:p-2 [&_.ant-table-thead>tr>th]:text-[16.8px] [&_.ant-table-thead>tr>th]:font-semibold [&_.ant-table-tbody>tr>td]:p-0 [&_.ant-table-measure-row]:hidden"
       columns={allColumns}
       dataSource={transformData()}
       pagination={false}

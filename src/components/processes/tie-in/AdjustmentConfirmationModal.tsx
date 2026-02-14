@@ -38,7 +38,7 @@ const AdjustmentConfirmationModal: React.FC<
           key="confirm"
           type="primary"
           onClick={isRevert ? onRevert : onConfirm}
-          className="customPrimaryButton"
+          className="bg-primary-300 border-primary-300 rounded px-4 h-9 flex items-center justify-center font-semibold text-neutral-100 hover:bg-primary-700 hover:border-primary-700 active:bg-neutral-900 active:border-neutral-900 disabled:bg-neutral-300 disabled:border-neutral-300"
           icon={
             isRevert ? (
               <MdRestartAlt size={18} />

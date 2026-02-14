@@ -123,7 +123,7 @@ const DailyRoutinePage: React.FC = () => {
     if (status === "Unavailable") {
       return (
         <div
-          className={`${baseClass} bg-[#EEEFF1] text-neutral-300 border-2 border-neutral-300`}></div>
+          className={`${baseClass} bg-[#eeeff1] text-neutral-300 border-2 border-neutral-300`}></div>
       );
     }
     return null;

@@ -63,8 +63,8 @@ const RevertModal: React.FC<RevertModalProps> = memo(
           `${
             all ? "All Tie In" : "This"
           } UDF will be reverted to previous version before adjustment.`}
-        {/* Tailwind: bg-[#f3f4f8] flex p-1.5 items-center gap-1 rounded mt-2 */}
-        <div className="bg-[#f3f4f8] flex p-1.5 items-center gap-1 rounded mt-2">
+        {/* Tailwind: bg-neutral-100 flex p-1.5 items-center gap-1 rounded mt-2 */}
+        <div className="bg-neutral-100 flex p-1.5 items-center gap-1 rounded mt-2">
           <MdInfo color="#F47920" size={22} />
           <span>You can&apos;t undo this process</span>
         </div>

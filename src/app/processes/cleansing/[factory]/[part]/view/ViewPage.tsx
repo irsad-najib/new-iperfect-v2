@@ -183,7 +183,7 @@ const ViewPage = () => {
             // Load lab data
             try {
               const rawLabResponse = await api.get(
-                `/daily_data/lab/raw/${lab_id}/${formattedDate}`
+                `/daily_data/lab/raw/${lab_id}/${formattedDate}`,
               );
               setRawLabData(rawLabResponse.data);
               setRawDCSData([]);
@@ -205,7 +205,7 @@ const ViewPage = () => {
             // Load clean lab data separately
             try {
               const cleanLabResponse = await api.get(
-                `/daily_data/lab/clean/${lab_id}/${formattedDate}`
+                `/daily_data/lab/clean/${lab_id}/${formattedDate}`,
               );
               setCleanLabData(cleanLabResponse.data);
               // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -226,10 +226,10 @@ const ViewPage = () => {
             // Load part data (DCS and Adpro)
             const [dcsResponse, adproResponse] = await Promise.all([
               api.get(
-                `/daily_data/raw/bagian/${bagian_id}/${formattedDate}?tipe=dcs`
+                `/daily_data/raw/bagian/${bagian_id}/${formattedDate}?tipe=dcs`,
               ),
               api.get(
-                `/daily_data/raw/bagian/${bagian_id}/${formattedDate}?tipe=adpro`
+                `/daily_data/raw/bagian/${bagian_id}/${formattedDate}?tipe=adpro`,
               ),
             ]);
 
@@ -242,10 +242,10 @@ const ViewPage = () => {
             // Fetch clean and modified data
             const [cleanedResponse, modifiedResponse] = await Promise.all([
               api.get(
-                `/daily_data/clean/bagian/${bagian_id}/${formattedDate}?modified=false`
+                `/daily_data/clean/bagian/${bagian_id}/${formattedDate}?modified=false`,
               ),
               api.get(
-                `/daily_data/clean/bagian/${bagian_id}/${formattedDate}?modified=true`
+                `/daily_data/clean/bagian/${bagian_id}/${formattedDate}?modified=true`,
               ),
             ]).catch((error) => {
               if (error.response?.status === 404) {
@@ -281,7 +281,9 @@ const ViewPage = () => {
           message?: string;
         };
         setError(
-          error.response?.data?.detail || error.message || "Failed to load data"
+          error.response?.data?.detail ||
+            error.message ||
+            "Failed to load data",
         );
         setIsRawDataLoading(false);
         setIsCleanDataLoading(false);
@@ -303,14 +305,14 @@ const ViewPage = () => {
       setLoadingDownload(true);
       try {
         const response = await api.get(
-          `/daily_data/clean/bagian/${bagian_id}/${formattedDate}/download_excel`
+          `/daily_data/clean/bagian/${bagian_id}/${formattedDate}/download_excel`,
         );
         const contentDisposition =
           response.headers["content-disposition"]?.trim();
         let filename = "defaultDownload.xlsx";
         if (contentDisposition) {
           const matches = /filename\s*=\s*"?([^";]+)"?/i.exec(
-            contentDisposition
+            contentDisposition,
           );
           if (matches && matches[1]) {
             filename = matches[1];
@@ -373,10 +375,10 @@ const ViewPage = () => {
    */
   const handleRevertClick = async (
     record: CleanData,
-    hour: number | string
+    hour: number | string,
   ) => {
     const modifiedRecord = modifiedData.find(
-      (modRecord) => modRecord.name_alias === record.name_alias
+      (modRecord) => modRecord.name_alias === record.name_alias,
     );
 
     try {
@@ -388,7 +390,7 @@ const ViewPage = () => {
         // Individual time column revert
         const dataPoint = record.data.find(
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          (d: any) => d.time === `${String(hour).padStart(2, "0")}:00`
+          (d: any) => d.time === `${String(hour).padStart(2, "0")}:00`,
         );
         currentValue = dataPoint ? dataPoint.value : null;
         fieldType = "time";
@@ -404,7 +406,7 @@ const ViewPage = () => {
           "/daily_data/clean/revert/value-before",
           {
             params: params,
-          }
+          },
         );
         originalValue = response.data.value;
       } else {
@@ -415,7 +417,7 @@ const ViewPage = () => {
 
         // Get original value from cleanedData
         const originalRecord = cleanedData.find(
-          (cleanRecord) => cleanRecord.name_alias === record.name_alias
+          (cleanRecord) => cleanRecord.name_alias === record.name_alias,
         );
 
         if (originalRecord) {
@@ -527,7 +529,8 @@ const ViewPage = () => {
         onConfirm={async (newValue: number) => {
           try {
             const cleanRecord = cleanedData.find(
-              (cleanRecord) => cleanRecord.name_alias === selectedCellData.alias
+              (cleanRecord) =>
+                cleanRecord.name_alias === selectedCellData.alias,
             );
 
             if (!cleanRecord) {
@@ -546,7 +549,7 @@ const ViewPage = () => {
             if (selectedCellData.fieldType === "time") {
               const timeString = `${String(selectedCellData.hour).padStart(
                 2,
-                "0"
+                "0",
               )}:00`;
               requestBody.time = timeString;
             } else {
@@ -560,10 +563,10 @@ const ViewPage = () => {
             // Refresh data
             const [cleanedResponse, modifiedResponse] = await Promise.all([
               api.get(
-                `/daily_data/clean/bagian/${bagian_id}/${formattedDate}?modified=false`
+                `/daily_data/clean/bagian/${bagian_id}/${formattedDate}?modified=false`,
               ),
               api.get(
-                `/daily_data/clean/bagian/${bagian_id}/${formattedDate}?modified=true`
+                `/daily_data/clean/bagian/${bagian_id}/${formattedDate}?modified=true`,
               ),
             ]);
 
@@ -611,7 +614,7 @@ const ViewPage = () => {
             if (selectedRevertData.fieldType === "time") {
               const timeString = `${String(selectedRevertData.hour).padStart(
                 2,
-                "0"
+                "0",
               )}:00`;
               requestBody.time = timeString;
             } else {
@@ -625,10 +628,10 @@ const ViewPage = () => {
             // Refresh data
             const [cleanedResponse, modifiedResponse] = await Promise.all([
               api.get(
-                `/daily_data/clean/bagian/${bagian_id}/${formattedDate}?modified=false`
+                `/daily_data/clean/bagian/${bagian_id}/${formattedDate}?modified=false`,
               ),
               api.get(
-                `/daily_data/clean/bagian/${bagian_id}/${formattedDate}?modified=true`
+                `/daily_data/clean/bagian/${bagian_id}/${formattedDate}?modified=true`,
               ),
             ]);
 
@@ -791,7 +794,7 @@ const ViewPage = () => {
           <span className="text-16 font-semibold whitespace-nowrap">
             Last run:{" "}
           </span>
-          <div className="w-54 px-4 py-2 border border-[#d9d9d9] rounded-md bg-[#e6e6e6] flex items-center justify-center gap-[7px] text-16 font-semibold">
+          <div className="w-54 px-4 py-2 border border-[#d9d9d9] rounded-md bg-neutral-250 flex items-center justify-center gap-[7px] text-16 font-semibold">
             <Avatar src="/images/avatar.png" size={28} />
             14/11/24, 14:31
             <HiCheckCircle size={28} color="#1268B3" />
@@ -819,7 +822,7 @@ const ViewPage = () => {
             <Button
               type="default"
               icon={<HiDownload size={22} />}
-              className="customSecondaryButton"
+              className="bg-transparent border border-neutral-700 rounded px-4 h-9 flex items-center justify-center font-semibold text-neutral-900 hover:bg-secondary-300 hover:border-secondary-300 hover:text-neutral-100 active:bg-neutral-500 active:border-neutral-500 active:text-neutral-900 disabled:bg-neutral-300 disabled:border-neutral-300 disabled:text-[#eeeff1]"
               onClick={handleDownloadData}
               loading={loadingDownload}>
               <span className="hidden sm:inline">Download Data</span>

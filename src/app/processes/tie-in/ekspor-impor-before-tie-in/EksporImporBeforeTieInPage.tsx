@@ -10,6 +10,7 @@ import {
   Modal,
   Table,
   Tooltip,
+  message,
 } from "antd";
 import {
   MdDelete,
@@ -21,19 +22,19 @@ import {
   MdOutlineStickyNote2,
 } from "react-icons/md";
 import { useDateContext } from "@/context/DateContext";
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useEffect, useState, useCallback, useMemo } from "react";
+import { useRouter } from "next/navigation";
+import api from "@/utils/axios";
 import {
-  HiLockClosed,
   HiOutlineAdjustments,
+  HiLockClosed,
   HiOutlineArrowNarrowRight,
 } from "react-icons/hi";
-import api from "@/utils/axios";
-import { message } from "antd";
-import { useRouter } from "next/navigation";
-import TieinUdfModal from "./components/TieinUdfModal";
-import RevertModal from "./components/RevertModal";
-import TieinLogModal from "./components/TieinLogModal";
-import UdfAdjustmentModal from "./components/UdfAdjustmentModal";
+
+import TieinUdfModal from "../../../../components/processes/tie-in/ekspor-impor-before-tie-in/TieinUdfModal";
+import UdfAdjustmentModal from "../../../../components/processes/tie-in/ekspor-impor-before-tie-in/UdfAdjustmentModal";
+import RevertModal from "../../../../components/processes/tie-in/ekspor-impor-before-tie-in/RevertModal";
+import TieinLogModal from "../../../../components/processes/tie-in/ekspor-impor-before-tie-in/TieinLogModal";
 
 // Interfaces
 interface CellData {
@@ -445,92 +446,132 @@ const EksporImporBeforeTieInPage: React.FC = () => {
             ),
             dataIndex: header.dataIndex,
             key: header.key,
-            ...(header.dataIndex !== "rowIndex" && {
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              onCell: (record: any) => {
-                const cellData = record.data?.[header.key];
-                const udfId = cellData?.udf_id || null;
-                const isNonClickableUdf = [
-                  "AUTO_UNBALANCE",
-                  "NO_EXPORT",
-                  "NO_IMPORT",
-                  "CUSTOM_MAX_TOLERANCE",
-                ].includes(udfId || "");
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            onCell: (record: any) => {
+              const isUnbalanceRow = record.rowIndex === "Unbalance";
+              const isMaxToleranceRow = record.rowIndex === "Max Tolerance";
+              const isUdfAdjustmentRow = record.rowIndex === "UDF Adjustment";
 
-                const isUdfAdjustmentRow = record.rowIndex === "UDF Adjustment";
-                const isNonClickable =
-                  isNonClickableUdf ||
-                  (activeTab === "before" && isUdfAdjustmentRow);
+              const stickyBottomClass = isUdfAdjustmentRow
+                ? "sticky bottom-0 z-30"
+                : isMaxToleranceRow
+                  ? "sticky bottom-[54px] z-40"
+                  : isUnbalanceRow
+                    ? "sticky bottom-[108px] z-50"
+                    : "";
 
-                let cellClass = "";
-                const isUnbalanceOrMaxTolerance =
-                  record.rowIndex === "Unbalance" ||
-                  record.rowIndex === "Max Tolerance";
-                const isUdfAdjustment = record.rowIndex === "UDF Adjustment";
+              // First column (rowIndex)
+              if (header.dataIndex === "rowIndex") {
+                const bgClass = isUdfAdjustmentRow
+                  ? "!bg-[#334155] !text-white"
+                  : isUnbalanceRow || isMaxToleranceRow
+                    ? "!bg-neutral-700 !text-neutral-100"
+                    : "";
 
-                const unbalanceRow = currentTableData.find(
-                  (row) => row.rowIndex === "Unbalance",
-                );
-                const maxToleranceRow = currentTableData.find(
-                  (row) => row.rowIndex === "Max Tolerance",
-                );
-                const unbalanceValue = unbalanceRow?.data[header.key]?.value;
-                const maxToleranceValue =
-                  maxToleranceRow?.data[header.key]?.value;
-
-                if (isUnbalanceOrMaxTolerance) {
-                  if (
-                    typeof unbalanceValue === "number" &&
-                    typeof maxToleranceValue === "number"
-                  ) {
-                    cellClass =
-                      Math.abs(unbalanceValue) <= maxToleranceValue
-                        ? "unbalance-cell-balanced"
-                        : "unbalance-cell-unbalanced";
-                  } else {
-                    cellClass = "unbalance-cell-unbalanced";
-                  }
-                } else if (isUdfAdjustment) {
-                  cellClass =
-                    "!bg-secondary-300 !text-white font-normal text-center p-2";
-                } else if (cellData?.adjusted) {
-                  cellClass =
-                    "!bg-secondary-300 !text-white text-center hover:!bg-secondary-500 cursor-pointer";
-                } else if (isNonClickable) {
-                  cellClass = "non-clickable";
-                } else {
-                  cellClass = "default-bg";
-                }
-
-                const handleCellClick = () => {
-                  if (isNonClickable) return;
-
-                  const cellValue = cellData?.value;
-                  const cellLocation = `${record.rowIndex}-${header.title}`;
-                  const cellUnit = header.unit;
-
-                  setSelectedCell({
-                    value: cellValue,
-                    location: cellLocation,
-                    udfId,
-                    unit: cellUnit,
-                    unbalance: unbalanceValue,
-                    max: maxToleranceValue,
-                  });
-
-                  if (record.rowIndex === "UDF Adjustment") {
-                    setIsUDFAdjustmentModalOpen(true);
-                  } else {
-                    setIsTieinUDFModalOpen(true);
-                  }
-                };
+                const heightClass =
+                  isUdfAdjustmentRow || isUnbalanceRow || isMaxToleranceRow
+                    ? "h-[54px]"
+                    : "";
 
                 return {
-                  className: cellClass,
-                  onClick: handleCellClick,
+                  className: [
+                    // keep existing sticky first-col behavior, but also add bottom-stick for special rows
+                    "sticky left-0",
+                    stickyBottomClass,
+                    bgClass,
+                    heightClass,
+                    "text-center",
+                  ]
+                    .filter(Boolean)
+                    .join(" "),
                 };
-              },
-            }),
+              }
+
+              // Other columns
+              const cellData = record.data?.[header.key];
+              const udfId = cellData?.udf_id || null;
+              const isNonClickableUdf = [
+                "AUTO_UNBALANCE",
+                "NO_EXPORT",
+                "NO_IMPORT",
+                "CUSTOM_MAX_TOLERANCE",
+              ].includes(udfId || "");
+
+              const isNonClickable =
+                isNonClickableUdf ||
+                (activeTab === "before" && isUdfAdjustmentRow);
+
+              let cellClass = "";
+              const isUnbalanceOrMaxTolerance =
+                isUnbalanceRow || isMaxToleranceRow;
+
+              const unbalanceRow = currentTableData.find(
+                (row) => row.rowIndex === "Unbalance",
+              );
+              const maxToleranceRow = currentTableData.find(
+                (row) => row.rowIndex === "Max Tolerance",
+              );
+              const unbalanceValue = unbalanceRow?.data[header.key]?.value;
+              const maxToleranceValue =
+                maxToleranceRow?.data[header.key]?.value;
+
+              if (isUnbalanceOrMaxTolerance) {
+                if (
+                  typeof unbalanceValue === "number" &&
+                  typeof maxToleranceValue === "number"
+                ) {
+                  cellClass =
+                    Math.abs(unbalanceValue) <= maxToleranceValue
+                      ? "unbalance-cell-balanced"
+                      : "unbalance-cell-unbalanced";
+                } else {
+                  cellClass = "unbalance-cell-unbalanced";
+                }
+              } else if (isUdfAdjustmentRow) {
+                cellClass = "udf-adjustment-cell !bg-[#334155] !text-white";
+              } else if (cellData?.adjusted) {
+                cellClass = "adjustedCell";
+              } else if (isNonClickable) {
+                cellClass = "non-clickable";
+              } else {
+                cellClass = "default-bg";
+              }
+
+              const heightClass =
+                isUdfAdjustmentRow || isUnbalanceRow || isMaxToleranceRow
+                  ? "h-[54px]"
+                  : "";
+
+              const handleCellClick = () => {
+                if (isNonClickable) return;
+
+                const cellValue = cellData?.value;
+                const cellLocation = `${record.rowIndex}-${header.title}`;
+                const cellUnit = header.unit;
+
+                setSelectedCell({
+                  value: cellValue,
+                  location: cellLocation,
+                  udfId,
+                  unit: cellUnit,
+                  unbalance: unbalanceValue,
+                  max: maxToleranceValue,
+                });
+
+                if (record.rowIndex === "UDF Adjustment") {
+                  setIsUDFAdjustmentModalOpen(true);
+                } else {
+                  setIsTieinUDFModalOpen(true);
+                }
+              };
+
+              return {
+                className: [cellClass, stickyBottomClass, heightClass]
+                  .filter(Boolean)
+                  .join(" "),
+                onClick: handleCellClick,
+              };
+            },
             render:
               header.dataIndex === "rowIndex"
                 ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -551,14 +592,32 @@ const EksporImporBeforeTieInPage: React.FC = () => {
                     </div>
                   )
                 : // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                  (record: any) => {
+                  (_value: unknown, record: any) => {
                     const cellData = record.data?.[header.key];
                     const cellValue = cellData?.value;
 
                     if (record.rowIndex === "UDF Adjustment") {
                       return (
-                        <div className="w-full text-center font-normal tabular-nums tracking-tight whitespace-nowrap">
+                        <div className="w-full h-full flex items-center justify-center font-normal tabular-nums tracking-tight whitespace-nowrap">
                           <HiOutlineAdjustments size={22} color="#FFF" />
+                        </div>
+                      );
+                    }
+
+                    if (cellData?.error) {
+                      return (
+                        <div className="w-full text-center font-normal tabular-nums tracking-tight whitespace-nowrap flex items-center justify-center gap-1">
+                          <span className="text-danger">Error</span>
+                          <Tooltip
+                            title={cellData.error}
+                            placement="bottom"
+                            color="#F47920">
+                            <MdError
+                              size={18}
+                              color="#ff4d4f"
+                              className="cursor-pointer"
+                            />
+                          </Tooltip>
                         </div>
                       );
                     }
@@ -567,27 +626,8 @@ const EksporImporBeforeTieInPage: React.FC = () => {
                       <Button
                         type="text"
                         className="w-8 h-8 p-0 flex items-center justify-center text-primary-300 mx-auto"
-                        icon={
-                          cellData?.error ? (
-                            <Tooltip
-                              title="Show the error message"
-                              placement="bottom"
-                              color="#F47920">
-                              <MdError size={24} color="#ff4d4f" />
-                            </Tooltip>
-                          ) : (
-                            <MdAddCircle size={24} color="#1268b3" />
-                          )
-                        }
+                        icon={<MdAddCircle size={24} color="#1268b3" />}
                         onClick={() => {
-                          if (cellData?.error) {
-                            setErrorModalData({
-                              visible: true,
-                              message: cellData.error,
-                            });
-                            return;
-                          }
-
                           const udfId = cellData?.udf_id || null;
                           const cellLocation = `${record.rowIndex}-${header.title}`;
                           const cellUnit = header.unit;
@@ -615,14 +655,16 @@ const EksporImporBeforeTieInPage: React.FC = () => {
                       />
                     ) : (
                       <div className="w-full text-center font-normal tabular-nums tracking-tight whitespace-nowrap">
-                        {typeof cellValue === "number"
-                          ? formatNumber(cellValue, {
-                              decimals: 2,
-                              locale: "id-ID",
-                            })
-                          : cellValue === null || cellValue === undefined
-                            ? "-"
-                            : cellValue}
+                        <span>
+                          {typeof cellValue === "number"
+                            ? formatNumber(cellValue, {
+                                decimals: 2,
+                                locale: "id-ID",
+                              })
+                            : cellValue === null || cellValue === undefined
+                              ? "-"
+                              : cellValue}
+                        </span>
                       </div>
                     );
                   },
@@ -666,31 +708,35 @@ const EksporImporBeforeTieInPage: React.FC = () => {
           items={[
             {
               title: (
-                <Link href="/processes" className="breadcrumbLink">
-                  <span className="linkText">Processes</span>
+                <Link
+                  href="/processes"
+                  className="text-neutral-300 hover:text-neutral-900 transition-colors">
+                  <span className="text-2xl font-semibold">Processes</span>
                 </Link>
               ),
             },
             {
               title: (
-                <Link href="/processes/tie-in" className="breadcrumbLink">
-                  <span className="linkText">Tie in</span>
+                <Link
+                  href="/processes/tie-in"
+                  className="text-neutral-300 hover:text-neutral-900 transition-colors">
+                  <span className="text-2xl font-semibold">Tie in</span>
                 </Link>
               ),
             },
             {
               title: (
-                <span className="lastBreadcrumbItem">
+                <span className="text-neutral-900 text-2xl font-semibold">
                   Kapasitas dan Kebutuhan Ekspor - Impor
                 </span>
               ),
             },
           ]}
-          className="customBreadcrumb separatorSpacing"
+          className="[&_.ant-breadcrumb-separator]:mx-1.5 [&_.ant-breadcrumb-separator]:flex [&_.ant-breadcrumb-separator]:items-center"
         />
         <Button
           type="default"
-          className="customSecondaryButton btn-md mr-12"
+          className="bg-transparent border border-neutral-700 rounded px-4 h-9 flex items-center justify-center font-semibold text-neutral-900 hover:bg-secondary-300 hover:border-secondary-300 hover:text-neutral-100 active:bg-neutral-500 active:border-neutral-500 active:text-neutral-900 disabled:bg-neutral-300 disabled:border-neutral-300 disabled:text-[#eeeff1] mr-12"
           onClick={handleRedirect}
           disabled={!isAdjusted}>
           <span className="font-normal">Next: </span>
@@ -726,7 +772,7 @@ const EksporImporBeforeTieInPage: React.FC = () => {
               type="default"
               loading={loading}
               onClick={handleLoadConfig}
-              className="customSecondaryButton">
+              className="bg-transparent border border-neutral-700 rounded px-4 h-9 flex items-center justify-center font-semibold text-neutral-900 hover:bg-secondary-300 hover:border-secondary-300 hover:text-neutral-100 active:bg-neutral-500 active:border-neutral-500 active:text-neutral-900 disabled:bg-neutral-300 disabled:border-neutral-300 disabled:text-[#eeeff1]">
               Load config
               <MdArrowForwardIos
                 size={18}
@@ -741,7 +787,9 @@ const EksporImporBeforeTieInPage: React.FC = () => {
                 { key: "2", label: "Save as new Tie in config" },
               ],
             }}>
-            <Button type="primary" className="customPrimaryButton">
+            <Button
+              type="primary"
+              className="bg-primary-300 border-primary-300 rounded px-4 h-9 flex items-center justify-center font-semibold text-neutral-100 hover:bg-primary-700 hover:border-primary-700 active:bg-neutral-900 active:border-neutral-900 disabled:bg-neutral-300 disabled:border-neutral-300">
               Save{" "}
               <MdArrowForwardIos
                 size={18}
@@ -757,7 +805,7 @@ const EksporImporBeforeTieInPage: React.FC = () => {
 
       {/* Tabs & Actions Section */}
       <div className="flex justify-between items-center gap-4 mb-[13px]">
-        <Button className="customSecondaryButton">
+        <Button className="bg-transparent border border-neutral-700 rounded px-4 h-9 flex items-center justify-center font-semibold text-neutral-900 hover:bg-secondary-300 hover:border-secondary-300 hover:text-neutral-100 active:bg-neutral-500 active:border-neutral-500 active:text-neutral-900 disabled:bg-neutral-300 disabled:border-neutral-300 disabled:text-[#eeeff1]">
           <MdFilterList />
           Filter
         </Button>
@@ -770,16 +818,20 @@ const EksporImporBeforeTieInPage: React.FC = () => {
                 </span>
                 <div className="flex">
                   <Button
-                    className={`customSecondaryButton ${
-                      activeTab === "before" ? "activeButton" : ""
+                    className={`bg-transparent border rounded px-4 h-9 flex items-center justify-center font-semibold hover:bg-secondary-300 hover:border-secondary-300 hover:text-neutral-100 active:bg-neutral-500 active:border-neutral-500 disabled:bg-neutral-300 disabled:border-neutral-300 disabled:text-[#eeeff1] ${
+                      activeTab === "before"
+                        ? "bg-secondary-300 border-secondary-300 border-2 text-neutral-100"
+                        : "border-neutral-700 text-neutral-900"
                     }`}
                     onClick={() => setActiveTab("before")}>
                     <HiLockClosed size={18} />
                     Before
                   </Button>
                   <Button
-                    className={`customSecondaryButton ${
-                      activeTab === "adjusted" ? "activeButton" : ""
+                    className={`bg-transparent border rounded px-4 h-9 flex items-center justify-center font-semibold hover:bg-secondary-300 hover:border-secondary-300 hover:text-neutral-100 active:bg-neutral-500 active:border-neutral-500 disabled:bg-neutral-300 disabled:border-neutral-300 disabled:text-[#eeeff1] ${
+                      activeTab === "adjusted"
+                        ? "bg-secondary-300 border-secondary-300 border-2 text-neutral-100"
+                        : "border-neutral-700 text-neutral-900"
                     }`}
                     onClick={() => setActiveTab("adjusted")}>
                     <HiOutlineAdjustments size={18} />
@@ -789,7 +841,7 @@ const EksporImporBeforeTieInPage: React.FC = () => {
               </div>
               <div className="flex gap-2.5 items-center">
                 <Button
-                  className="customOtherButton"
+                  className="bg-transparent border border-neutral-700 rounded px-4 h-9 flex items-center justify-center font-semibold text-neutral-900 hover:bg-secondary-300 hover:border-secondary-300 hover:text-neutral-100 active:bg-neutral-500 active:border-neutral-500 active:text-neutral-900 disabled:bg-neutral-300 disabled:border-neutral-300 disabled:text-[#eeeff1]"
                   onClick={() => setIsRevertModalOpen(true)}>
                   Revert all
                 </Button>
@@ -797,7 +849,7 @@ const EksporImporBeforeTieInPage: React.FC = () => {
             </div>
           ) : (
             <Button
-              className="customOtherButton"
+              className="bg-transparent border border-neutral-700 rounded px-4 h-9 flex items-center justify-center font-semibold text-neutral-900 hover:bg-secondary-300 hover:border-secondary-300 hover:text-neutral-100 active:bg-neutral-500 active:border-neutral-500 active:text-neutral-900 disabled:bg-neutral-300 disabled:border-neutral-300 disabled:text-[#eeeff1]"
               onClick={() => setIsAdjustConfirmationOpen(true)}>
               <HiOutlineAdjustments />
               Adjust
@@ -807,7 +859,7 @@ const EksporImporBeforeTieInPage: React.FC = () => {
           <Tooltip title="View logs" placement="bottom" color="#F47920">
             <Button
               onClick={() => setIsTieinLogModalOpen(true)}
-              className="customOtherButton btn-sm"
+              className="bg-transparent border border-neutral-700 rounded px-4 h-8 text-sm flex items-center justify-center font-semibold text-neutral-900 hover:bg-secondary-300 hover:border-secondary-300 hover:text-neutral-100 active:bg-neutral-500 active:border-neutral-500 active:text-neutral-900 disabled:bg-neutral-300 disabled:border-neutral-300 disabled:text-[#eeeff1]"
               icon={<MdOutlineStickyNote2 size={28} />}
             />
           </Tooltip>
@@ -815,7 +867,7 @@ const EksporImporBeforeTieInPage: React.FC = () => {
       </div>
 
       {/* Table Section */}
-      <div className="flex flex-col items-center w-full max-h-[calc(100vh-270px)] overflow-hidden relative">
+      <div className="flex flex-col items-center w-full max-h-[65vh] md:max-h-[calc(100vh-270px)] overflow-hidden relative">
         <div className="w-full flex items-stretch overflow-hidden relative">
           <Table
             dataSource={currentTableData
@@ -835,7 +887,21 @@ const EksporImporBeforeTieInPage: React.FC = () => {
             pagination={false}
             bordered
             size="middle"
-            className="w-full overflow-auto [&_.ant-table-wrapper]:max-h-full [&_.ant-table]:bg-white [&_.ant-table-container]:flex [&_.ant-table-container]:flex-col [&_.ant-table-container]:h-[calc(100vh-270px)] [&_.ant-table-body]:overflow-auto [&_.ant-table-body]:!max-h-none [&_.ant-table-body]:!h-full [&_.ant-table-cell[class*='ant-table-cell-row']:first-child]:!bg-neutral-250 [&_.ant-table-tbody>tr>td:first-child]:!bg-neutral-250 [&_.ant-table-tbody>tr>td:first-child]:font-semibold [&_.ant-table-tbody>tr>td:first-child]:!text-center [&_.ant-table-thead>tr>th:first-child_.columnHeaderContainer]:!justify-center [&_.ant-table-thead>tr>th:first-child_.columnHeaderContainer_span]:text-center [&_.ant-table-thead>tr>th:first-child_.columnHeaderContainer_span]:mr-0 [&_.ant-table-thead>tr>th:first-child]:!max-w-[200px] [&_.ant-table-thead>tr>th:first-child]:!w-[200px] [&_.ant-table-thead>tr>th:first-child]:!sticky [&_.ant-table-thead>tr>th:first-child]:!left-0 [&_.ant-table-thead>tr>th:first-child]:!z-[2] [&_.ant-table-tbody>tr>td:first-child]:!max-w-[200px] [&_.ant-table-tbody>tr>td:first-child]:!w-[200px] [&_.ant-table-tbody>tr>td:first-child]:!sticky [&_.ant-table-tbody>tr>td:first-child]:!left-0 [&_.ant-table-tbody>tr>td:first-child]:!z-[2] [&_.ant-table-tbody>tr>td:first-child]:after:content-[''] [&_.ant-table-tbody>tr>td:first-child]:after:absolute [&_.ant-table-tbody>tr>td:first-child]:after:top-0 [&_.ant-table-tbody>tr>td:first-child]:after:right-0 [&_.ant-table-tbody>tr>td:first-child]:after:bottom-0 [&_.ant-table-tbody>tr>td:first-child]:after:w-1 [&_.ant-table-tbody>tr>td:first-child]:after:bg-gradient-to-r [&_.ant-table-tbody>tr>td:first-child]:after:from-black/10 [&_.ant-table-tbody>tr>td:first-child]:after:to-transparent [&_.ant-table-tbody>tr>td:first-child]:after:pointer-events-none [&_.ant-table-thead>tr>th]:!sticky [&_.ant-table-thead>tr>th]:!top-0 [&_.ant-table-thead>tr>th]:!z-[2] [&_.ant-table-thead>tr>th]:!bg-neutral-250 [&_.ant-table-thead>tr>th.adjust-column]:!bg-primary-300 [&_.ant-table-thead>tr>th.adjust-column]:!text-neutral-100 [&_.ant-table-thead>tr>th:first-child]:!z-[3] [&_.ant-table-body]:scrollbar-none [&_.ant-table-body]:[-ms-overflow-style:none] [&_.ant-table-body::-webkit-scrollbar]:hidden [&_.ant-table-tbody>tr[data-row-key='unbalance']]:!sticky [&_.ant-table-tbody>tr[data-row-key='unbalance']]:!bottom-[104px] [&_.ant-table-tbody>tr[data-row-key='unbalance']]:!z-[11] [&_.ant-table-tbody>tr[data-row-key='unbalance']]:!bg-neutral-250 [&_.ant-table-tbody>tr[data-row-key='unbalance']]:font-semibold [&_.ant-table-tbody>tr[data-row-key='unbalance']>td]:!sticky [&_.ant-table-tbody>tr[data-row-key='unbalance']>td]:!bottom-10 [&_.ant-table-tbody>tr[data-row-key='unbalance']>td]:!z-[11] [&_.ant-table-tbody>tr[data-row-key='unbalance']>td]:!bg-neutral-250 [&_.ant-table-tbody>tr[data-row-key='unbalance']>td]:font-semibold [&_.ant-table-tbody>tr[data-row-key='unbalance']>td]:border-t-2 [&_.ant-table-tbody>tr[data-row-key='unbalance']>td]:border-[#d9d9d9] [&_.ant-table-tbody>tr[data-row-key='unbalance']>td:first-child]:!sticky [&_.ant-table-tbody>tr[data-row-key='unbalance']>td:first-child]:!left-0 [&_.ant-table-tbody>tr[data-row-key='unbalance']>td:first-child]:!z-[12] [&_.ant-table-tbody>tr[data-row-key='unbalance']>td:first-child]:!bg-neutral-700 [&_.ant-table-tbody>tr[data-row-key='unbalance']>td:first-child]:!text-neutral-100 [&_.ant-table-tbody>tr[data-row-key='unbalance']:hover>td]:!bg-neutral-250 [&_.ant-table-tbody>tr[data-row-key='unbalance']:hover>td:first-child]:!bg-neutral-700 [&_.ant-table-tbody>tr[data-row-key='unbalance']:hover>td:first-child]:!text-neutral-100 [&_.ant-table-tbody>tr[data-row-key='max_tolerance']]:!sticky [&_.ant-table-tbody>tr[data-row-key='max_tolerance']]:!bottom-[54px] [&_.ant-table-tbody>tr[data-row-key='max_tolerance']]:!z-[12] [&_.ant-table-tbody>tr[data-row-key='max_tolerance']]:!bg-neutral-250 [&_.ant-table-tbody>tr[data-row-key='max_tolerance']]:font-semibold [&_.ant-table-tbody>tr[data-row-key='max_tolerance']>td]:!sticky [&_.ant-table-tbody>tr[data-row-key='max_tolerance']>td]:!bottom-0 [&_.ant-table-tbody>tr[data-row-key='max_tolerance']>td]:!z-[12] [&_.ant-table-tbody>tr[data-row-key='max_tolerance']>td]:!bg-neutral-250 [&_.ant-table-tbody>tr[data-row-key='max_tolerance']>td:first-child]:!sticky [&_.ant-table-tbody>tr[data-row-key='max_tolerance']>td:first-child]:!left-0 [&_.ant-table-tbody>tr[data-row-key='max_tolerance']>td:first-child]:!z-[11] [&_.ant-table-tbody>tr[data-row-key='max_tolerance']>td:first-child]:!bg-neutral-700 [&_.ant-table-tbody>tr[data-row-key='max_tolerance']>td:first-child]:!text-neutral-100 [&_.ant-table-tbody>tr[data-row-key='max_tolerance']:hover>td]:!bg-neutral-250 [&_.ant-table-tbody>tr[data-row-key='max_tolerance']:hover>td:first-child]:!bg-neutral-700 [&_.ant-table-tbody>tr[data-row-key='max_tolerance']:hover>td:first-child]:!text-neutral-100 [&_.ant-table-tbody>tr[data-row-key='udf_adjustment']]:!sticky [&_.ant-table-tbody>tr[data-row-key='udf_adjustment']]:!bottom-0 [&_.ant-table-tbody>tr[data-row-key='udf_adjustment']]:!z-[12] [&_.ant-table-tbody>tr[data-row-key='udf_adjustment']]:!bg-neutral-250 [&_.ant-table-tbody>tr[data-row-key='udf_adjustment']]:font-semibold [&_.ant-table-tbody>tr[data-row-key='udf_adjustment']>td]:!sticky [&_.ant-table-tbody>tr[data-row-key='udf_adjustment']>td]:!bottom-0 [&_.ant-table-tbody>tr[data-row-key='udf_adjustment']>td]:!z-[12] [&_.ant-table-tbody>tr[data-row-key='udf_adjustment']>td]:!bg-neutral-700 [&_.ant-table-tbody>tr[data-row-key='udf_adjustment']>td:first-child]:!sticky [&_.ant-table-tbody>tr[data-row-key='udf_adjustment']>td:first-child]:!left-0 [&_.ant-table-tbody>tr[data-row-key='udf_adjustment']>td:first-child]:!z-[12] [&_.ant-table-tbody>tr[data-row-key='udf_adjustment']>td:first-child]:!bg-neutral-700 [&_.ant-table-tbody>tr[data-row-key='udf_adjustment']>td:first-child]:!text-neutral-100 [&_.ant-table-tbody>tr[data-row-key='udf_adjustment']:hover>td]:!bg-neutral-700 [&_.ant-table-tbody>tr[data-row-key='udf_adjustment']:hover>td:first-child]:!bg-neutral-700 [&_.ant-table-tbody>tr[data-row-key='udf_adjustment']:hover>td:first-child]:!text-neutral-100 [&_.ant-table-tbody>tr.unbalance-row]:font-semibold [&_.ant-table-tbody>tr>td.unbalance-cell]:!text-center [&_.ant-table-tbody>tr>td.unbalance-cell]:transition-[background] [&_.ant-table-tbody>tr>td.unbalance-cell]:duration-200 [&_.ant-table-tbody>tr>td.unbalance-cell]:p-2 [&_.ant-table-tbody>tr>td.unbalance-cell-balanced]:!bg-success [&_.ant-table-tbody>tr>td.unbalance-cell-balanced]:!text-white [&_.ant-table-tbody>tr>td.unbalance-cell-balanced]:font-normal [&_.ant-table-tbody>tr>td.unbalance-cell-balanced]:!text-center [&_.ant-table-tbody>tr>td.unbalance-cell-balanced]:p-2 [&_.ant-table-tbody>tr>td.unbalance-cell-unbalanced]:!bg-danger [&_.ant-table-tbody>tr>td.unbalance-cell-unbalanced]:!text-white [&_.ant-table-tbody>tr>td.unbalance-cell-unbalanced]:font-normal [&_.ant-table-tbody>tr>td.unbalance-cell-unbalanced]:!text-center [&_.ant-table-tbody>tr>td.unbalance-cell-unbalanced]:p-2 [&_.ant-table-tbody>tr>td.unbalance-cell-balanced>div]:!text-white [&_.ant-table-tbody>tr>td.unbalance-cell-balanced>div]:font-normal [&_.ant-table-tbody>tr>td.unbalance-cell-balanced>div]:!text-center [&_.ant-table-tbody>tr>td.unbalance-cell-balanced>div]:w-full [&_.ant-table-tbody>tr>td.unbalance-cell-unbalanced>div]:!text-white [&_.ant-table-tbody>tr>td.unbalance-cell-unbalanced>div]:font-normal [&_.ant-table-tbody>tr>td.unbalance-cell-unbalanced>div]:!text-center [&_.ant-table-tbody>tr>td.unbalance-cell-unbalanced>div]:w-full [&_.ant-table-tbody>tr:hover>td.unbalance-cell-balanced]:!bg-success [&_.ant-table-tbody>tr:hover>td.unbalance-cell-balanced]:!text-white [&_.ant-table-tbody>tr>td.udf-adjustment]:!bg-neutral-700 [&_.ant-table-tbody>tr>td.udf-adjustment]:!text-white [&_.ant-table-tbody>tr>td.udf-adjustment]:font-normal [&_.ant-table-tbody>tr>td.udf-adjustment]:!text-center [&_.ant-table-tbody>tr>td.udf-adjustment]:p-2 [&_.ant-table-tbody>tr:hover>td.unbalance-cell-unbalanced]:!bg-danger [&_.ant-table-tbody>tr:hover>td.unbalance-cell-unbalanced]:!text-white [&_.ant-table-tbody>tr>td.default-bg]:!bg-[#eeeff1] [&_.ant-table-tbody>tr>td.default-bg]:cursor-pointer [&_.ant-table-tbody>tr>td.default-bg]:!text-center [&_.ant-table-tbody>tr>td.non-clickable]:!bg-[#eeeff1] [&_.ant-table-tbody>tr>td.non-clickable]:!text-center [&_tr.odd>td:not(:first-child):not(.adjustedCell)]:!bg-[#f1f2f3] [&_tr.odd>td:not(:first-child):not(.adjustedCell):hover]:!bg-neutral-250 [&_tr.even>td:not(:first-child):not(.adjustedCell)]:!bg-[#ebebeb] [&_tr.even>td:not(:first-child):not(.adjustedCell):hover]:!bg-neutral-250"
+            className="w-full overflow-auto [&_.ant-table-wrapper]:max-h-full [&_.ant-table]:bg-white [&_.ant-table-container]:flex [&_.ant-table-container]:flex-col [&_.ant-table-container]:h-[calc(100vh-270px)] [&_.ant-table-body]:overflow-auto [&_.ant-table-body]:max-h-none! [&_.ant-table-body]:h-full! [&_.ant-table-cell[class*='ant-table-cell-row']:first-child]:bg-neutral-250! [&_.ant-table-tbody>tr>td:first-child]:bg-neutral-250! [&_.ant-table-tbody>tr>td:first-child]:font-semibold [&_.ant-table-tbody>tr>td:first-child]:text-center! [&_.ant-table-thead>tr>th:first-child_.columnHeaderContainer]:justify-center! [&_.ant-table-thead>tr>th:first-child_.columnHeaderContainer_span]:text-center [&_.ant-table-thead>tr>th:first-child_.columnHeaderContainer_span]:mr-0 [&_.ant-table-thead>tr>th:first-child]:max-w-[200px]! [&_.ant-table-thead>tr>th:first-child]:w-[200px]! [&_.ant-table-thead>tr>th:first-child]:sticky! [&_.ant-table-thead>tr>th:first-child]:left-0! [&_.ant-table-tbody>tr>td:first-child]:max-w-[200px]! [&_.ant-table-tbody>tr>td:first-child]:w-[200px]! [&_.ant-table-tbody>tr>td:first-child]:sticky! [&_.ant-table-tbody>tr>td:first-child]:left-0! [&_.ant-table-tbody>tr>td:first-child]:z-2! [&_.ant-table-tbody>tr>td:first-child]:after:content-[''] [&_.ant-table-tbody>tr>td:first-child]:after:absolute [&_.ant-table-tbody>tr>td:first-child]:after:top-0 [&_.ant-table-tbody>tr>td:first-child]:after:right-0 [&_.ant-table-tbody>tr>td:first-child]:after:bottom-0 [&_.ant-table-tbody>tr>td:first-child]:after:w-1 [&_.ant-table-tbody>tr>td:first-child]:after:shadow-[2px_0_4px_rgba(0,0,0,0.1)] [&_.ant-table-tbody>tr>td:first-child]:after:pointer-events-none [&_.ant-table-thead>tr>th]:sticky! [&_.ant-table-thead>tr>th]:top-0! [&_.ant-table-thead>tr>th]:z-2! [&_.ant-table-thead>tr>th]:bg-neutral-250! [&_.ant-table-thead>tr>th.adjust-column]:bg-primary-300! [&_.ant-table-thead>tr>th.adjust-column]:text-neutral-100! [&_.ant-table-thead>tr>th:first-child]:z-3! [&_.ant-table-body]:scrollbar-none [&_.ant-table-body]:[-ms-overflow-style:none] [&_.ant-table-body::-webkit-scrollbar]:hidden \
+            [&_.ant-table-tbody>tr.unbalance-row]:font-semibold \
+            [&_.ant-table-tbody>tr>td.unbalance-cell]:text-center! [&_.ant-table-tbody>tr>td.unbalance-cell]:transition-[background] [&_.ant-table-tbody>tr>td.unbalance-cell]:duration-200 [&_.ant-table-tbody>tr>td.unbalance-cell]:p-2 \
+            [&_.ant-table-tbody>tr>td.unbalance-cell-balanced]:bg-[#52c41a]! [&_.ant-table-tbody>tr>td.unbalance-cell-balanced]:text-white! [&_.ant-table-tbody>tr>td.unbalance-cell-balanced]:font-normal [&_.ant-table-tbody>tr>td.unbalance-cell-balanced]:text-center! [&_.ant-table-tbody>tr>td.unbalance-cell-balanced]:p-2 \
+            [&_.ant-table-tbody>tr>td.unbalance-cell-unbalanced]:bg-[#ff4d4f]! [&_.ant-table-tbody>tr>td.unbalance-cell-unbalanced]:text-white! [&_.ant-table-tbody>tr>td.unbalance-cell-unbalanced]:font-normal [&_.ant-table-tbody>tr>td.unbalance-cell-unbalanced]:text-center! [&_.ant-table-tbody>tr>td.unbalance-cell-unbalanced]:p-2 \
+            [&_.ant-table-tbody>tr>td.unbalance-cell-balanced>div]:text-white! [&_.ant-table-tbody>tr>td.unbalance-cell-balanced>div]:font-normal [&_.ant-table-tbody>tr>td.unbalance-cell-balanced>div]:text-center! [&_.ant-table-tbody>tr>td.unbalance-cell-balanced>div]:w-full \
+            [&_.ant-table-tbody>tr>td.unbalance-cell-unbalanced>div]:text-white! [&_.ant-table-tbody>tr>td.unbalance-cell-unbalanced>div]:font-normal [&_.ant-table-tbody>tr>td.unbalance-cell-unbalanced>div]:text-center! [&_.ant-table-tbody>tr>td.unbalance-cell-unbalanced>div]:w-full \
+            [&_.ant-table-tbody>tr:hover>td.unbalance-cell-balanced]:bg-[#52c41a]! [&_.ant-table-tbody>tr:hover>td.unbalance-cell-balanced]:text-white! \
+            [&_.ant-table-tbody>tr:hover>td.unbalance-cell-unbalanced]:bg-[#ff4d4f]! [&_.ant-table-tbody>tr:hover>td.unbalance-cell-unbalanced]:text-white! \
+            \
+            [&_.ant-table-tbody>tr>td.default-bg]:bg-[#eeeff1]! [&_.ant-table-tbody>tr>td.default-bg]:cursor-pointer [&_.ant-table-tbody>tr>td.default-bg]:text-center! \
+            [&_.ant-table-tbody>tr>td.non-clickable]:bg-[#eeeff1]! [&_.ant-table-tbody>tr>td.non-clickable]:text-center! \
+            [&_.ant-table-tbody>tr>td.adjustedCell]:border-2! [&_.ant-table-tbody>tr>td.adjustedCell]:border-[#F47920]! [&_.ant-table-tbody>tr>td.adjustedCell]:bg-[#eeeff1]! [&_.ant-table-tbody>tr>td.adjustedCell]:cursor-pointer [&_.ant-table-tbody>tr>td.adjustedCell]:text-center! \
+            [&_tr.odd>td:not(:first-child):not(.adjustedCell):not(.unbalance-cell-balanced):not(.unbalance-cell-unbalanced)]:bg-[#f1f2f3]! [&_tr.odd>td:not(:first-child):not(.adjustedCell):not(.unbalance-cell-balanced):not(.unbalance-cell-unbalanced):hover]:bg-neutral-250! \
+            [&_tr.even>td:not(:first-child):not(.adjustedCell):not(.unbalance-cell-balanced):not(.unbalance-cell-unbalanced)]:bg-[#ebebeb]! [&_tr.even>td:not(:first-child):not(.adjustedCell):not(.unbalance-cell-balanced):not(.unbalance-cell-unbalanced):hover]:bg-neutral-250!"
             sticky={{
               offsetHeader: 0,
               offsetScroll: 0,
@@ -858,6 +924,9 @@ const EksporImporBeforeTieInPage: React.FC = () => {
                 record.rowIndex === "Max Tolerance"
               ) {
                 return "unbalance-row";
+              }
+              if (record.rowIndex === "UDF Adjustment") {
+                return "udf-adjustment-row";
               }
               return index % 2 === 0 ? "even" : "odd";
             }}
@@ -887,7 +956,9 @@ const EksporImporBeforeTieInPage: React.FC = () => {
         setAdjustedTableData={setAdjustedTableData}
         loading={udfUpdateLoading}
         setLoading={setUdfUpdateLoading}
-        handleRevert={(reasoning, udfId) => handleRevert(reasoning, udfId)}
+        handleRevert={(reasoning: string, udfId: string) =>
+          handleRevert(reasoning, udfId)
+        }
         revertLoading={revertLoading}
         reasoning={reasoning}
         setReasoning={setReasoning}
@@ -914,7 +985,9 @@ const EksporImporBeforeTieInPage: React.FC = () => {
         setAdjustedTableData={setAdjustedTableData}
         loading={udfUpdateLoading}
         setLoading={setUdfUpdateLoading}
-        handleRevert={(reasoning, udfId) => handleRevert(reasoning, udfId)}
+        handleRevert={(reasoning: string, udfId: string) =>
+          handleRevert(reasoning, udfId)
+        }
         revertLoading={revertLoading}
         reasoning={reasoning}
         setReasoning={setReasoning}
@@ -932,7 +1005,7 @@ const EksporImporBeforeTieInPage: React.FC = () => {
 
       <RevertModal
         visible={isRevertModalOpen}
-        onOk={(reasoning) => handleRevertAll(reasoning)}
+        onOk={(reasoning: string) => handleRevertAll(reasoning)}
         onCancel={() => setIsRevertModalOpen(false)}
         confirmLoading={revertAllLoading}
         title="Revert All UDF"

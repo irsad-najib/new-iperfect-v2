@@ -9,7 +9,7 @@ interface PriorityModalProps {
   onSelect: (
     value: string,
     limit: number | null,
-    limit_udf_id: string | null
+    limit_udf_id: string | null,
   ) => void;
   options: Array<{ value: string; label: string }>;
   currentPriorities: Array<{ order: number; value: string }>;
@@ -70,8 +70,8 @@ const PriorityModal = ({
       !currentPriorities.some(
         (priority) =>
           priority.value === option.value &&
-          (!initialPriority || priority.value !== initialPriority.value)
-      )
+          (!initialPriority || priority.value !== initialPriority.value),
+      ),
   );
 
   useEffect(() => {
@@ -95,7 +95,7 @@ const PriorityModal = ({
       onSelect(
         exporter_selection,
         max_value ? parseFloat(max_value) : null,
-        null
+        null,
       );
     }
   };
@@ -134,7 +134,7 @@ const PriorityModal = ({
                 {/* Show current value even if not available */}
                 {initialPriority &&
                   !availableOptions.some(
-                    (opt) => opt.value === initialPriority.value
+                    (opt) => opt.value === initialPriority.value,
                   ) && (
                     <Select.Option
                       key={initialPriority.value}
@@ -146,7 +146,7 @@ const PriorityModal = ({
             </Form.Item>
 
             <div className="flex gap-2.5 flex-col">
-              <span className="font-semibold text-[16.8px] text-[#13162a]">
+              <span className="font-semibold text-[16.8px] text-neutral-900">
                 Max value
               </span>
               <Radio.Group
@@ -166,7 +166,7 @@ const PriorityModal = ({
                       if (
                         !/^[0-9]*[,.]?[0-9]*$/.test(
                           // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                          target.value + (e as any).data
+                          target.value + (e as any).data,
                         )
                       ) {
                         e.preventDefault();
@@ -178,13 +178,15 @@ const PriorityModal = ({
             </div>
 
             <div className="flex justify-end gap-2 mt-2.5">
-              <Button className="customSecondaryButton" onClick={onClose}>
+              <Button
+                className="bg-transparent border border-neutral-700 rounded px-4 h-9 flex items-center justify-center font-semibold text-neutral-900 hover:bg-secondary-300 hover:border-secondary-300 hover:text-neutral-100 active:bg-neutral-500 active:border-neutral-500 active:text-neutral-900 disabled:bg-neutral-300 disabled:border-neutral-300 disabled:text-[#eeeff1]"
+                onClick={onClose}>
                 Cancel
               </Button>
               <Button
                 type="primary"
                 htmlType="submit"
-                className="customPrimaryButton"
+                className="bg-primary-300 border-primary-300 rounded px-4 h-9 flex items-center justify-center font-semibold text-neutral-100 hover:bg-primary-700 hover:border-primary-700 active:bg-neutral-900 active:border-neutral-900 disabled:bg-neutral-300 disabled:border-neutral-300"
                 loading={modifyLoading}>
                 {initialPriority ? "Save" : "Add"}
               </Button>

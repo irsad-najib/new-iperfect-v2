@@ -239,11 +239,11 @@ const OverwriteModal: React.FC<OverwriteModalProps> = ({
           autoFocus
           onPressEnter={handleNext}
         />
-        <div className="text-[12px] text-[#777986] mt-1">
+        <div className="text-[12px] text-neutral-500 mt-1">
           Supports Indonesian format: use comma (,) for decimal separator
         </div>
         {newValue && (
-          <div className="text-[14px] text-[#404252] mt-2">
+          <div className="text-[14px] text-neutral-700 mt-2">
             Parsed value: <span className="font-semibold">{parsedValue}</span>
           </div>
         )}
@@ -262,7 +262,7 @@ const OverwriteModal: React.FC<OverwriteModalProps> = ({
           <div className="text-[16px] font-semibold mb-2">
             Confirm Value Change
           </div>
-          <div className="text-[14px] text-[#777986]">
+          <div className="text-[14px] text-neutral-500">
             You are about to change the value for{" "}
             <span className="font-semibold">{tag}</span> at field{" "}
             <span className="font-semibold">{getFieldDisplayName(field)}</span>.
@@ -274,16 +274,16 @@ const OverwriteModal: React.FC<OverwriteModalProps> = ({
       <div className="bg-[#f5f5f5] px-4 py-4 rounded-lg mb-6">
         <div className="flex items-center justify-center gap-4">
           <div className="text-center">
-            <div className="text-[12px] text-[#777986] mb-1">Current</div>
-            <div className="text-[20px] font-semibold text-[#404252]">
+            <div className="text-[12px] text-neutral-500 mb-1">Current</div>
+            <div className="text-[20px] font-semibold text-neutral-700">
               {currentValue}
             </div>
           </div>
 
-          <div className="text-[24px] text-[#777986]">→</div>
+          <div className="text-[24px] text-neutral-500">→</div>
 
           <div className="text-center">
-            <div className="text-[12px] text-[#777986] mb-1">New</div>
+            <div className="text-[12px] text-neutral-500 mb-1">New</div>
             <div className="text-[20px] font-semibold text-[#00AD17]">
               {parsedValue}
             </div>

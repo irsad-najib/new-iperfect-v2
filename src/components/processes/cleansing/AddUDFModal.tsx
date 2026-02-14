@@ -48,7 +48,7 @@ const AddUDFModal: React.FC<AddUDFModalProps> = ({
         }
 
         const response = await api.get<UDFTemplate[]>(
-          `/pipeline/utils/available-udf?pipeline_type=${pipelineType}`
+          `/pipeline/utils/available-udf?pipeline_type=${pipelineType}`,
         );
         setTemplates(response.data);
       } catch (error) {
@@ -177,7 +177,7 @@ const AddUDFModal: React.FC<AddUDFModalProps> = ({
   };
 
   const filteredTemplates = templates.filter((template) =>
-    template.display_name.toLowerCase().includes(searchTerm.toLowerCase())
+    template.display_name.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   return (
@@ -251,14 +251,14 @@ const AddUDFModal: React.FC<AddUDFModalProps> = ({
             type="primary"
             onClick={() => handleAddNewUDF("template")}
             block
-            className="customPrimaryButton btn-md h-10"
+            className="bg-primary-300 border-primary-300 rounded px-4 h-10 flex items-center justify-center font-semibold text-neutral-100 hover:bg-primary-700 hover:border-primary-700 active:bg-neutral-900 active:border-neutral-900 disabled:bg-neutral-300 disabled:border-neutral-300"
             disabled={!udfName || !selectedTemplate}>
             Add new UDF from template
           </Button>
           <Button
             onClick={() => handleAddNewUDF("blank")}
             block
-            className="customSecondaryButton btn-md h-10"
+            className="bg-transparent border border-neutral-700 rounded px-4 h-10 flex items-center justify-center font-semibold text-neutral-900 hover:bg-secondary-300 hover:border-secondary-300 hover:text-neutral-100 active:bg-neutral-500 active:border-neutral-500 active:text-neutral-900 disabled:bg-neutral-300 disabled:border-neutral-300 disabled:text-[#eeeff1]"
             disabled={!udfName || selectedTemplate !== null}>
             Create new blank UDF
           </Button>

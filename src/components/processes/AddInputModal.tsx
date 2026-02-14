@@ -286,8 +286,8 @@ const AddInputModal: React.FC<AddInputModalProps> = ({
   ) => {
     if (unbalance && max) {
       return unbalance <= max
-        ? "!w-full !text-white !bg-[#00ad17]"
-        : "!w-full !text-white !bg-[#e20301]";
+        ? "!w-full !text-white !bg-success"
+        : "!w-full !text-white !bg-danger";
     }
     return "!w-full !text-black";
   };
@@ -460,12 +460,12 @@ const AddInputModal: React.FC<AddInputModalProps> = ({
                     />
                     <Button
                       icon={<HiPlus size={28} />}
-                      className="!flex !items-center !justify-center !h-[50px] !min-w-[50px] !p-0 !border !border-[#f47920] !rounded-md hover:!border-[#f47920] hover:!text-[#f47920]"
+                      className="!flex !items-center !justify-center !h-[50px] !min-w-[50px] !p-0 !border !border-secondary-300 !rounded-md hover:!border-secondary-300 hover:!text-secondary-300"
                       onClick={() => handleAdjustmentChange(true)}
                     />
                     <Button
                       icon={<HiMinus size={28} />}
-                      className="!flex !items-center !justify-center !h-[50px] !min-w-[50px] !p-0 !border !border-[#f47920] !rounded-md hover:!border-[#f47920] hover:!text-[#f47920]"
+                      className="!flex !items-center !justify-center !h-[50px] !min-w-[50px] !p-0 !border !border-secondary-300 !rounded-md hover:!border-secondary-300 hover:!text-secondary-300"
                       onClick={() => handleAdjustmentChange(false)}
                     />
                   </div>

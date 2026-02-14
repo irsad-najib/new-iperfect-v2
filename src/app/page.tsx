@@ -103,19 +103,19 @@ export default function Home() {
 
           <div className="relative text-center my-6">
             <div className="absolute top-1/2 left-0 w-[45%] h-px bg-[#e8e8e8]"></div>
-            <span className="bg-white px-2.5 text-[#777986] text-sm relative z-10">
+            <span className="bg-white px-2.5 text-neutral-500 text-sm relative z-10">
               or login with Google
             </span>
             <div className="absolute top-1/2 right-0 w-[45%] h-px bg-[#e8e8e8]"></div>
           </div>
 
-          <Button block size="large" className="mb-6 border-[#404252]">
+          <Button block size="large" className="mb-6 border-neutral-700">
             Login with Google
           </Button>
 
-          <p className="text-center m-0 text-[#777986]">
+          <p className="text-center m-0 text-neutral-500">
             Not registered yet?{" "}
-            <a href="#" className="text-[#f47920] no-underline font-medium">
+            <a href="#" className="text-secondary-300 no-underline font-medium">
               Contact admin
             </a>
           </p>

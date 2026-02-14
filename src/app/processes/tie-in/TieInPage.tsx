@@ -70,7 +70,7 @@ const TieInPage: React.FC = () => {
         return (
           <div className={baseContainerClasses}>
             <div
-              className={`${baseCircleClasses} bg-[#F3F4F8] text-[#F47920] text-[20.16px] font-semibold`}>
+              className={`${baseCircleClasses} bg-neutral-100 text-secondary-300 text-[20.16px] font-semibold`}>
               {recordKey}
             </div>
             <span className={textClasses}>In Progress</span>
@@ -80,10 +80,10 @@ const TieInPage: React.FC = () => {
         return (
           <div className={baseContainerClasses}>
             <div
-              className={`${baseCircleClasses} bg-[#EEEFF1] text-[#B3B5BD] text-[20.16px] font-semibold border-2 border-[#B3B5BD]`}>
+              className={`${baseCircleClasses} bg-[#eeeff1] text-neutral-300 text-[20.16px] font-semibold border-2 border-neutral-300`}>
               {recordKey}
             </div>
-            <span className="text-[20.16px] text-[#B3B5BD]">Unavailable</span>
+            <span className="text-[20.16px] text-neutral-300">Unavailable</span>
           </div>
         );
       default:
@@ -112,12 +112,12 @@ const TieInPage: React.FC = () => {
             <span
               className={`text-[20.16px] font-normal ${
                 record.status === "Unavailable"
-                  ? "text-[#B3B5BD]"
-                  : "text-[#13162A]"
+                  ? "text-neutral-300"
+                  : "text-neutral-900"
               }`}>
               {process}
             </span>
-            <span className="text-[9.72px] text-[#B3B5BD] font-normal">
+            <span className="text-[9.72px] text-neutral-300 font-normal">
               Version: {record.version}
             </span>
           </div>
@@ -266,7 +266,7 @@ const TieInPage: React.FC = () => {
   // Optimasi: Extract row class logic
   const getRowClassName = (record: ProcessRecord) => {
     return record.status === "Unavailable"
-      ? "bg-[#EEEFF1] hover:bg-[#E8E8ED]"
+      ? "bg-[#eeeff1] hover:bg-[#e8e8e8]"
       : "";
   };
 
@@ -280,14 +280,14 @@ const TieInPage: React.FC = () => {
             title: (
               <Link
                 href="/processes"
-                className="text-[#B3B5BD] hover:text-[#B3B5BD] transition-colors">
+                className="text-neutral-300 hover:text-neutral-300 transition-colors">
                 <span className="text-2xl font-semibold">Processes</span>
               </Link>
             ),
           },
           {
             title: (
-              <span className="text-[#101223] text-2xl font-semibold">
+              <span className="text-neutral-900 text-2xl font-semibold">
                 Tie in
               </span>
             ),
@@ -320,7 +320,7 @@ const TieInPage: React.FC = () => {
           </Button>
           <Button
             type="primary"
-            className="bg-danger hover:bg-[#c70200]! border-0 h-11 text-20 rounded-lg font-semibold flex items-center gap-2">
+            className="bg-danger hover:bg-danger! border-0 h-11 text-20 rounded-lg font-semibold flex items-center gap-2">
             <MdRestartAlt size={28} />
             Reset all
           </Button>

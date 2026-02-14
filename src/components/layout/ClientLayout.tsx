@@ -57,12 +57,11 @@ const ClientLayout: React.FC<ClientLayoutProps> = ({ children }) => {
       }
       if (pathname.startsWith("/global-config") && !access?.global_config) {
         router.push("/processes");
-        return;
       }
     };
 
     checkAccess();
-  }, [pathname, access, router, isAuthenticated, isLoginPage]);
+  }, [pathname, router, isAuthenticated, isLoginPage, access]);
 
   if (isLoading && !isLoginPage) {
     return (

@@ -257,7 +257,7 @@ const StepsList: React.FC<StepsListProps> = ({
       <Modal
         title={
           <div className="flex items-center gap-2">
-            <MdInfo className="text-[#FF2624]" size={32} />
+            <MdInfo className="text-danger" size={32} />
             <span>You are about to delete the current UDF</span>
           </div>
         }

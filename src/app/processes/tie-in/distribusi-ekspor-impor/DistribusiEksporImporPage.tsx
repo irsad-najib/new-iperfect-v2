@@ -30,7 +30,7 @@ import { useRouter } from "next/navigation";
 import GuideModal from "@/components/processes/tie-in/GuideModal";
 import LoadingSpinner from "@/components/processes/tie-in/LoadingSpinner";
 import { formatNumber } from "@/utils/numberFormat";
-import PriorityModal from "./components/PriorityModal";
+import PriorityModal from "../../../../components/processes/tie-in/distribusi-ekspor-impor/PriorityModal";
 
 interface DataType {
   key: string;
@@ -111,7 +111,7 @@ const DistribusiEksporImporPage: React.FC = () => {
     number | null
   >(null);
   const [tabsData, setTabsData] = useState<Record<string, DistributionConfig>>(
-    {}
+    {},
   );
   const [unitOptions, setUnitOptions] = useState<
     { value: string; label: string }[]
@@ -161,7 +161,7 @@ const DistribusiEksporImporPage: React.FC = () => {
 
         const response = await api.post(
           "/tiein/distribusi-tiein/save",
-          requestBody
+          requestBody,
         );
         setTabsData(response.data.config);
         setIsPriorityModalOpen(false);
@@ -173,7 +173,7 @@ const DistribusiEksporImporPage: React.FC = () => {
         setModifyLoading(false);
       }
     },
-    [dailyRunner?._id, formattedDate]
+    [dailyRunner?._id, formattedDate],
   );
   // Optimized: Memoized fetch result data
   const fetchResultData = useCallback(async () => {
@@ -202,7 +202,7 @@ const DistribusiEksporImporPage: React.FC = () => {
       setLoading(true);
       try {
         const response = await api.get(
-          `/tiein/distribusi-tiein/get-by-args?tanggal=${formattedDate}`
+          `/tiein/distribusi-tiein/get-by-args?tanggal=${formattedDate}`,
         );
         const data: ApiResponse = response.data;
 
@@ -248,7 +248,7 @@ const DistribusiEksporImporPage: React.FC = () => {
     async (material: string) => {
       try {
         const response = await api.get(
-          `/tiein/distribusi-tiein/available-eksporter-importer?tanggal=${formattedDate}&material=${material}`
+          `/tiein/distribusi-tiein/available-eksporter-importer?tanggal=${formattedDate}&material=${material}`,
         );
         const data: OptionsResponse[] = response.data;
 
@@ -258,14 +258,14 @@ const DistribusiEksporImporPage: React.FC = () => {
             materialOptions.importer.map((item) => ({
               value: item,
               label: item,
-            }))
+            })),
           );
 
           setPriorityOptions(
             materialOptions.eksporter.map((item) => ({
               value: item,
               label: item,
-            }))
+            })),
           );
         }
       } catch (error) {
@@ -273,7 +273,7 @@ const DistribusiEksporImporPage: React.FC = () => {
         message.error("Failed to fetch options");
       }
     },
-    [formattedDate]
+    [formattedDate],
   );
 
   useEffect(() => {
@@ -283,7 +283,7 @@ const DistribusiEksporImporPage: React.FC = () => {
   // Optimized: Memoized current data getter
   const getCurrentData = useCallback(
     () => tabsData[activeButton] || { distribution_config: [] },
-    [tabsData, activeButton]
+    [tabsData, activeButton],
   );
 
   // Optimized: useCallback for handlers
@@ -291,7 +291,7 @@ const DistribusiEksporImporPage: React.FC = () => {
     (record: DataType) => {
       const currentData = getCurrentData();
       const newData = currentData.distribution_config.filter(
-        (item) => item.key !== record.key
+        (item) => item.key !== record.key,
       );
 
       const updatedData = newData.map((item, index) => ({
@@ -310,14 +310,14 @@ const DistribusiEksporImporPage: React.FC = () => {
       setTabsData(newTabsData);
       saveData(newTabsData);
     },
-    [getCurrentData, tabsData, activeButton, saveData]
+    [getCurrentData, tabsData, activeButton, saveData],
   );
 
   const handleAddRow = useCallback(
     (record: DataType) => {
       const currentData = getCurrentData();
       const index = currentData.distribution_config.findIndex(
-        (item) => item.key === record.key
+        (item) => item.key === record.key,
       );
 
       const newRow: DataType = {
@@ -347,7 +347,7 @@ const DistribusiEksporImporPage: React.FC = () => {
       setTabsData(newTabsData);
       saveData(newTabsData);
     },
-    [getCurrentData, tabsData, activeButton, saveData]
+    [getCurrentData, tabsData, activeButton, saveData],
   );
 
   const handleUnitChange = useCallback(
@@ -371,7 +371,7 @@ const DistribusiEksporImporPage: React.FC = () => {
       setTabsData(newTabsData);
       saveData(newTabsData);
     },
-    [getCurrentData, tabsData, activeButton, saveData]
+    [getCurrentData, tabsData, activeButton, saveData],
   );
 
   const handlePriorityChange = useCallback(
@@ -379,7 +379,7 @@ const DistribusiEksporImporPage: React.FC = () => {
       value: string,
       record: DataType,
       limit: number | null,
-      limit_udf_id: string | null
+      limit_udf_id: string | null,
     ) => {
       const currentData = getCurrentData();
       const newData = currentData.distribution_config.map((item) => {
@@ -407,7 +407,7 @@ const DistribusiEksporImporPage: React.FC = () => {
       setTabsData(newTabsData);
       saveData(newTabsData);
     },
-    [getCurrentData, tabsData, activeButton, saveData]
+    [getCurrentData, tabsData, activeButton, saveData],
   );
 
   const handleDeletePriority = useCallback(
@@ -421,7 +421,7 @@ const DistribusiEksporImporPage: React.FC = () => {
         ),
         content: (
           <div className="text-[16.8px] mb-4 ml-8">
-            <div className="text-[#13162A] mb-3">
+            <div className="text-neutral-900 mb-3">
               Apakah anda yakin ingin menghapus priority ini?
             </div>
             <div className="text-14 text-[#8c8c8c]">
@@ -479,7 +479,7 @@ const DistribusiEksporImporPage: React.FC = () => {
         },
       });
     },
-    [getCurrentData, tabsData, activeButton, saveData]
+    [getCurrentData, tabsData, activeButton, saveData],
   );
 
   const handleEditPriority = useCallback((record: DataType, index: number) => {
@@ -494,7 +494,7 @@ const DistribusiEksporImporPage: React.FC = () => {
       record: DataType,
       index: number,
       limit: number | null,
-      limit_udf_id: string | null
+      limit_udf_id: string | null,
     ) => {
       const currentData = getCurrentData();
       const newData = currentData.distribution_config.map((item) => {
@@ -522,7 +522,7 @@ const DistribusiEksporImporPage: React.FC = () => {
       setTabsData(newTabsData);
       saveData(newTabsData);
     },
-    [getCurrentData, tabsData, activeButton, saveData]
+    [getCurrentData, tabsData, activeButton, saveData],
   );
 
   const handleAddNewRow = useCallback(() => {
@@ -591,7 +591,7 @@ const DistribusiEksporImporPage: React.FC = () => {
         },
       ],
     }),
-    [handleAddRow, handleDeleteRow]
+    [handleAddRow, handleDeleteRow],
   );
 
   // Optimized: Memoized columns
@@ -644,24 +644,24 @@ const DistribusiEksporImporPage: React.FC = () => {
         align: "start",
         render: (
           value: Array<{ order: number; value: string; limit: number | null }>,
-          record: DataType
+          record: DataType,
         ) => {
           const sortedPriorities = [...value].sort((a, b) => a.order - b.order);
           return (
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 ">
               <div className="flex gap-1 flex-wrap items-center">
                 {sortedPriorities.map((p, index) => (
                   <>
-                    <div className="flex gap-0.5 relative transition-all duration-200 rounded group hover:bg-[#e20301]">
+                    <div className="flex gap-0.5 relative transition-all duration-200 rounded group hover:bg-danger bg-secondary-300 text-neutral-100">
                       <Button
                         key={`btn-${index}`}
-                        className="!px-3 !py-1 !bg-secondary-300 !border-none !rounded !text-[16.8px] !my-0.5 !h-8 !text-[#f3f4f8] flex items-center justify-center !min-w-max !transition-all !duration-200 group-hover:!bg-transparent group-hover:!shadow-none">
-                        <span className="opacity-100 transition-all duration-200 relative group-hover:opacity-0 group-hover:invisible">
+                        className="px-3 py-1 bg-secondary-300 border-none rounded text-[16.8px] my-0.5 h-8 text-neutral-100 flex items-center justify-center min-w-max transition-all duration-200 group-hover:bg-transparent group-hover:shadow-none">
+                        <span className="opacity-100 transition-all duration-200 relative group-hover:opacity-0 group-hover:invisible text-neutral-100">
                           {p.value}
                         </span>
                       </Button>
 
-                      <div className="flex gap-1 opacity-0 absolute transition-all duration-200 left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 invisible z-[1] group-hover:opacity-100 group-hover:visible">
+                      <div className="flex gap-1 opacity-0 absolute transition-all duration-200 left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 invisible z-1 group-hover:opacity-100 group-hover:visible">
                         <MdEditNote
                           className="cursor-pointer"
                           size={24}
@@ -723,7 +723,7 @@ const DistribusiEksporImporPage: React.FC = () => {
       handleEditPriority,
       modifyLoading,
       handleDeletePriority,
-    ]
+    ],
   );
 
   // Optimized: Memoized current result data
@@ -731,7 +731,7 @@ const DistribusiEksporImporPage: React.FC = () => {
     () =>
       resultData?.data.find((item) => item.material === activeButton)?.items ||
       [],
-    [resultData, activeButton]
+    [resultData, activeButton],
   );
 
   // Optimized: Memoized result columns
@@ -759,8 +759,8 @@ const DistribusiEksporImporPage: React.FC = () => {
             {typeof value === "number"
               ? formatNumber(value, { decimals: 2, locale: "id-ID" })
               : value === null || value === undefined
-              ? "-"
-              : value}
+                ? "-"
+                : value}
           </div>
         ),
       },
@@ -774,8 +774,8 @@ const DistribusiEksporImporPage: React.FC = () => {
             {typeof value === "number"
               ? formatNumber(value, { decimals: 2, locale: "id-ID" })
               : value === null || value === undefined
-              ? "-"
-              : value}
+                ? "-"
+                : value}
           </div>
         ),
       },
@@ -789,8 +789,8 @@ const DistribusiEksporImporPage: React.FC = () => {
             {typeof value === "number"
               ? formatNumber(value, { decimals: 2, locale: "id-ID" })
               : value === null || value === undefined
-              ? "-"
-              : value}
+                ? "-"
+                : value}
           </div>
         ),
       },
@@ -804,13 +804,13 @@ const DistribusiEksporImporPage: React.FC = () => {
             {typeof value === "number"
               ? formatNumber(value, { decimals: 2, locale: "id-ID" })
               : value === null || value === undefined
-              ? "-"
-              : value}
+                ? "-"
+                : value}
           </div>
         ),
       },
     ],
-    []
+    [],
   );
 
   const getItemLabel = useCallback(
@@ -818,7 +818,7 @@ const DistribusiEksporImporPage: React.FC = () => {
       const item = buttonTabs.find((tab) => tab.key === key);
       return item ? item.label : "";
     },
-    [buttonTabs]
+    [buttonTabs],
   );
 
   const renderContent = () => {
@@ -827,7 +827,7 @@ const DistribusiEksporImporPage: React.FC = () => {
         <div className="flex flex-col gap-6">
           <div className="w-full rounded-lg overflow-hidden">
             <div className="py-3">
-              <h2 className="m-0 text-20 font-semibold text-[#13162a]">
+              <h2 className="m-0 text-20 font-semibold text-neutral-900">
                 Ekspor dan Impor {getItemLabel(activeButton)}
               </h2>
             </div>
@@ -836,7 +836,19 @@ const DistribusiEksporImporPage: React.FC = () => {
                 columns={resultColumns}
                 dataSource={getCurrentResultData()}
                 pagination={false}
-                className="dataTable"
+                className="
+  /* font size semua cell */
+  [&_.ant-table-cell]:text-[16.8px]
+
+  /* HEADER */
+  [&_.ant-table-thead>tr>th]:bg-[#e6e6e6]!
+  [&_.ant-table-thead>tr>th]:font-semibold
+  [&_.ant-table-thead>tr>th]:text-center
+
+  /* BODY CELL */
+  [&_.ant-table-tbody>tr>td]:bg-[#eeeff1]!
+  [&_.ant-table-tbody>tr>td]:text-center
+"
                 bordered
                 size="middle"
                 scroll={{ x: true, y: 450 }}
@@ -852,7 +864,7 @@ const DistribusiEksporImporPage: React.FC = () => {
       <div className="flex flex-col gap-6">
         <div className="w-full rounded-lg overflow-hidden">
           <div className="py-3">
-            <h2 className="m-0 text-20 font-semibold text-[#13162a]">
+            <h2 className="m-0 text-20 font-semibold text-neutral-900">
               Ekspor dan Impor {getItemLabel(activeButton)}
             </h2>
           </div>
@@ -887,7 +899,7 @@ const DistribusiEksporImporPage: React.FC = () => {
           </div>
           <Button
             type="dashed"
-            className="w-full h-10 text-14 flex justify-center items-center text-[#666] border-t-0 rounded-b-lg !bg-transparent !border !border-dashed !border-[#b3b5bd] hover:!border-secondary-300 [&:hover_svg]:!text-secondary-300"
+            className="w-full h-10 text-14 flex justify-center items-center text-[#666] border-t-0 rounded-b-lg !bg-transparent !border !border-dashed !border-neutral-300 hover:!border-secondary-300 [&:hover_svg]:!text-secondary-300"
             onClick={handleAddNewRow}>
             <MdAdd size={24} />
           </Button>
@@ -944,31 +956,35 @@ const DistribusiEksporImporPage: React.FC = () => {
           items={[
             {
               title: (
-                <Link href="/processes" className="breadcrumbLink">
-                  <span className="linkText">Processes</span>
+                <Link
+                  href="/processes"
+                  className="text-neutral-300 hover:text-neutral-900 transition-colors">
+                  <span className="text-2xl font-semibold">Processes</span>
                 </Link>
               ),
             },
             {
               title: (
-                <Link href="/processes/tie-in" className="breadcrumbLink">
-                  <span className="linkText">Tie in</span>
+                <Link
+                  href="/processes/tie-in"
+                  className="text-neutral-300 hover:text-neutral-900 transition-colors">
+                  <span className="text-2xl font-semibold">Tie in</span>
                 </Link>
               ),
             },
             {
               title: (
-                <span className="lastBreadcrumbItem">
-                  Distribusi Ekspor dan Impor
+                <span className="text-neutral-900 text-2xl font-semibold">
+                  Kapasitas dan Kebutuhan Ekspor - Impor
                 </span>
               ),
             },
           ]}
-          className="customBreadcrumb separatorSpacing"
+          className="[&_.ant-breadcrumb-separator]:mx-1.5 [&_.ant-breadcrumb-separator]:flex [&_.ant-breadcrumb-separator]:items-center"
         />
         <Button
           type="default"
-          className="customSecondaryButton btn-md mr-12"
+          className="bg-transparent border border-neutral-700 rounded px-4 h-9 flex items-center justify-center font-semibold text-neutral-900 hover:bg-secondary-300 hover:border-secondary-300 hover:text-neutral-100 active:bg-neutral-500 active:border-neutral-500 active:text-neutral-900 disabled:bg-neutral-300 disabled:border-neutral-300 disabled:text-[#eeeff1] mr-12"
           onClick={handleRedirect}>
           <span className="font-normal">Next: </span>
           <span className="font-semibold">Generate Matrix</span>
@@ -978,7 +994,7 @@ const DistribusiEksporImporPage: React.FC = () => {
 
       <div className="flex justify-between items-center mb-6">
         <div className="flex items-center gap-3 mb-[18px] mt-[34px]">
-          <span className="text-[#404252]"></span>
+          <span className="text-neutral-700"></span>
           <DatePicker
             disabled
             value={selectedDate}
@@ -993,9 +1009,9 @@ const DistribusiEksporImporPage: React.FC = () => {
           activeKey={activeTab}
           onChange={setActiveTab}
           items={items}
-          className="customTabs flex-1 min-w-0"
+          className="text-20 [&_.ant-tabs-nav::before]:h-1 [&_.ant-tabs-nav::before]:bg-neutral-250 [&_.ant-tabs-tab]:text-center [&_.ant-tabs-tab]:items-center [&_.ant-tabs-tab]:justify-center [&_.ant-tabs-tab]:py-2 [&_.ant-tabs-tab]:px-4 [&_.ant-tabs-tab]:mx-1 [&_.ant-tabs-tab]:text-neutral-300 [&_.ant-tabs-tab]:font-semibold [&_.ant-tabs-tab-active]:rounded [&_.ant-tabs-tab-active_.ant-tabs-tab-btn]:text-black [&_.ant-tabs-tab-active_.ant-tabs-tab-btn]:font-semibold [&_.ant-tabs-ink-bar]:bg-orange-500 [&_.ant-tabs-ink-bar]:h-1"
         />
-        <div className="flex items-center gap-3 py-4 rounded-lg flex-shrink-0">
+        <div className="flex items-center gap-3 py-4 rounded-lg shrink-0">
           <span>Config:</span>
           <div className="py-1 px-[11px] border border-[#d9d9d9] rounded-md min-w-[200px] bg-neutral-250">
             {loading ? "Loading..." : config?.name || selectedConfig}
@@ -1004,7 +1020,7 @@ const DistribusiEksporImporPage: React.FC = () => {
             type="default"
             loading={guideLoading}
             onClick={handleGuide}
-            className="customSecondaryButton">
+            className="bg-transparent border border-neutral-700 rounded px-4 h-9 flex items-center justify-center font-semibold text-neutral-900 hover:bg-secondary-300 hover:border-secondary-300 hover:text-neutral-100 active:bg-neutral-500 active:border-neutral-500 active:text-neutral-900 disabled:bg-neutral-300 disabled:border-neutral-300 disabled:text-[#eeeff1]">
             <MdLibraryBooks size={24} />
             Guide
           </Button>
@@ -1025,7 +1041,7 @@ const DistribusiEksporImporPage: React.FC = () => {
               type="default"
               loading={loading}
               onClick={handleLoadConfig}
-              className="customSecondaryButton">
+              className="bg-transparent border border-neutral-700 rounded px-4 h-9 flex items-center justify-center font-semibold text-neutral-900 hover:bg-secondary-300 hover:border-secondary-300 hover:text-neutral-100 active:bg-neutral-500 active:border-neutral-500 active:text-neutral-900 disabled:bg-neutral-300 disabled:border-neutral-300 disabled:text-[#eeeff1]">
               Load config
               <MdArrowForwardIos
                 size={18}
@@ -1071,8 +1087,10 @@ const DistribusiEksporImporPage: React.FC = () => {
         {buttonTabs.map((tab) => (
           <Button
             key={tab.key}
-            className={`customSecondaryButton ${
-              activeButton === tab.key ? "activeButton" : ""
+            className={`bg-transparent border rounded px-4 h-9 flex items-center justify-center font-semibold hover:bg-secondary-300 hover:border-secondary-300 hover:text-neutral-100 active:bg-neutral-500 active:border-neutral-500 disabled:bg-neutral-300 disabled:border-neutral-300 disabled:text-[#eeeff1] ${
+              activeButton === tab.key
+                ? "bg-secondary-300 border-secondary-300 border-2 text-neutral-100"
+                : "border-neutral-700 text-neutral-900"
             }`}
             onClick={() => setActiveButton(tab.key)}>
             {tab.label}
@@ -1104,7 +1122,7 @@ const DistribusiEksporImporPage: React.FC = () => {
                 currentRecord,
                 editingPriorityIndex,
                 limit,
-                limit_udf_id
+                limit_udf_id,
               );
             } else {
               handlePriorityChange(value, currentRecord, limit, limit_udf_id);

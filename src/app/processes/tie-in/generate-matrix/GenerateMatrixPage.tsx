@@ -50,10 +50,10 @@ const GenerateMatrixPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState("before");
   const [activeMaterial, setActiveMaterial] = useState("steam");
   const [beforeData, setBeforeData] = useState<MatrixTieInResponse | null>(
-    null
+    null,
   );
   const [adjustedData, setAdjustedData] = useState<MatrixTieInResponse | null>(
-    null
+    null,
   );
   const [error, setError] = useState<string | null>(null);
   const [isAdjusted, setIsAdjusted] = useState(false);
@@ -133,7 +133,7 @@ const GenerateMatrixPage: React.FC = () => {
             profile_id: adjustedData.profile_id,
             data_id: adjustedData.data_id,
           },
-        }
+        },
       );
 
       setAdjustedData(response.data);
@@ -420,7 +420,7 @@ const GenerateMatrixPage: React.FC = () => {
 
         const response = await api.post<MatrixTieInResponse>(
           "/tiein/matrix-tiein/adjustment",
-          requestBody
+          requestBody,
         );
         setAdjustedData(response.data);
         message.success("Matrix value adjusted successfully");
@@ -430,7 +430,7 @@ const GenerateMatrixPage: React.FC = () => {
         message.error("Failed to adjust matrix value");
       }
     },
-    [activeTab, beforeData, adjustedData, selectedCell, activeMaterial]
+    [activeTab, beforeData, adjustedData, selectedCell, activeMaterial],
   );
 
   const handleDownload = useCallback(async () => {
@@ -511,23 +511,31 @@ const GenerateMatrixPage: React.FC = () => {
         items={[
           {
             title: (
-              <Link href="/processes" className="breadcrumbLink">
-                <span className="linkText">Processes</span>
+              <Link
+                href="/processes"
+                className="text-neutral-300 hover:text-neutral-900 transition-colors">
+                <span className="text-2xl font-semibold">Processes</span>
               </Link>
             ),
           },
           {
             title: (
-              <Link href="/processes/tie-in" className="breadcrumbLink">
-                <span className="linkText">Tie in</span>
+              <Link
+                href="/processes/tie-in"
+                className="text-neutral-300 hover:text-neutral-900 transition-colors">
+                <span className="text-2xl font-semibold">Tie in</span>
               </Link>
             ),
           },
           {
-            title: <span className="lastBreadcrumbItem">Generate Matrix</span>,
+            title: (
+              <span className="text-neutral-900 text-2xl font-semibold">
+                Generate Matrix
+              </span>
+            ),
           },
         ]}
-        className="customBreadcrumb separatorSpacing"
+        className="[&_.ant-breadcrumb-separator]:mx-1.5 [&_.ant-breadcrumb-separator]:flex [&_.ant-breadcrumb-separator]:items-center"
       />
 
       <div className="flex justify-between items-center mb-6">
@@ -542,7 +550,7 @@ const GenerateMatrixPage: React.FC = () => {
         </div>
         <Button
           type="default"
-          className="customSecondaryButton btn-md"
+          className="bg-transparent border border-neutral-700 rounded px-4 h-9 flex items-center justify-center font-semibold text-neutral-900 hover:bg-secondary-300 hover:border-secondary-300 hover:text-neutral-100 active:bg-neutral-500 active:border-neutral-500 active:text-neutral-900 disabled:bg-neutral-300 disabled:border-neutral-300 disabled:text-[#eeeff1]"
           onClick={handleDownload}>
           <span className="font-normal">Download all matrix</span>
           <HiDownload size={24} className="ml-1" />
@@ -553,8 +561,10 @@ const GenerateMatrixPage: React.FC = () => {
         {beforeData?.material_data.map((tab) => (
           <Button
             key={tab.material}
-            className={`customSecondaryButton ${
-              activeMaterial === tab.material ? "activeButton" : ""
+            className={`bg-transparent border rounded px-4 h-9 flex items-center justify-center font-semibold hover:bg-secondary-300 hover:border-secondary-300 hover:text-neutral-100 active:bg-neutral-500 active:border-neutral-500 disabled:bg-neutral-300 disabled:border-neutral-300 disabled:text-[#eeeff1] ${
+              activeMaterial === tab.material
+                ? "bg-secondary-300 border-secondary-300 border-2 text-neutral-100"
+                : "border-neutral-700 text-neutral-900"
             }`}
             onClick={() => setActiveMaterial(tab.material)}>
             {tab.material}
@@ -568,7 +578,7 @@ const GenerateMatrixPage: React.FC = () => {
             <Tabs
               activeKey={activeTab}
               onChange={setActiveTab}
-              className="customTabs flex-1">
+              className="w-full text-20 [&_.ant-tabs-nav::before]:h-1 [&_.ant-tabs-nav::before]:bg-neutral-250 [&_.ant-tabs-tab]:text-center [&_.ant-tabs-tab]:items-center [&_.ant-tabs-tab]:justify-center [&_.ant-tabs-tab]:py-2 [&_.ant-tabs-tab]:px-4 [&_.ant-tabs-tab]:mx-1 [&_.ant-tabs-tab]:text-neutral-300 [&_.ant-tabs-tab]:font-semibold [&_.ant-tabs-tab-active]:rounded [&_.ant-tabs-tab-active_.ant-tabs-tab-btn]:text-black [&_.ant-tabs-tab-active_.ant-tabs-tab-btn]:font-semibold [&_.ant-tabs-ink-bar]:bg-orange-500 [&_.ant-tabs-ink-bar]:h-1">
               <TabPane tab="Before" key="before" />
               <TabPane
                 tab="Adjusted"
