@@ -53,7 +53,6 @@ const EditInputDataPage: React.FC = () => {
                 <MdArrowForwardIos
                   size={16}
                   className="align-middle inline-block"
-                  style={{ verticalAlign: "middle" }}
                 />
               }
               items={[

@@ -14,26 +14,31 @@ const RawmatPage = () => {
     <div>
       <div className="flex items-center justify-between">
         <Breadcrumb
-          separator={<MdArrowForwardIos size={16} />}
+          separator={
+            <MdArrowForwardIos
+              size={16}
+              className="inline-block align-middle"
+            />
+          }
           items={[
             {
               title: (
-                <Link
-                  href="/processes"
-                  className="text-neutral-300 hover:text-neutral-900 transition-colors">
-                  <span className="text-2xl font-semibold">Processes</span>
+                <Link href="/processes" className="breadcrumbLink">
+                  <span className="text-neutral-300 text-20 font-semibold">
+                    Processes
+                  </span>
                 </Link>
               ),
             },
             {
               title: (
-                <span className="text-neutral-900 text-2xl font-semibold">
+                <span className="text-neutral-900 text-20 font-semibold">
                   RawMat
                 </span>
               ),
             },
           ]}
-          className="[&_.ant-breadcrumb-separator]:mx-1.5 [&_.ant-breadcrumb-separator]:flex [&_.ant-breadcrumb-separator]:items-center"
+          className="customBreadcrumb separatorSpacing mb-4"
         />
       </div>
       <div className="flex justify-between items-center mb-[18px] mt-7">
@@ -66,9 +71,7 @@ const RawmatPage = () => {
         </div>
       </div>
       <RawmatTable
-        formattedDate={
-          selectedDate ? selectedDate.format("dddd, DD MMMM YYYY") : ""
-        }
+        formattedDate={selectedDate ? selectedDate.format("YYYY-MM-D") : ""}
       />
     </div>
   );

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback, useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Table, Button, Avatar, Tooltip, Space, Progress, message } from "antd";
 import {
   MdPlayArrow,
@@ -44,18 +44,83 @@ type JobStatusEvent = {
 
 const RawmatTable = ({ formattedDate }: RawmatTableProps) => {
   const router = useRouter();
-  const [loadingRawmatData, setLoadingRawmatData] = useState(false);
   const [loadingCalculation, setLoadingCalculation] = useState(false);
   const [rawmatData, setRawmatData] = useState<RawmatData | null>(null);
 
+  const [icTableData, setIcTableData] = useState<ProcessRecord[]>([
+    {
+      key: "1",
+      status: "In Progress",
+      process: "Set RPF and Integration",
+      version: "V10.24.10:31",
+      progress: 50,
+      lastModified: "14/11/24, 14:31",
+      avatarUrl: "",
+    },
+    {
+      key: "2",
+      status: "In Progress",
+      process: "Calculate MMBTU",
+      version: "V10.24.10:31",
+      progress: 50,
+      lastModified: "14/11/24, 14:31",
+      avatarUrl: "",
+    },
+  ]);
+
+  const rawmatJobIdRef = useRef<string | null>(null);
+
+  const formatLastModified = (date: Date) =>
+    date.toLocaleString("en-GB", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false,
+    });
+
   /* ================= SSE ================= */
   useEffect(() => {
-    const apiurl = process.env.NEXT_PUBLIC_API_URL;
-    const eventSource = new EventSource(`${apiurl}/api/sse`);
+    const eventSource = new EventSource("/api/sse");
 
     eventSource.onmessage = (event) => {
       const eventData: JobStatusEvent = JSON.parse(event.data);
+      console.log("Received SSE event:", eventData);
+
+      // Only react to the rawmat job triggered from this table.
+      if (
+        !rawmatJobIdRef.current ||
+        eventData.job_id !== rawmatJobIdRef.current
+      ) {
+        return;
+      }
+
       setLoadingCalculation(false);
+      const nowLabel = formatLastModified(new Date());
+
+      setIcTableData((prev) =>
+        prev.map((row) => {
+          // Keep everything else as-is, only update the fields you requested.
+          if (eventData.status === "completed") {
+            return {
+              ...row,
+              status: "Done",
+              progress: 100,
+              lastModified: nowLabel,
+            };
+          }
+
+          return {
+            ...row,
+            status: "In Progress",
+            lastModified: nowLabel,
+          };
+        }),
+      );
+
+      // Clear tracked job once it reaches a terminal state.
+      rawmatJobIdRef.current = null;
 
       if (eventData.status === "completed") {
         message.success(`Job ${eventData.job_id} completed`);
@@ -70,24 +135,21 @@ const RawmatTable = ({ formattedDate }: RawmatTableProps) => {
   }, []);
 
   /* ================= API ================= */
-  const fetchRawmatData = useCallback(async () => {
-    if (!formattedDate) return;
-    try {
-      setLoadingRawmatData(true);
-      const res = await api.get<RawmatData>("/rawmat/data/get-by-args", {
-        params: { tanggal: formattedDate, only_id: true },
-      });
-      setRawmatData(res.data);
-    } catch {
-      message.error("Failed to fetch rawmat data");
-    } finally {
-      setLoadingRawmatData(false);
-    }
-  }, [formattedDate]);
-
   useEffect(() => {
+    const fetchRawmatData = async () => {
+      if (!formattedDate) return;
+      try {
+        const res = await api.get<RawmatData>("/rawmat/data/get-by-args", {
+          params: { tanggal: formattedDate, only_id: true },
+        });
+        setRawmatData(res.data);
+      } catch {
+        message.error("Failed to fetch rawmat data");
+      }
+    };
+
     fetchRawmatData();
-  }, [fetchRawmatData]);
+  }, [formattedDate]);
 
   const getProgressColor = (progress: number) =>
     progress < 100 ? "#F47920" : "#1268B3";
@@ -235,35 +297,27 @@ const RawmatTable = ({ formattedDate }: RawmatTableProps) => {
     },
   ];
 
-  const icTableData: ProcessRecord[] = [
-    {
-      key: "1",
-      status: "In Progress",
-      process: "Set RPF and Integration",
-      version: "V10.24.10:31",
-      progress: 50,
-      lastModified: "14/11/24, 14:31",
-      avatarUrl: "",
-    },
-    {
-      key: "2",
-      status: "In Progress",
-      process: "Calculate MMBTU",
-      version: "V10.24.10:31",
-      progress: 50,
-      lastModified: "14/11/24, 14:31",
-      avatarUrl: "",
-    },
-  ];
-
   /* ================= ACTIONS ================= */
   const handleRunCalculation = async () => {
     if (!rawmatData?._id) return;
     setLoadingCalculation(true);
     try {
-      await api.post<RunResponse>(`/rawmat/executor/${rawmatData._id}`);
+      const res = await api.post<RunResponse>(
+        `/rawmat/executor/${rawmatData._id}`,
+      );
+      rawmatJobIdRef.current = res.data.job_id;
+
+      const nowLabel = formatLastModified(new Date());
+      setIcTableData((prev) =>
+        prev.map((row) => ({
+          ...row,
+          status: "In Progress",
+          lastModified: nowLabel,
+        })),
+      );
     } catch {
       message.error("Failed to run calculation");
+      setLoadingCalculation(false);
     }
   };
 

@@ -229,7 +229,7 @@ const TieInPage: React.FC = () => {
         },
       },
     ],
-    [router]
+    [router],
   );
 
   // Static data - bisa dipindahkan ke file terpisah atau fetch dari API
@@ -274,26 +274,28 @@ const TieInPage: React.FC = () => {
     <div className="p-4 px-5">
       {/* Breadcrumb Section */}
       <Breadcrumb
-        separator={<MdArrowForwardIos size={16} />}
+        separator={
+          <MdArrowForwardIos size={16} className="inline-block align-middle" />
+        }
         items={[
           {
             title: (
-              <Link
-                href="/processes"
-                className="text-neutral-300 hover:text-neutral-300 transition-colors">
-                <span className="text-2xl font-semibold">Processes</span>
+              <Link href="/processes" className="breadcrumbLink">
+                <span className="text-neutral-300 text-20 font-semibold">
+                  Processes
+                </span>
               </Link>
             ),
           },
           {
             title: (
-              <span className="text-neutral-900 text-2xl font-semibold">
+              <span className="text-neutral-900 text-20 font-semibold">
                 Tie in
               </span>
             ),
           },
         ]}
-        className="[&_.ant-breadcrumb-separator]:mx-1.5 [&_.ant-breadcrumb-separator]:flex [&_.ant-breadcrumb-separator]:items-center"
+        className="customBreadcrumb separatorSpacing mb-4"
       />
 
       {/* Date and Action Buttons Section */}

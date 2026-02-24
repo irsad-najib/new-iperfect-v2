@@ -410,17 +410,12 @@ const TieinUdfModal = ({
                       </Button>
                     </>
                   ) : (
-                    <div style={{ display: "flex", gap: "24px" }}>
-                      <div
-                        style={{
-                          display: "flex",
-                          gap: "10px",
-                          alignItems: "center",
-                        }}>
+                    <div className="flex gap-6">
+                      <div className="flex gap-[10px] items-center">
                         <span className="text-black text-[16.8px] font-semibold">
                           Select version:{""}
                         </span>
-                        <div style={{ display: "flex" }}>
+                        <div className="flex">
                           <Button
                             className={`bg-transparent border rounded px-4 h-9 flex items-center justify-center font-semibold hover:bg-secondary-300 hover:border-secondary-300 hover:text-neutral-100 active:bg-neutral-500 active:border-neutral-500 disabled:bg-neutral-300 disabled:border-neutral-300 disabled:text-[#eeeff1] ${
                               localTab === "before"
@@ -475,19 +470,9 @@ const TieinUdfModal = ({
                     }>
                     {unbalance != null ? formatNumber(unbalance) : "-"}
                     {unbalance && max && unbalance > max ? (
-                      <MdInfo
-                        size={18}
-                        style={{
-                          marginLeft: "5px",
-                        }}
-                      />
+                      <MdInfo size={18} className="ml-[5px]" />
                     ) : (
-                      <HiCheckCircle
-                        size={18}
-                        style={{
-                          marginLeft: "5px",
-                        }}
-                      />
+                      <HiCheckCircle size={18} className="ml-[5px]" />
                     )}
                   </span>
                   <span className="text-black text-[16.8px] font-semibold">
@@ -503,19 +488,9 @@ const TieinUdfModal = ({
                     }>
                     {max != null ? formatNumber(max) : "-"}
                     {unbalance && max && unbalance > max ? (
-                      <MdInfo
-                        size={18}
-                        style={{
-                          marginLeft: "5px",
-                        }}
-                      />
+                      <MdInfo size={18} className="ml-[5px]" />
                     ) : (
-                      <HiCheckCircle
-                        size={18}
-                        style={{
-                          marginLeft: "5px",
-                        }}
-                      />
+                      <HiCheckCircle size={18} className="ml-[5px]" />
                     )}
                   </span>
                 </div>

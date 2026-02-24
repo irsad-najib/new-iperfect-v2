@@ -39,7 +39,6 @@ const TableGroupModal = ({
   onClose,
   onSubmit,
   initialData,
-  selectedIds,
   loading,
 }: TableGroupModalProps) => {
   const [formData, setFormData] = useState<TableGroup>(() => ({

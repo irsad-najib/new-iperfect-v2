@@ -131,7 +131,10 @@ const DailyRoutinePage: React.FC = () => {
 
   // Helper function untuk menentukan border color berdasarkan status dominan
   const getBorderColor = (
-    listData: { name: string; status: "Done" | "In Progress" | "Unavailable" }[]
+    listData: {
+      name: string;
+      status: "Done" | "In Progress" | "Unavailable";
+    }[],
   ) => {
     const statusCounts = {
       Done: 0,
@@ -157,7 +160,7 @@ const DailyRoutinePage: React.FC = () => {
   // Handler untuk navigasi item dengan loading state
   const handleItemClick = async (
     date: string,
-    item: { name: string; status: string }
+    item: { name: string; status: string },
   ) => {
     // Set loading state dan item yang diklik
     setIsNavigating(true);
@@ -207,48 +210,45 @@ const DailyRoutinePage: React.FC = () => {
 
     return (
       <div
-        className="p-0"
+        className="p-0 border-t-[3px]"
         style={{
-          borderTop: `3px solid ${borderColor}`,
+          borderColor: borderColor,
         }}>
         <ul className="p-0 m-0 list-none">
           {listData.map((item, idx) => {
-            const isCurrentlyClicked =
-              isNavigating &&
-              clickedItem?.date === currentDate &&
-              clickedItem?.name === item.name;
+        const isCurrentlyClicked =
+          isNavigating &&
+          clickedItem?.date === currentDate &&
+          clickedItem?.name === item.name;
 
-            return (
-              <li
-                key={idx}
-                onClick={() =>
-                  !isNavigating && handleItemClick(currentDate, item)
-                }
-                className={`flex items-center text-14 py-0.5 rounded transition-colors duration-200 relative ${
-                  !isNavigating ? "hover:bg-[#f5f5f5]" : ""
-                }`}
-                style={{
-                  color:
-                    item.status === "Done"
-                      ? "var(--color-primary-300)"
-                      : item.status === "In Progress"
-                      ? "var(--color-secondary-300)"
-                      : "var(--color-neutral-300)",
-                  fontWeight: 400,
-                  cursor: isNavigating ? "wait" : "pointer",
-                  opacity: isNavigating && !isCurrentlyClicked ? 0.5 : 1,
-                }}>
-                {isCurrentlyClicked ? (
-                  <Spin size="small" className="mr-1.5 text-20" />
-                ) : (
-                  renderStatusIcon(item.status)
-                )}
-                {item.name}
-                {isCurrentlyClicked && (
-                  <span className="ml-2 text-20 text-[#666]">Loading...</span>
-                )}
-              </li>
-            );
+        return (
+          <li
+            key={idx}
+            onClick={() =>
+          !isNavigating && handleItemClick(currentDate, item)
+            }
+            className={`flex items-center text-sm py-0.5 rounded transition-colors duration-200 relative ${
+          !isNavigating ? "hover:bg-gray-100" : ""
+            } ${
+          item.status === "Done"
+            ? "text-blue-300"
+            : item.status === "In Progress"
+              ? "text-orange-300"
+              : "text-gray-300"
+            } ${isNavigating ? "cursor-wait" : "cursor-pointer"} ${
+          isNavigating && !isCurrentlyClicked ? "opacity-50" : "opacity-100"
+            }`}>
+            {isCurrentlyClicked ? (
+          <Spin size="small" className="mr-1.5 text-xl" />
+            ) : (
+          renderStatusIcon(item.status)
+            )}
+            {item.name}
+            {isCurrentlyClicked && (
+          <span className="ml-2 text-xl text-gray-600">Loading...</span>
+            )}
+          </li>
+        );
           })}
         </ul>
       </div>
@@ -305,16 +305,21 @@ const DailyRoutinePage: React.FC = () => {
         </div>
       )}
 
-      <div className="customBreadcrumb separatorSpacing flex items-center h-11">
-        <Breadcrumb
-          separator={<MdArrowForwardIos size={16} />}
-          items={[
-            {
-              title: <span className="lastBreadcrumbItem">Daily Routines</span>,
-            },
-          ]}
-        />
-      </div>
+      <Breadcrumb
+        separator={
+          <MdArrowForwardIos size={16} className="inline-block align-middle" />
+        }
+        items={[
+          {
+            title: (
+              <span className="text-neutral-900 text-20 font-semibold">
+                Daily Routines
+              </span>
+            ),
+          },
+        ]}
+        className="customBreadcrumb separatorSpacing mb-4"
+      />
       <div className="flex justify-between pt-4">
         <div className="flex items-center gap-2 text-32">
           <HiOutlineChevronLeft
@@ -333,24 +338,22 @@ const DailyRoutinePage: React.FC = () => {
 
         <div className="flex items-center gap-2">
           <Select
-            style={{ width: 160, height: 44 }}
+            className="w-[160px] h-11 text-16 font-bold"
             value={monthOptions[month]}
             onChange={handleMonthSelect}
             options={monthOptions.map((month) => ({
               label: month,
               value: month,
             }))}
-            className="text-16 font-bold"
           />
           <Select
-            style={{ width: 100, height: 44 }}
+            className="w-[100px] h-11 text-16 font-bold"
             value={year}
             onChange={handleYearSelect}
             options={getYearOptions(
               dayjs().subtract(10, "year").year(),
-              dayjs().add(10, "year").year()
+              dayjs().add(10, "year").year(),
             )}
-            className="text-16 font-bold"
           />
         </div>
       </div>

@@ -626,7 +626,7 @@ const InputOutputModal = ({
               </span>
             </div>
             <div>
-              <Button onClick={handleCancel} style={{ marginRight: 8 }}>
+              <Button onClick={handleCancel} className="mr-2">
                 Cancel
               </Button>
               <Button type="primary" onClick={handleNext} loading={isFinishing}>

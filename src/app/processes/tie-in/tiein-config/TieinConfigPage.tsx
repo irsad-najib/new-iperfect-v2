@@ -218,35 +218,40 @@ const TieinConfigPage = () => {
     <div className="p-4 px-5">
       <div className="flex justify-between items-center mr-12">
         <Breadcrumb
-          separator={<MdArrowForwardIos size={16} />}
+          separator={
+            <MdArrowForwardIos
+              size={16}
+              className="inline-block align-middle"
+            />
+          }
           items={[
             {
               title: (
-                <Link
-                  href="/processes"
-                  className="text-neutral-300 hover:text-neutral-900 transition-colors">
-                  <span className="text-2xl font-semibold">Processes</span>
+                <Link href="/processes" className="breadcrumbLink">
+                  <span className="text-neutral-300 text-20 font-semibold">
+                    Processes
+                  </span>
                 </Link>
               ),
             },
             {
               title: (
-                <Link
-                  href="/processes/tie-in"
-                  className="text-neutral-300 hover:text-neutral-900 transition-colors">
-                  <span className="text-2xl font-semibold">Tie in</span>
+                <Link href="/processes/tie-in" className="breadcrumbLink">
+                  <span className="text-neutral-300 text-20 font-semibold">
+                    Tie in
+                  </span>
                 </Link>
               ),
             },
             {
               title: (
-                <span className="text-neutral-900 text-2xl font-semibold">
+                <span className="text-neutral-900 text-20 font-semibold">
                   Set Config
                 </span>
               ),
             },
           ]}
-          className="[&_.ant-breadcrumb-separator]:mx-1.5 [&_.ant-breadcrumb-separator]:flex [&_.ant-breadcrumb-separator]:items-center"
+          className="customBreadcrumb separatorSpacing mb-4"
         />
         <Button
           type="default"
@@ -299,10 +304,7 @@ const TieinConfigPage = () => {
               // disabled={!dailyRunner?.pipeline_id}
             >
               Load config
-              <MdArrowForwardIos
-                size={18}
-                style={{ transform: "rotate(90deg)" }}
-              />
+              <MdArrowForwardIos size={18} className="rotate-90" />
             </Button>
           </Dropdown>
 
@@ -326,10 +328,7 @@ const TieinConfigPage = () => {
               type="primary"
               className="bg-primary-300 border-primary-300 rounded px-4 h-9 flex items-center justify-center font-semibold text-neutral-100 hover:bg-primary-700 hover:border-primary-700 active:bg-neutral-900 active:border-neutral-900 disabled:bg-neutral-300 disabled:border-neutral-300">
               Save
-              <MdArrowForwardIos
-                size={18}
-                style={{ transform: "rotate(90deg)" }}
-              />
+              <MdArrowForwardIos size={18} className="rotate-90" />
             </Button>
           </Dropdown>
           <Button

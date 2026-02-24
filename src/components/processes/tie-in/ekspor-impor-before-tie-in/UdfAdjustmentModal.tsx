@@ -363,18 +363,12 @@ const UdfAdjustmentModal = ({
         <div className="grid grid-cols-[160px_160px_65px_110px_160px_65px_110px] items-center w-full px-4 py-3 [className={styles.tableRowHeader}_span]:font-semibold [className={styles.tableRowHeader}_span]:text-sm [className={styles.tableRowHeader}_span]:text-neutral-900 [className={styles.tableRowHeader}_span]:text-center">
           <span>{name}</span>
           <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              width: "100%",
-              padding: "0 10px",
-            }}
+            className="flex items-center justify-between w-full px-[10px]"
             onClick={(event) => event.stopPropagation()}>
             {formatNumber(inputs.value)}
             <MdContentCopy
               size={18}
-              style={{ cursor: "pointer" }}
+              className="cursor-pointer"
               onMouseDown={(event) => handleCopy(inputs.var_name, event)}
             />
           </div>
@@ -387,18 +381,12 @@ const UdfAdjustmentModal = ({
               : "-"}
           </span>
           <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              width: "100%",
-              padding: "0 10px",
-            }}
+            className="flex items-center justify-between w-full px-[10px]"
             onClick={(event) => event.stopPropagation()}>
             {outputs?.value ? formatNumber(outputs.value) : "-"}
             <MdContentCopy
               size={18}
-              style={{ cursor: "pointer" }}
+              className="cursor-pointer"
               onMouseDown={(event) => handleCopy(outputs?.var_name, event)}
             />
           </div>
@@ -427,34 +415,15 @@ const UdfAdjustmentModal = ({
         label: tableRowHeader,
         children: (
           <div className="grid grid-cols-2 gap-4 w-full max-h-130 overflow-x-auto overflow-y-auto rounded-lg p-4 bg-[#fafafa] [className={styles.tableContainer}_table]:w-full [className={styles.tableContainer}_table]:border-collapse [className={styles.tableContainer}_table]:rounded-lg [className={styles.tableContainer}_table]:overflow-hidden [className={styles.tableContainer}_table]:shadow-[0_2px_4px_rgba(0,0,0,0.1)] [className={styles.tableContainer}_th]:p-2 [className={styles.tableContainer}_th]:text-center [className={styles.tableContainer}_th]:border [className={styles.tableContainer}_th]:border-neutral-250 [className={styles.tableContainer}_td]:p-2 [className={styles.tableContainer}_td]:text-center [className={styles.tableContainer}_td]:border [className={styles.tableContainer}_td]:border-neutral-250">
-            <div style={{ flex: 1 }}>
-              <table style={{ width: "100%", borderCollapse: "collapse" }}>
+            <div className="flex-1">
+              <table className="w-full border-collapse">
                 <thead>
                   <tr>
-                    <th
-                      style={{
-                        backgroundColor: "#f0f0f0",
-                        padding: "8px",
-                        textAlign: "center",
-                      }}>
+                    <th className="bg-[#f0f0f0] p-2 text-center">
                       Import Variable
                     </th>
-                    <th
-                      style={{
-                        backgroundColor: "#f0f0f0",
-                        padding: "8px",
-                        textAlign: "center",
-                      }}>
-                      Before
-                    </th>
-                    <th
-                      style={{
-                        backgroundColor: "#f0f0f0",
-                        padding: "8px",
-                        textAlign: "center",
-                      }}>
-                      Adjusted
-                    </th>
+                    <th className="bg-[#f0f0f0] p-2 text-center">Before</th>
+                    <th className="bg-[#f0f0f0] p-2 text-center">Adjusted</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -470,7 +439,7 @@ const UdfAdjustmentModal = ({
                           </Tooltip>
                           <MdContentCopy
                             size={18}
-                            style={{ cursor: "pointer" }}
+                            className="cursor-pointer"
                             onMouseDown={(event) =>
                               handleCopy(output.var_name, event)
                             }
@@ -489,13 +458,7 @@ const UdfAdjustmentModal = ({
                     ))
                   ) : (
                     <tr>
-                      <td
-                        colSpan={3}
-                        style={{
-                          textAlign: "center",
-                          padding: "8px",
-                          color: "#999",
-                        }}>
+                      <td colSpan={3} className="text-center p-2 text-[#999]">
                         No import variables
                       </td>
                     </tr>
@@ -504,34 +467,15 @@ const UdfAdjustmentModal = ({
               </table>
             </div>
 
-            <div style={{ flex: 1 }}>
-              <table style={{ width: "100%", borderCollapse: "collapse" }}>
+            <div className="flex-1">
+              <table className="w-full border-collapse">
                 <thead>
                   <tr>
-                    <th
-                      style={{
-                        backgroundColor: "#f0f0f0",
-                        padding: "8px",
-                        textAlign: "center",
-                      }}>
+                    <th className="bg-[#f0f0f0] p-2 text-center">
                       Export Variable
                     </th>
-                    <th
-                      style={{
-                        backgroundColor: "#f0f0f0",
-                        padding: "8px",
-                        textAlign: "center",
-                      }}>
-                      Before
-                    </th>
-                    <th
-                      style={{
-                        backgroundColor: "#f0f0f0",
-                        padding: "8px",
-                        textAlign: "center",
-                      }}>
-                      Adjusted
-                    </th>
+                    <th className="bg-[#f0f0f0] p-2 text-center">Before</th>
+                    <th className="bg-[#f0f0f0] p-2 text-center">Adjusted</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -547,7 +491,7 @@ const UdfAdjustmentModal = ({
                           </Tooltip>
                           <MdContentCopy
                             size={18}
-                            style={{ cursor: "pointer" }}
+                            className="cursor-pointer"
                             onMouseDown={(event) =>
                               handleCopy(output.var_name, event)
                             }
@@ -566,13 +510,7 @@ const UdfAdjustmentModal = ({
                     ))
                   ) : (
                     <tr>
-                      <td
-                        colSpan={3}
-                        style={{
-                          textAlign: "center",
-                          padding: "8px",
-                          color: "#999",
-                        }}>
+                      <td colSpan={3} className="text-center p-2 text-[#999]">
                         No export variables
                       </td>
                     </tr>
@@ -616,12 +554,7 @@ const UdfAdjustmentModal = ({
           <>
             <div className="flex flex-col items-start gap-[18px] mt-7">
               <div className="flex items-center justify-between w-full">
-                <div
-                  style={{
-                    display: "flex",
-                    gap: "10px",
-                    alignItems: "center",
-                  }}>
+                <div className="flex gap-[10px] items-center">
                   <div>
                     <span className="text-black text-[16.8px] font-semibold">
                       Material: {""}
@@ -648,13 +581,8 @@ const UdfAdjustmentModal = ({
                   </div>
                 </div>
                 <div className="flex gap-1.5">
-                  <div style={{ display: "flex", gap: "6px" }}>
-                    <div
-                      style={{
-                        display: "flex",
-                        gap: "6px",
-                        alignItems: "center",
-                      }}></div>
+                  <div className="flex gap-[6px]">
+                    <div className="flex gap-[6px] items-center"></div>
                     <Button
                       type="default"
                       // loading={guideLoading}
@@ -686,10 +614,7 @@ const UdfAdjustmentModal = ({
                         // disabled={!dailyRunner?.pipeline_id}
                       >
                         Load
-                        <MdArrowForwardIos
-                          size={18}
-                          style={{ transform: "rotate(90deg)" }}
-                        />
+                        <MdArrowForwardIos size={18} className="rotate-90" />
                       </Button>
                     </Dropdown>
                     <Dropdown
@@ -715,10 +640,7 @@ const UdfAdjustmentModal = ({
                         // disabled={!dailyRunner?.pipeline_id}
                       >
                         Save as
-                        <MdArrowForwardIos
-                          size={18}
-                          style={{ transform: "rotate(90deg)" }}
-                        />
+                        <MdArrowForwardIos size={18} className="rotate-90" />
                       </Button>
                     </Dropdown>
                     <Button
@@ -747,18 +669,8 @@ const UdfAdjustmentModal = ({
                 </div>
               </div>
               <div className="flex items-center justify-between w-full">
-                <div
-                  style={{
-                    display: "flex",
-                    gap: "18px",
-                    alignItems: "center",
-                  }}>
-                  <div
-                    style={{
-                      display: "flex",
-                      gap: "6px",
-                      alignItems: "center",
-                    }}>
+                <div className="flex gap-[18px] items-center">
+                  <div className="flex gap-[6px] items-center">
                     <span className="text-black text-[16.8px] font-semibold">
                       Unbalance: {""}
                     </span>
@@ -772,19 +684,9 @@ const UdfAdjustmentModal = ({
                       }>
                       {typeof unbalance === "number" && formatNumber(unbalance)}
                       {unbalance && max && unbalance > max ? (
-                        <MdInfo
-                          size={18}
-                          style={{
-                            marginLeft: "5px",
-                          }}
-                        />
+                        <MdInfo size={18} className="ml-[5px]" />
                       ) : (
-                        <HiCheckCircle
-                          size={18}
-                          style={{
-                            marginLeft: "5px",
-                          }}
-                        />
+                        <HiCheckCircle size={18} className="ml-[5px]" />
                       )}
                     </span>
                     <Button
@@ -794,7 +696,7 @@ const UdfAdjustmentModal = ({
                       className="customOtherButton">
                       <MdContentCopy
                         size={18}
-                        style={{ cursor: "pointer" }}
+                        className="cursor-pointer"
                         onMouseDown={(event) => handleCopy(unbalance, event)}
                       />
                     </Button>
@@ -813,19 +715,9 @@ const UdfAdjustmentModal = ({
                       }>
                       {typeof max === "number" && formatNumber(max)}
                       {unbalance && max && unbalance > max ? (
-                        <MdInfo
-                          size={18}
-                          style={{
-                            marginLeft: "5px",
-                          }}
-                        />
+                        <MdInfo size={18} className="ml-[5px]" />
                       ) : (
-                        <HiCheckCircle
-                          size={18}
-                          style={{
-                            marginLeft: "5px",
-                          }}
-                        />
+                        <HiCheckCircle size={18} className="ml-[5px]" />
                       )}
                     </span>
                   </div>

@@ -535,7 +535,7 @@ const RpfModal = ({
               Step 1 of 3
             </span>
             <div>
-              <Button onClick={handleCancel} style={{ marginRight: 8 }}>
+              <Button onClick={handleCancel} className="mr-2">
                 Cancel
               </Button>
               <Button
@@ -580,7 +580,7 @@ const RpfModal = ({
               </span>
             </div>
             <div>
-              <Button onClick={handleCancel} style={{ marginRight: 8 }}>
+              <Button onClick={handleCancel} className="mr-2">
                 Cancel
               </Button>
               <Button type="primary" onClick={handleNext} loading={isFinishing}>
@@ -817,7 +817,7 @@ const RpfModal = ({
               </span>
             </div>
             <div>
-              <Button onClick={handleCancel} style={{ marginRight: 8 }}>
+              <Button onClick={handleCancel} className="mr-2">
                 Cancel
               </Button>
               <Button type="primary" onClick={handleNext} loading={isFinishing}>

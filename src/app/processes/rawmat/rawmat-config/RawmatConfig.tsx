@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   Table,
   Breadcrumb,
@@ -98,7 +98,7 @@ const RawmatConfigPage = () => {
   }, [formattedDate]);
 
   /* ================= HANDLE SUBMIT ================= */
-  const handleSubmitTableGroup = async (data: TableGroup) => {
+  const handleSubmitTableGroup = async () => {
     try {
       setLoadingSubmit(true);
       // Add your API call here to save the table group
@@ -108,6 +108,7 @@ const RawmatConfigPage = () => {
       // Refetch config data if needed
     } catch (error) {
       message.error("Failed to save table group");
+      console.error("Error details:", error);
     } finally {
       setLoadingSubmit(false);
     }
@@ -121,8 +122,9 @@ const RawmatConfigPage = () => {
       message.success("Table group deleted successfully");
       setShowDeleteModal(false);
       // Refetch config data if needed
-    } catch (error) {
+    } catch (err) {
       message.error("Failed to delete table group");
+      console.error("Error details:", err);
     } finally {
       setLoadingDelete(false);
     }
@@ -248,24 +250,40 @@ const RawmatConfigPage = () => {
       {/* ===== BREADCRUMB ===== */}
       <div className="flex justify-between items-center mb-6">
         <Breadcrumb
-          separator={<MdArrowForwardIos size={16} />}
+          separator={
+            <MdArrowForwardIos
+              size={16}
+              className="inline-block align-middle"
+            />
+          }
           items={[
             {
               title: (
                 <Link href="/processes" className="breadcrumbLink">
-                  Processes
+                  <span className="text-neutral-300 text-20 font-semibold">
+                    Processes
+                  </span>
                 </Link>
               ),
             },
             {
               title: (
                 <Link href="/processes/rawmat" className="breadcrumbLink">
-                  RawMat
+                  <span className="text-neutral-300 text-20 font-semibold">
+                    RawMat
+                  </span>
                 </Link>
               ),
             },
-            { title: "Set config rawmat" },
+            {
+              title: (
+                <span className="text-neutral-900 text-20 font-semibold">
+                  Set config rawmat
+                </span>
+              ),
+            },
           ]}
+          className="customBreadcrumb separatorSpacing mb-4"
         />
         <Button
           className="customSecondaryButton btn-md mr-12"
@@ -295,10 +313,7 @@ const RawmatConfigPage = () => {
             menu={{ items: [{ key: "1", label: "Load default config" }] }}>
             <Button className="customSecondaryButton">
               Load config
-              <MdArrowForwardIos
-                size={16}
-                style={{ transform: "rotate(90deg)" }}
-              />
+              <MdArrowForwardIos size={16} className="rotate-90" />
             </Button>
           </Dropdown>
 
@@ -306,10 +321,7 @@ const RawmatConfigPage = () => {
             menu={{ items: [{ key: "1", label: "Save as new default" }] }}>
             <Button type="primary" className="customPrimaryButton">
               Save
-              <MdArrowForwardIos
-                size={16}
-                style={{ transform: "rotate(90deg)" }}
-              />
+              <MdArrowForwardIos size={16} className="rotate-90" />
             </Button>
           </Dropdown>
 

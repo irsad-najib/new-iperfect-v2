@@ -487,27 +487,37 @@ export default function ComparePage() {
     <div className="px-4 py-4 sm:px-5 md:px-6 lg:px-8">
       {/* Breadcrumb Navigation */}
       <Breadcrumb
-        separator={<MdArrowForwardIos size={16} />}
+        separator={
+          <MdArrowForwardIos size={16} className="inline-block align-middle" />
+        }
         items={[
           {
             title: (
               <Link href="/processes" className="breadcrumbLink">
-                <span className="linkText">Processes</span>
+                <span className="text-neutral-300 text-20 font-semibold">
+                  Processes
+                </span>
               </Link>
             ),
           },
           {
             title: (
               <Link href="/processes/cleansing" className="breadcrumbLink">
-                <span className="linkText">Cleansing</span>
+                <span className="text-neutral-300 text-20 font-semibold">
+                  Cleansing
+                </span>
               </Link>
             ),
           },
           {
-            title: <span className="lastBreadcrumbItem">Compare</span>,
+            title: (
+              <span className="text-neutral-900 text-20 font-semibold">
+                Compare
+              </span>
+            ),
           },
         ]}
-        className="customBreadcrumb separatorSpacing"
+        className="customBreadcrumb separatorSpacing mb-4"
       />
 
       {/* Date Picker Section - Responsive */}

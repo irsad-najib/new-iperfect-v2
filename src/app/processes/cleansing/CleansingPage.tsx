@@ -382,9 +382,11 @@ const CleansingPage: React.FC = () => {
     },
     [clearJobByJobId],
   );
-  const apiurl = process.env.NEXT_PUBLIC_API_URL;
+
   useEffect(() => {
-    const eventSource = new EventSource(`${apiurl}/api/sse`);
+    const eventSource = new EventSource(
+      `${process.env.NEXT_PUBLIC_SSE_URL}/api/sse`,
+    );
 
     eventSource.onmessage = async (event) => {
       console.log("SSE event received:", event.data);

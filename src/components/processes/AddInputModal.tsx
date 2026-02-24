@@ -78,7 +78,7 @@ const AddInputModal: React.FC<AddInputModalProps> = ({
       try {
         setLoading(true);
         const response = await api.get(
-          `/udf/utils/available-timeframe-selection?ref_name=${refName}`
+          `/udf/utils/available-timeframe-selection?ref_name=${refName}`,
         );
         if (response.data?.timeframe) {
           setTimeframeOptions(response.data.timeframe);
@@ -92,7 +92,7 @@ const AddInputModal: React.FC<AddInputModalProps> = ({
         setLoading(false);
       }
     },
-    [editingInput, form]
+    [editingInput, form],
   );
 
   const fetchValue = useCallback(
@@ -120,7 +120,7 @@ const AddInputModal: React.FC<AddInputModalProps> = ({
         setValueLoading(false);
       }
     },
-    [formattedDate]
+    [formattedDate],
   );
 
   useEffect(() => {
@@ -141,7 +141,7 @@ const AddInputModal: React.FC<AddInputModalProps> = ({
         if (currentData) {
           newLevels.push({ level: i + 1, options: currentData });
           const selectedOption = currentData.find(
-            (opt) => opt.name === pathParts[i]
+            (opt) => opt.name === pathParts[i],
           );
           currentData = selectedOption?.data || [];
         }
@@ -166,7 +166,7 @@ const AddInputModal: React.FC<AddInputModalProps> = ({
     let path = "";
     for (let i = 0; i < level; i++) {
       const selectedOption = currentData.find(
-        (opt) => opt.name === newSelectedValues[i]
+        (opt) => opt.name === newSelectedValues[i],
       );
       path = path ? `${path}/${selectedOption.name}` : selectedOption.name;
       currentData = selectedOption?.data || [];
@@ -250,7 +250,7 @@ const AddInputModal: React.FC<AddInputModalProps> = ({
 
             const response = await api.post(
               "/tiein/kapasitas-tiein/adjustment",
-              requestBody
+              requestBody,
             );
             setAdjustedTableData?.(response.data.row);
             message.success("Adjustment saved successfully");
@@ -282,7 +282,7 @@ const AddInputModal: React.FC<AddInputModalProps> = ({
 
   const getFieldClassName = (
     unbalance: number | null | undefined,
-    max: number | null | undefined
+    max: number | null | undefined,
   ) => {
     if (unbalance && max) {
       return unbalance <= max
@@ -333,7 +333,7 @@ const AddInputModal: React.FC<AddInputModalProps> = ({
                     onChange={(value) => handleLevelChange(value, level.level)}
                     showSearch
                     optionFilterProp="children"
-                    className="[&_.ant-select-selector]:!py-2 [&_.ant-select-selector]:!px-3 [&_.ant-select-selector]:!rounded-md">
+                    className="[&_.ant-select-selector]:py-2! [&_.ant-select-selector]:px-3! [&_.ant-select-selector]:rounded-md!">
                     {level.options.map((option) => (
                       <Select.Option key={option.name} value={option.name}>
                         {option.name}
@@ -367,7 +367,7 @@ const AddInputModal: React.FC<AddInputModalProps> = ({
                   showSearch
                   optionFilterProp="children"
                   onChange={handleTimeframeChange}
-                  className="[&_.ant-select-selector]:!py-2 [&_.ant-select-selector]:!px-3 [&_.ant-select-selector]:!rounded-md">
+                  className="[&_.ant-select-selector]:py-2! [&_.ant-select-selector]:px-3! [&_.ant-select-selector]:rounded-md!">
                   {timeframeOptions.map((timeframe) => (
                     <Select.Option key={timeframe} value={timeframe}>
                       {timeframe}
@@ -385,7 +385,7 @@ const AddInputModal: React.FC<AddInputModalProps> = ({
                 className="mb-4">
                 <Input
                   placeholder="Enter input name"
-                  className="!py-2 !px-3 !rounded-md"
+                  className="py-2! px-3! rounded-md!"
                 />
               </Form.Item>
 
@@ -393,7 +393,7 @@ const AddInputModal: React.FC<AddInputModalProps> = ({
                 <Form.Item label="Value (before)" className="mb-4">
                   <InputNumber
                     placeholder="Value (before)"
-                    className="!w-full !text-black"
+                    className="w-full! text-black!"
                     disabled
                     value={editingInput.value}
                   />
@@ -406,7 +406,7 @@ const AddInputModal: React.FC<AddInputModalProps> = ({
                     className="mb-4">
                     <InputNumber
                       placeholder="Enter default value"
-                      className="!w-full"
+                      className="w-full!"
                     />
                   </Form.Item>
 
@@ -414,7 +414,7 @@ const AddInputModal: React.FC<AddInputModalProps> = ({
                     <Spin spinning={valueLoading}>
                       <InputNumber
                         placeholder="Value"
-                        className="!w-full !text-black !bg-gray-100"
+                        className="w-full! text-black! bg-gray-100!"
                         readOnly
                         value={fetchedValue}
                       />
@@ -453,19 +453,19 @@ const AddInputModal: React.FC<AddInputModalProps> = ({
                   <div className="flex items-stretch gap-2">
                     <InputNumber
                       placeholder="Enter adjust value"
-                      className="!w-full"
+                      className="w-full!"
                       onChange={(value) => {
                         form.setFieldValue("adjustment_value", value);
                       }}
                     />
                     <Button
                       icon={<HiPlus size={28} />}
-                      className="!flex !items-center !justify-center !h-[50px] !min-w-[50px] !p-0 !border !border-secondary-300 !rounded-md hover:!border-secondary-300 hover:!text-secondary-300"
+                      className="flex! items-center! justify-center! h-[50px]! min-w-[50px]! p-0! border! border-secondary-300! rounded-md! hover:border-secondary-300! hover:text-secondary-300!"
                       onClick={() => handleAdjustmentChange(true)}
                     />
                     <Button
                       icon={<HiMinus size={28} />}
-                      className="!flex !items-center !justify-center !h-[50px] !min-w-[50px] !p-0 !border !border-secondary-300 !rounded-md hover:!border-secondary-300 hover:!text-secondary-300"
+                      className="flex! items-center! justify-center! h-[50px]! min-w-[50px]! p-0! border! border-secondary-300! rounded-md! hover:border-secondary-300! hover:text-secondary-300!"
                       onClick={() => handleAdjustmentChange(false)}
                     />
                   </div>
@@ -473,7 +473,7 @@ const AddInputModal: React.FC<AddInputModalProps> = ({
                 <Form.Item label="Final" className="mb-4">
                   <InputNumber
                     placeholder="Final"
-                    className="!w-full !text-black"
+                    className="w-full! text-black!"
                     disabled
                     value={finalValue}
                   />

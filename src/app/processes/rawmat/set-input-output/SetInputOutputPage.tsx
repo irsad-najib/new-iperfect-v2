@@ -568,19 +568,25 @@ const SetInputOutputPage = () => {
     {
       title: (
         <Link className="breadcrumbLink" href="/processes">
-          <span className="linkText">Processes</span>
+          <span className="text-neutral-300 text-20 font-semibold">
+            Processes
+          </span>
         </Link>
       ),
     },
     {
       title: (
         <Link className="breadcrumbLink" href="/processes/rawmat">
-          <span className="linkText">RawMat</span>
+          <span className="text-neutral-300 text-20 font-semibold">RawMat</span>
         </Link>
       ),
     },
     {
-      title: <span className="lastBreadcrumbItem">Set inputs and outputs</span>,
+      title: (
+        <span className="text-neutral-900 text-20 font-semibold">
+          Set inputs and outputs
+        </span>
+      ),
     },
   ];
 
@@ -775,9 +781,14 @@ const SetInputOutputPage = () => {
     <div className="py-4 px-5 h-full">
       <div className="flex items-center justify-between">
         <Breadcrumb
-          separator={<MdArrowForwardIos size={16} />}
+          separator={
+            <MdArrowForwardIos
+              size={16}
+              className="inline-block align-middle"
+            />
+          }
           items={breadcrumbItems}
-          className="customBreadcrumb separatorSpacing"
+          className="customBreadcrumb separatorSpacing mb-4"
         />
         <Button
           type="default"
@@ -828,10 +839,7 @@ const SetInputOutputPage = () => {
               // disabled={!dailyRunner?.pipeline_id}
             >
               Load config
-              <MdArrowForwardIos
-                size={18}
-                style={{ transform: "rotate(90deg)" }}
-              />
+              <MdArrowForwardIos size={18} className="rotate-90" />
             </Button>
           </Dropdown>
           <Dropdown
@@ -852,10 +860,7 @@ const SetInputOutputPage = () => {
             }}>
             <Button type="primary" className="customPrimaryButton">
               Save
-              <MdArrowForwardIos
-                size={18}
-                style={{ transform: "rotate(90deg)" }}
-              />
+              <MdArrowForwardIos size={18} className="rotate-90" />
             </Button>
           </Dropdown>
           <Button

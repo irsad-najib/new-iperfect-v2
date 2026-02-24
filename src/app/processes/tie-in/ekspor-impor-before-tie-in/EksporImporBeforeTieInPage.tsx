@@ -774,10 +774,7 @@ const EksporImporBeforeTieInPage: React.FC = () => {
               onClick={handleLoadConfig}
               className="bg-transparent border border-neutral-700 rounded px-4 h-9 flex items-center justify-center font-semibold text-neutral-900 hover:bg-secondary-300 hover:border-secondary-300 hover:text-neutral-100 active:bg-neutral-500 active:border-neutral-500 active:text-neutral-900 disabled:bg-neutral-300 disabled:border-neutral-300 disabled:text-[#eeeff1]">
               Load config
-              <MdArrowForwardIos
-                size={18}
-                style={{ transform: "rotate(90deg)" }}
-              />
+              <MdArrowForwardIos size={18} className="rotate-90" />
             </Button>
           </Dropdown>
           <Dropdown
@@ -790,11 +787,7 @@ const EksporImporBeforeTieInPage: React.FC = () => {
             <Button
               type="primary"
               className="bg-primary-300 border-primary-300 rounded px-4 h-9 flex items-center justify-center font-semibold text-neutral-100 hover:bg-primary-700 hover:border-primary-700 active:bg-neutral-900 active:border-neutral-900 disabled:bg-neutral-300 disabled:border-neutral-300">
-              Save{" "}
-              <MdArrowForwardIos
-                size={18}
-                style={{ transform: "rotate(90deg)" }}
-              />
+              Save <MdArrowForwardIos size={18} className="rotate-90" />
             </Button>
           </Dropdown>
           <Button type="default" loading={loading} onClick={handleDeleteConfig}>

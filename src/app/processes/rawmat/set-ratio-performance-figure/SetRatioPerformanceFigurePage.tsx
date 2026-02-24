@@ -105,7 +105,6 @@ interface ResourceRowData {
 const SetRatioPerformanceFigurePage = () => {
   const router = useRouter();
   const { selectedDate, formattedDate } = useDateContext();
-  const [loadingConfig, setLoadingConfig] = useState(false);
   const [loadingData, setLoadingData] = useState(false);
   const [rawmatConfig, setRawmatConfig] = useState<RawmatConfig | null>(null);
   const [rawmatData, setRawmatData] = useState<RawmatData | null>(null);
@@ -177,7 +176,6 @@ const SetRatioPerformanceFigurePage = () => {
   useEffect(() => {
     const fetchRawmatConfig = async () => {
       try {
-        setLoadingConfig(true);
         const response = await api.get<RawmatConfig>(
           "/rawmat/config/get-by-args",
           {
@@ -194,8 +192,6 @@ const SetRatioPerformanceFigurePage = () => {
       } catch (error) {
         console.error("Error fetching rawmat config:", error);
         message.error("Failed to fetch rawmat configuration");
-      } finally {
-        setLoadingConfig(false);
       }
     };
 
@@ -584,20 +580,24 @@ const SetRatioPerformanceFigurePage = () => {
     {
       title: (
         <Link className="breadcrumbLink" href="/processes">
-          <span className="linkText">Processes</span>
+          <span className="text-neutral-300 text-20 font-semibold">
+            Processes
+          </span>
         </Link>
       ),
     },
     {
       title: (
         <Link className="breadcrumbLink" href="/processes/rawmat">
-          <span className="linkText">RawMat</span>
+          <span className="text-neutral-300 text-20 font-semibold">RawMat</span>
         </Link>
       ),
     },
     {
       title: (
-        <span className="lastBreadcrumbItem">Set ratio performance figure</span>
+        <span className="text-neutral-900 text-20 font-semibold">
+          Set ratio performance figure
+        </span>
       ),
     },
   ];
@@ -774,9 +774,14 @@ const SetRatioPerformanceFigurePage = () => {
     <div className="h-full px-5 py-4">
       <div className="flex items-center justify-between">
         <Breadcrumb
-          separator={<MdArrowForwardIos size={16} />}
+          separator={
+            <MdArrowForwardIos
+              size={16}
+              className="inline-block align-middle"
+            />
+          }
           items={breadcrumbItems}
-          className="customBreadcrumb separatorSpacing"
+          className="customBreadcrumb separatorSpacing mb-4"
         />
         <Button
           type="default"
@@ -827,10 +832,7 @@ const SetRatioPerformanceFigurePage = () => {
               // disabled={!dailyRunner?.pipeline_id}
             >
               Load config
-              <MdArrowForwardIos
-                size={18}
-                style={{ transform: "rotate(90deg)" }}
-              />
+              <MdArrowForwardIos size={18} className="rotate-90" />
             </Button>
           </Dropdown>
           <Dropdown
@@ -851,10 +853,7 @@ const SetRatioPerformanceFigurePage = () => {
             }}>
             <Button type="primary" className="customPrimaryButton">
               Save
-              <MdArrowForwardIos
-                size={18}
-                style={{ transform: "rotate(90deg)" }}
-              />
+              <MdArrowForwardIos size={18} className="rotate-90" />
             </Button>
           </Dropdown>
           <Button

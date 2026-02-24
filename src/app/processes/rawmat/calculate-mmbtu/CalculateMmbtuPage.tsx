@@ -128,8 +128,6 @@ interface UDFResponse {
 const CalculateMmbtuPage = () => {
   const router = useRouter();
   const { selectedDate, formattedDate } = useDateContext();
-  const [loadingConfig, setLoadingConfig] = useState(false);
-  const [loadingData, setLoadingData] = useState(false);
   const [rawmatConfig, setRawmatConfig] = useState<RawmatConfig | null>(null);
   const [rawmatData, setRawmatData] = useState<RawmatData | null>(null);
   const [activeTab, setActiveTab] = useState("");
@@ -182,7 +180,6 @@ const CalculateMmbtuPage = () => {
       return;
     }
     try {
-      setLoadingData(true);
       const response = await api.get<RawmatData>("/rawmat/data/get-by-args", {
         params: {
           tanggal: formattedDate,
@@ -192,15 +189,12 @@ const CalculateMmbtuPage = () => {
     } catch (error) {
       console.error("Error fetching rawmat data:", error);
       message.error("Failed to fetch rawmat data");
-    } finally {
-      setLoadingData(false);
     }
   }, [formattedDate]);
 
   useEffect(() => {
     const fetchRawmatConfig = async () => {
       try {
-        setLoadingConfig(true);
         const response = await api.get<RawmatConfig>(
           "/rawmat/config/get-by-args",
           {
@@ -217,8 +211,6 @@ const CalculateMmbtuPage = () => {
       } catch (error) {
         console.error("Error fetching rawmat config:", error);
         message.error("Failed to fetch rawmat configuration");
-      } finally {
-        setLoadingConfig(false);
       }
     };
 
@@ -685,19 +677,25 @@ const CalculateMmbtuPage = () => {
     {
       title: (
         <Link className="breadcrumbLink" href="/processes">
-          <span className="linkText">Processes</span>
+          <span className="text-neutral-300 text-20 font-semibold">
+            Processes
+          </span>
         </Link>
       ),
     },
     {
       title: (
         <Link className="breadcrumbLink" href="/processes/rawmat">
-          <span className="linkText">RawMat</span>
+          <span className="text-neutral-300 text-20 font-semibold">RawMat</span>
         </Link>
       ),
     },
     {
-      title: <span className="lastBreadcrumbItem">Calculate MMBTU</span>,
+      title: (
+        <span className="text-neutral-900 text-20 font-semibold">
+          Calculate MMBTU
+        </span>
+      ),
     },
   ];
 
@@ -843,9 +841,14 @@ const CalculateMmbtuPage = () => {
     <div className="px-5 py-4 h-full">
       <div className="flex items-center justify-between">
         <Breadcrumb
-          separator={<MdArrowForwardIos size={16} />}
+          separator={
+            <MdArrowForwardIos
+              size={16}
+              className="inline-block align-middle"
+            />
+          }
           items={breadcrumbItems}
-          className="customBreadcrumb separatorSpacing"
+          className="customBreadcrumb separatorSpacing mb-4"
         />
         <Button
           type="default"

@@ -62,9 +62,8 @@ function NotificationListener() {
     }
   }, [user, fetchNotifications]);
 
-  const apiurl = process.env.NEXT_PUBLIC_API_URL;
   useEffect(() => {
-    const eventSource = new EventSource(`${apiurl}/api/sse`);
+    const eventSource = new EventSource("/api/sse");
 
     eventSource.onmessage = async (event) => {
       const eventData: JobStatusEvent = JSON.parse(event.data);

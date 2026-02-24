@@ -106,11 +106,7 @@ const LoginPage = () => {
             <div className="absolute top-1/2 right-0 w-[45%] h-px bg-[#e8e8e8]"></div>
           </div>
 
-          <Button
-            block
-            size="large"
-            className="mb-6 border border-neutral-700"
-            style={{ borderColor: "#404252" }}>
+          <Button block size="large" className="mb-6 border border-[#404252]">
             Login with Google
           </Button>
 

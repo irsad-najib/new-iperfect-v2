@@ -12,13 +12,13 @@ export const formatNumber = (
     locale?: string;
     style?: "decimal" | "currency" | "percent";
     currency?: string;
-  }
+  },
 ): string => {
   const {
     decimals = 2,
-    locale = "en-US",
+    locale = "id-ID",
     style = "decimal",
-    currency,
+    currency = "IDR",
   } = options || {};
 
   return new Intl.NumberFormat(locale, {
@@ -34,7 +34,7 @@ export const formatNumber = (
  */
 export const formatNumberWithoutRounding = (
   value: number,
-  maxDecimals: number = 2
+  maxDecimals: number = 2,
 ): string => {
   return formatNumber(value, { decimals: maxDecimals });
 };
