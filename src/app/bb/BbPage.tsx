@@ -444,7 +444,15 @@ const BbPage: React.FC = () => {
         dataSource={data}
         pagination={false}
         rowClassName={getRowClassName}
-        className="customTable"
+        className="
+          [&_.ant-table-thead>tr>th]:!bg-[#e6e6e6]
+          [&_.ant-table-thead>tr>th]:!py-3
+          [&_.ant-table-thead>tr>th]:!px-0
+          [&_.ant-table-thead>tr>th]:!text-center
+          [&_.ant-table-thead>tr>th]:text-[20.16px]
+          [&_.ant-table-thead>tr>th]:font-semibold
+          [&_.ant-table-tbody>tr>td]:!text-center
+        "
       />
     </div>
   );

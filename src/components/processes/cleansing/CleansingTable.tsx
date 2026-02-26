@@ -84,7 +84,7 @@ const CleansingTable: React.FC<CleansingTableProps> = (props) => {
 
   useEffect(() => {
     const filteredData = data.filter(
-      (item) => item.pabrik_id.toString() === activeTab
+      (item) => item.pabrik_id.toString() === activeTab,
     );
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setTableData(filteredData);
@@ -128,21 +128,21 @@ const CleansingTable: React.FC<CleansingTableProps> = (props) => {
 
     tableRef.addEventListener(
       "jobComplete",
-      handleJobComplete as EventListener
+      handleJobComplete as EventListener,
     );
     tableRef.addEventListener(
       "updateRunningJobs",
-      handleUpdateRunningJobs as EventListener
+      handleUpdateRunningJobs as EventListener,
     );
 
     return () => {
       tableRef.removeEventListener(
         "jobComplete",
-        handleJobComplete as EventListener
+        handleJobComplete as EventListener,
       );
       tableRef.removeEventListener(
         "updateRunningJobs",
-        handleUpdateRunningJobs as EventListener
+        handleUpdateRunningJobs as EventListener,
       );
     };
   }, [externalRunningJobs]);
@@ -163,12 +163,12 @@ const CleansingTable: React.FC<CleansingTableProps> = (props) => {
             detail: { bagianId: bagian_id, isLoading: true },
             bubbles: true,
             composed: true,
-          })
+          }),
         );
       }
 
       const dailyRunnerResponse = await api.get(
-        `/daily_runner/get-by-args?tanggal=${formattedDate}&tipe=cleaning&bagian_id=${bagian_id}`
+        `/daily_runner/get-by-args?tanggal=${formattedDate}&tipe=cleaning&bagian_id=${bagian_id}`,
       );
 
       if (!dailyRunnerResponse.data || !dailyRunnerResponse.data._id) {
@@ -182,7 +182,7 @@ const CleansingTable: React.FC<CleansingTableProps> = (props) => {
               detail: { bagianId: bagian_id, isLoading: false },
               bubbles: true,
               composed: true,
-            })
+            }),
           );
         }
         return;
@@ -193,7 +193,7 @@ const CleansingTable: React.FC<CleansingTableProps> = (props) => {
         "/daily_runner/execute/cleaning",
         {
           daily_runner_id: dailyRunnerId,
-        }
+        },
       );
 
       const jobId = runResponse.data.job_id;
@@ -211,7 +211,7 @@ const CleansingTable: React.FC<CleansingTableProps> = (props) => {
             detail: { bagianId: bagian_id, jobId },
             bubbles: true,
             composed: true,
-          })
+          }),
         );
       }
     } catch (error) {
@@ -227,7 +227,7 @@ const CleansingTable: React.FC<CleansingTableProps> = (props) => {
             detail: { bagianId: bagian_id, isLoading: false },
             bubbles: true,
             composed: true,
-          })
+          }),
         );
       }
     }
@@ -235,13 +235,13 @@ const CleansingTable: React.FC<CleansingTableProps> = (props) => {
 
   const handleViewClick = (record: TableItem) => {
     router.push(
-      `/processes/cleansing/${record.pabrik_id}/${record.bagian_id}/view?factory=${record.pabrik_name}&part=${record.name}`
+      `/processes/cleansing/${record.pabrik_id}/${record.bagian_id}/view?factory=${record.pabrik_name}&part=${record.name}`,
     );
   };
 
   const handleLabViewClick = (record: Lab) => {
     router.push(
-      `/processes/cleansing/${record.pabrik_id}/${record.lab_id}/view?factory=${record.pabrik_name}&part=${record.name}`
+      `/processes/cleansing/${record.pabrik_id}/${record.lab_id}/view?factory=${record.pabrik_name}&part=${record.name}`,
     );
   };
 
@@ -328,7 +328,7 @@ const CleansingTable: React.FC<CleansingTableProps> = (props) => {
             <Button
               onClick={() => {
                 router.push(
-                  `/processes/cleansing/${record.pabrik_id}/${record.bagian_id}/config?factoryName=${record.pabrik_name}&partName=${record.name}`
+                  `/processes/cleansing/${record.pabrik_id}/${record.bagian_id}/config?factoryName=${record.pabrik_name}&partName=${record.name}`,
                 );
               }}
               className={`actionButton ${!record.isActive ? "inactive" : ""}`}
@@ -435,7 +435,15 @@ const CleansingTable: React.FC<CleansingTableProps> = (props) => {
         columns={columns}
         dataSource={tableData}
         pagination={false}
-        className="customTable"
+        className="
+          [&_.ant-table-thead>tr>th]:bg-[#e6e6e6]!
+          [&_.ant-table-thead>tr>th]:py-3!
+          [&_.ant-table-thead>tr>th]:px-0!
+          [&_.ant-table-thead>tr>th]:text-center!
+          [&_.ant-table-thead>tr>th]:text-[20.16px]
+          [&_.ant-table-thead>tr>th]:font-semibold
+          [&_.ant-table-tbody>tr>td]:text-center!
+        "
         rowClassName={(record) =>
           !record.isActive
             ? "!bg-neutral-100 !text-neutral-300 [&:hover_td]:!bg-neutral-100"
@@ -467,7 +475,15 @@ const CleansingTable: React.FC<CleansingTableProps> = (props) => {
             columns={labColumns}
             dataSource={labData}
             pagination={false}
-            className="customTable"
+            className="
+              [&_.ant-table-thead>tr>th]:bg-[#e6e6e6]!
+              [&_.ant-table-thead>tr>th]:py-3!
+              [&_.ant-table-thead>tr>th]:px-0!
+              [&_.ant-table-thead>tr>th]:text-center!
+              [&_.ant-table-thead>tr>th]:text-[20.16px]
+              [&_.ant-table-thead>tr>th]:font-semibold
+              [&_.ant-table-tbody>tr>td]:text-center!
+            "
           />
         )}
       </div>

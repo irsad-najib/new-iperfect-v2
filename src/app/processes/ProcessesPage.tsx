@@ -119,7 +119,7 @@ const ProcessesPage: React.FC = () => {
                   style={{
                     ...getCircleStyle(
                       "var(--color-primary-300)",
-                      "var(--color-white)"
+                      "var(--color-white)",
                     ),
                   }}>
                   <AiOutlineCheck color="var(--color-white)" size={24} />
@@ -133,7 +133,7 @@ const ProcessesPage: React.FC = () => {
                 <div
                   style={getCircleStyle(
                     "var(--color-neutral-100)",
-                    "var(--color-secondary-300)"
+                    "var(--color-secondary-300)",
                   )}>
                   {record.key}
                 </div>
@@ -466,7 +466,15 @@ const ProcessesPage: React.FC = () => {
           pagination={false}
           rowClassName={getRowClassName}
           scroll={{ x: 1000 }}
-          className="responsive-table"
+          className="
+            [&_.ant-table-thead>tr>th]:!bg-[#e6e6e6]
+            [&_.ant-table-thead>tr>th]:!py-3
+            [&_.ant-table-thead>tr>th]:!px-0
+            [&_.ant-table-thead>tr>th]:!text-center
+            [&_.ant-table-thead>tr>th]:text-[20.16px]
+            [&_.ant-table-thead>tr>th]:font-semibold
+            [&_.ant-table-tbody>tr>td]:!text-center
+          "
         />
       </div>
       {/* <div className="mt-11">
